@@ -36,7 +36,19 @@ const existingTranslations = ['pt-br', 'da', 'ru-ru'];
  * Runs the script to update the root `.pot` file with the new strings
  */
 function runLocaleUpdatePot() {
-  execSync('ttag extract -o ./locale/texts.pot ./src/', { stdio: 'inherit' });
+  try {
+    // Check if the pot file exists. If not, create it.
+    if (!fs.existsSync('./locale/texts.pot')) {
+      fs.mkdirSync('./locale', { recursive: true });
+      fs.writeFileSync('./locale/texts.pot', '');
+    }
+
+    // Extract the strings from the source code
+    execSync('npx ttag extract -o ./locale/texts.pot ./src/', { stdio: 'inherit' });
+  } catch (error) {
+    console.error('Error updating pot file:', error);
+    process.exit(1);
+  }
 }
 
 /**
@@ -76,6 +88,12 @@ function mergeTranslations() {
       fs.mkdirSync(subfolderPath, { recursive: true });
     }
     const poFile = path.join(subfolderPath, 'texts.po');
+    // Create the file if it does not exist
+    if (!fs.existsSync(poFile)) {
+      fs.writeFileSync(poFile, '');
+    }
+
+    // Merge the `.pot` file with the existing translations
     execSync(`msgmerge ${poFile} ${potFile} -o ${poFile}`, { stdio: 'inherit' });
   });
 }
