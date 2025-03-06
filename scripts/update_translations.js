@@ -150,11 +150,38 @@ function checkForChanges() {
   }
 }
 
+/**
+ * Compiles the translations by generating JSON files from the `.po` files.
+ * This function replicates the behavior of the `i18n` target in the Makefile.
+ */
+function generateJsonFromPos() {
+  const localeDir = 'locale';
+  const outputDir = 'src/locale';
+
+  existingTranslations.forEach((locale) => {
+    const poFile = path.join(localeDir, locale, 'texts.po');
+    const jsonFile = path.join(outputDir, locale, 'texts.po.json');
+    const jsonDir = path.dirname(jsonFile);
+
+    if (!fs.existsSync(jsonDir)) {
+      fs.mkdirSync(jsonDir, { recursive: true });
+    }
+
+    try {
+      execSync(`npx ttag po2json ${poFile} > ${jsonFile}`, { stdio: 'inherit' });
+    } catch (error) {
+      console.error(`Error compiling translations for ${locale}:`, error);
+      process.exit(1);
+    }
+  });
+}
+
 try {
   const isCiValidationRun = process.argv.includes('--ci-validation');
 
   runLocaleUpdatePot();
   mergeTranslations();
+  generateJsonFromPos();
   const hasFuzzyTags = checkFuzzyTags();
   const translationFilesChanged = checkForChanges();
 
