@@ -221,20 +221,24 @@ try {
   mergeTranslations();
   generateJsonFromPos();
   const hasFuzzyTags = checkFuzzyTags();
-  const translationFilesChanged = checkForChanges();
+  if (!isCiValidationRun) {
+    // Translations upgraded successfully
+    console.log(`✅ Translations updated successfully.`);
+    process.exit(0);
+  }
 
   // If this script was called with the "--ci-validation" argument, it will fail if there are any
   // changes in the translation files or if there are any fuzzy tags
-  if (isCiValidationRun) {
-    const invalidPot = checkPotOutdated();
-    const invalidPos = checkPoTranslations();
-    if (invalidPot || invalidPos || hasFuzzyTags || translationFilesChanged) {
-      process.exit(1);
-    }
+  const invalidPot = checkPotOutdated();
+  const invalidPos = checkPoTranslations();
+  const translationFilesChanged = checkForChanges();
+  if (invalidPot || invalidPos || hasFuzzyTags || translationFilesChanged) {
+    console.log(`❌ Translations are not up-to-date. Please review the changes.`);
+    process.exit(1);
+  } else {
+    console.log(`✅ Translations validated successfully.`);
+    process.exit(0);
   }
-
-  // Translations upgraded successfully
-  process.exit(0);
 } catch (error) {
   console.error('Error updating translations:', error);
   process.exit(1);
