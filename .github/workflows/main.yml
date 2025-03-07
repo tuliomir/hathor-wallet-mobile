@@ -31,7 +31,7 @@ jobs:
       run: sudo apt-get install gettext
     - name: Check version
       run: make check_version
-    - name: check_i18n
-      run: make check_i18n
     - name: Linter
       run: npm run lint
+    - name: check_i18n
+      run: make check_i18n
