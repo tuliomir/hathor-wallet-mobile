@@ -12,10 +12,12 @@ check_version:
 	./scripts/check_version
 
 .PHONY: i18n
-	./scripts/update_translations.js
+i18n:
+	node ./scripts/update_translations.js
 
 .PHONY: check_i18n
-	./scripts/update_translations.js --ci-validation
+check_i18n:
+	node ./scripts/update_translations.js --ci-validation
 
 # Usage:
 #`3.0.1` -> make bump updateType=major -> `4.0.0`
