@@ -36,6 +36,7 @@ const existingTranslations = ['pt-br', 'da', 'ru-ru'];
  * Runs the script to update the root `.pot` file with the new strings
  */
 function runLocaleUpdatePot() {
+  console.log('⏳ Updating pot file...');
   try {
     // Check if the pot file exists. If not, create it.
     if (!fs.existsSync('./locale/texts.pot')) {
@@ -46,7 +47,7 @@ function runLocaleUpdatePot() {
     // Extract the strings from the source code
     execSync('npx ttag extract -o ./locale/texts.pot ./src/', { stdio: 'inherit' });
   } catch (error) {
-    console.error('Error updating pot file:', error);
+    console.error('❌ Error updating pot file:', error);
     process.exit(1);
   }
 }
@@ -56,6 +57,8 @@ function runLocaleUpdatePot() {
  * @returns {boolean} True if the `.pot` file is outdated
  */
 function checkPotOutdated() {
+  console.log(`⏳ Checking if pot file is outdated...`);
+
   let isPotOutdated = false;
   const myTmpDir = fs.mkdtempSync(path.join(tmpdir(), 'check_pot-'));
   try {
@@ -67,10 +70,11 @@ function checkPotOutdated() {
     execSync(`msgcmp ${myTmpDir}/po ./locale/texts.pot`, { stdio: 'inherit' });
   } catch (error) {
     isPotOutdated = true;
-    console.error('Error checking pot file:', error);
+    console.error('❌ Error checking pot file, or pot file outdated:', error);
   } finally {
     fs.rmSync(myTmpDir, { recursive: true, force: true });
   }
+
   return isPotOutdated;
 }
 
@@ -79,6 +83,8 @@ function checkPotOutdated() {
  * Creates subfolders and their translation files if they do not exist.
  */
 function mergeTranslations() {
+  console.log(`⏳ Merging translations...`);
+
   const localeDir = 'locale';
   const potFile = path.join(localeDir, 'texts.pot');
 
@@ -105,6 +111,8 @@ function mergeTranslations() {
  * @returns {boolean} True if an error happened or if there are any differences
  */
 function checkPoTranslations(strict = false) {
+  console.log(`⏳ Checking translations...`);
+
   const localeDir = 'locale';
   const potFile = path.join(localeDir, 'texts.pot');
   const subfolders = fs.readdirSync(localeDir)
@@ -123,6 +131,9 @@ function checkPoTranslations(strict = false) {
     }
   });
 
+  if (errorHappened) {
+    console.warn('❌ Some translations are missing. Please review the changes.');
+  }
   return errorHappened
 }
 
@@ -132,6 +143,8 @@ function checkPoTranslations(strict = false) {
  * @returns {boolean} True if any fuzzy tags were found
  */
 function checkFuzzyTags() {
+  console.log(`⏳ Checking for fuzzy tags...`);
+
   const localeDir = 'locale';
   const subfolders = fs.readdirSync(localeDir)
     .filter((subfolder) => fs.statSync(path.join(localeDir, subfolder))
@@ -147,7 +160,7 @@ function checkFuzzyTags() {
   });
 
   if (containsFuzzy) {
-    console.warn(`Warning: Fuzzy translations found in '.po' files. Please review the changes.`);
+    console.warn(`❌: Fuzzy translations found in '.po' files. Please review the changes.`);
   }
 
   return containsFuzzy;
@@ -159,20 +172,28 @@ function checkFuzzyTags() {
  * @returns {boolean} True if changes were found, or if an error happened
  */
 function checkForChanges() {
+  console.log(`⏳ Checking for filesystem changes after i18n execution...`);
+  let hasChanges = false;
   try {
     const result = execSync('git status --porcelain', { encoding: 'utf-8' });
-    return result.trim().length > 0;
+    hasChanges = result.trim().length > 0;
   } catch (error) {
-    console.error('Error checking for changes:', error);
+    console.error('❌ Error checking for changes:', error);
     return true;
   }
+
+  if (hasChanges) {
+    console.warn('❗ Changes found in the translation files. Please review them.');
+  }
+  return hasChanges;
 }
 
 /**
  * Compiles the translations by generating JSON files from the `.po` files.
- * This function replicates the behavior of the `i18n` target in the Makefile.
  */
 function generateJsonFromPos() {
+  console.log(`⏳ Compiling translations into JSON files...`);
+
   const localeDir = 'locale';
   const outputDir = 'src/locale';
 
@@ -188,8 +209,7 @@ function generateJsonFromPos() {
     try {
       execSync(`npx ttag po2json ${poFile} > ${jsonFile}`, { stdio: 'inherit' });
     } catch (error) {
-      console.error(`Error compiling translations for ${locale}:`, error);
-      process.exit(1);
+      console.error(`❌ Error compiling JSON translations for ${locale}:`, error);
     }
   });
 }
