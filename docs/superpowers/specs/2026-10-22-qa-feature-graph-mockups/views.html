@@ -1,0 +1,95 @@
+<h2>Four ways to look at the same YAML</h2>
+<p class="subtitle">All four are rendered from one data file. Which would you actually open before a release-candidate run? Pick as many as you like — real data from the codebase pass, simplified.</p>
+
+<style>
+  .v svg text{font:11px system-ui;fill:currentColor}
+  .v table{border-collapse:collapse;font:11px system-ui;width:100%}
+  .v th,.v td{border:1px solid #8884;padding:3px 5px;text-align:center}
+  .v th{background:#8882}
+  .ok{background:#2e7d3240}.no{background:#c6282840;}.edge{background:#f9a82550}.lib{background:#1565c040}
+  .chip{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;margin:1px}
+  .step{border-left:3px solid #8886;padding:4px 8px;margin:4px 0;font:12px system-ui}
+  .setup{border-left-color:#c62828;background:#c628281a;font-weight:600}
+</style>
+
+<div class="options" data-multiselect>
+
+  <div class="option" data-choice="impact" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content v">
+      <h3>Impact map (features + flags)</h3>
+      <p>Click a feature, everything it touches lights up. "Inter-chain lands → what must I re-test?"</p>
+      <svg viewBox="0 0 420 190" width="100%">
+        <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="#888"/></marker></defs>
+        <g stroke="#888" marker-end="url(#ar)">
+          <line x1="70" y1="40" x2="185" y2="85"/><line x1="70" y1="140" x2="185" y2="100"/>
+          <line x1="245" y1="90" x2="335" y2="40"/><line x1="245" y1="95" x2="335" y2="95"/><line x1="245" y1="100" x2="335" y2="150"/>
+          <line x1="215" y1="160" x2="215" y2="108" stroke-dasharray="4"/>
+        </g>
+        <rect x="185" y="78" width="60" height="28" rx="6" fill="#f9a825"/><text x="198" y="96" style="font-weight:700;fill:#000">send</text>
+        <rect x="10" y="26" width="60" height="26" rx="6" fill="#8883"/><text x="18" y="43">pin-unlock</text>
+        <rect x="10" y="126" width="60" height="26" rx="6" fill="#8883"/><text x="14" y="143">token-reg.</text>
+        <rect x="335" y="26" width="80" height="26" rx="6" fill="#f9a82580"/><text x="342" y="43">shielded-send</text>
+        <rect x="335" y="82" width="80" height="26" rx="6" fill="#f9a82580"/><text x="348" y="99">fee-tokens</text>
+        <rect x="335" y="137" width="80" height="26" rx="6" fill="#f9a82580"/><text x="342" y="154">wallet-service</text>
+        <rect x="170" y="160" width="90" height="24" rx="12" fill="none" stroke="#1565c0"/><text x="176" y="176" style="fill:#1565c0">flag: shielded.rollout</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="option" data-choice="matrix" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content v">
+      <h3>Combination matrix (per action)</h3>
+      <p>Every cell is one scenario. Colour = valid / rejected-by-design / known edge / lib-only risk.</p>
+      <table>
+        <tr><th>send · wallet service</th><th>simple</th><th>multisig</th><th>shielded</th></tr>
+        <tr><th>HTR</th><td class="ok">✓</td><td class="lib">✓ lib</td><td class="edge">needs cap. full</td></tr>
+        <tr><th>deposit</th><td class="ok">✓</td><td class="lib">✓ lib</td><td class="edge">needs cap. full</td></tr>
+        <tr><th>fee</th><td class="edge">0 HTR → late fail</td><td class="lib">✓ lib</td><td class="edge">fee + privacy fee</td></tr>
+        <tr><th>private mode</th><td class="no">✗ rejected</td><td class="no">✗ rejected</td><td class="ok">✓</td></tr>
+      </table>
+      <p style="font-size:11px">…same grid repeated for fullnode, seed/passkey, shielded testnet…</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="flow" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content v">
+      <h3>Path diagram (happy + error branches)</h3>
+      <p>The screens of one action, with every exit that leads to an error message.</p>
+      <svg viewBox="0 0 420 150" width="100%">
+        <g stroke="#2e7d32" stroke-width="2" marker-end="url(#ar)">
+          <line x1="80" y1="40" x2="125" y2="40"/><line x1="205" y1="40" x2="250" y2="40"/><line x1="330" y1="40" x2="360" y2="40"/>
+        </g>
+        <g stroke="#c62828" stroke-dasharray="4" marker-end="url(#ar)">
+          <line x1="45" y1="55" x2="45" y2="95"/><line x1="165" y1="55" x2="165" y2="95"/><line x1="290" y1="55" x2="290" y2="95"/>
+        </g>
+        <rect x="5" y="25" width="75" height="30" rx="5" fill="#8883"/><text x="12" y="44">Address</text>
+        <rect x="125" y="25" width="80" height="30" rx="5" fill="#8883"/><text x="135" y="44">Amount</text>
+        <rect x="250" y="25" width="80" height="30" rx="5" fill="#8883"/><text x="258" y="44">Confirm+PIN</text>
+        <text x="365" y="44" style="fill:#2e7d32;font-weight:700">sent ✓</text>
+        <text x="5" y="110" style="fill:#c62828">shielded addr</text><text x="5" y="123" style="fill:#c62828">not supported</text>
+        <text x="125" y="110" style="fill:#c62828">private mode needs</text><text x="125" y="123" style="fill:#c62828">shielded recipient</text>
+        <text x="250" y="110" style="fill:#c62828">insufficient HTR</text><text x="250" y="123" style="fill:#c62828">input limit · raw lib text</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="option" data-choice="runplan" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content v">
+      <h3>Run plan (ordered by switching cost)</h3>
+      <p>The suite flattened into a run order: expensive setups once, cheap combos inside. This is what the generated <code>.md</code> would follow.</p>
+      <div class="step setup">⚙ SETUP 1 · testnet · wallet service · seed wallet</div>
+      <div class="step">send HTR → simple · multisig</div>
+      <div class="step">send deposit → simple · multisig</div>
+      <div class="step">send fee → simple · multisig · fee with 0 HTR ⚠</div>
+      <div class="step setup">⚙ SETUP 2 · testnet · <b>fullnode</b> (empty WS fields)</div>
+      <div class="step">same 3×2 sweep + facade-only edges</div>
+      <div class="step setup">⚙ SETUP 3 · shielded testnet · wallet service</div>
+      <div class="step">…</div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,65 @@
+<h2>A, redone as a workflow: "this PR landed — what do I re-test?"</h2>
+<p class="subtitle">Worked example with a real past change: <b>fee-based tokens</b>. Read left to right. Every arrow carries its reason, so nothing is "random info". Does this read as a workflow you'd follow?</p>
+
+<style>
+  .flowrow{display:grid;grid-template-columns:1fr 26px 1.1fr 26px 1.5fr 26px 1.3fr;align-items:start;font:12px system-ui}
+  .col h4{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;opacity:.7}
+  .arrow{align-self:center;text-align:center;font-size:20px;opacity:.5}
+  .box{border:1px solid #8885;border-radius:6px;padding:6px 8px;margin-bottom:6px}
+  .chg{border-color:#f9a825;background:#f9a82522;font-weight:600}
+  .axis{border-color:#6a1b9a;background:#6a1b9a1a}
+  .flag{border-color:#1565c0;background:#1565c01a}
+  .why{display:block;font-weight:400;font-size:10.5px;opacity:.75;margin-top:2px}
+  .tag{display:inline-block;font-size:10px;padding:0 5px;border-radius:6px;margin-left:4px}
+  .code{background:#2e7d3233}.viaaxis{background:#6a1b9a33}.viaflag{background:#1565c033}
+  .sc{display:flex;justify-content:space-between}
+  .n{font-weight:700}
+  .legend{font:11px system-ui;margin-top:10px;opacity:.85}
+  .out{border-color:#c62828;background:#c628281a}
+</style>
+
+<div class="flowrow">
+  <div class="col">
+    <h4>1 · What changed</h4>
+    <div class="box chg">PR: fee-based tokens<span class="why">new token version; fee paid in HTR per output</span></div>
+    <div class="box flag">flag added: <code>fee-based-tokens.rollout</code><span class="why">default off</span></div>
+    <div class="box axis">axis value added: <b>token type += fee</b><span class="why">joins HTR, deposit</span></div>
+  </div>
+  <div class="arrow">→</div>
+
+  <div class="col">
+    <h4>2 · Why it spreads</h4>
+    <div class="box"><b>via code</b><span class="why">files the PR touched or that import them</span></div>
+    <div class="box axis"><b>via axis</b><span class="why">every action that varies on <i>token type</i> gets a new column — even if its code didn't change</span></div>
+    <div class="box flag"><b>via flag</b><span class="why">must be tested flag-on <i>and</i> flag-off</span></div>
+  </div>
+  <div class="arrow">→</div>
+
+  <div class="col">
+    <h4>3 · Features touched</h4>
+    <div class="box">token-create <span class="tag code">code</span><span class="tag viaflag">flag</span><span class="why">type chooser vs deposit-only notice</span></div>
+    <div class="box">send <span class="tag code">code</span><span class="tag viaaxis">axis</span><span class="why">fee row, "amount + fee" total, insufficient-HTR copy</span></div>
+    <div class="box">dApp send / create token <span class="tag code">code</span><span class="tag viaaxis">axis</span><span class="why">Reown TransactionFees</span></div>
+    <div class="box">token swap <span class="tag viaaxis">axis</span><span class="why">fee-token pairs</span></div>
+    <div class="box">tx history / token details <span class="tag viaaxis">axis</span><span class="why">fee-model text per version</span></div>
+    <div class="box">shielded send <span class="tag viaaxis">axis</span><span class="why">fee + privacy fee both in HTR</span></div>
+  </div>
+  <div class="arrow">→</div>
+
+  <div class="col">
+    <h4>4 · Scenarios to re-run</h4>
+    <div class="box sc"><span>send matrix, fee column</span><span class="n">12</span></div>
+    <div class="box sc"><span>create token (flag on/off)</span><span class="n">4</span></div>
+    <div class="box sc"><span>dApp requests w/ fee token</span><span class="n">6</span></div>
+    <div class="box sc"><span>swap w/ fee token</span><span class="n">2</span></div>
+    <div class="box sc"><span>history / details</span><span class="n">3</span></div>
+    <div class="box out"><b>27 scenarios · 3 setups</b><span class="why">→ opens as a filtered Run plan (D); each scenario links to its matrix cell (B) and path (C)</span></div>
+  </div>
+</div>
+
+<p class="legend">Numbers are illustrative. For inter-chain the same page would start from "axis value added: destination += foreign chain" and spread to every action with a destination axis.</p>
+
+<div class="options">
+  <div class="option" data-choice="impact-yes" onclick="toggleSelect(this)"><div class="letter">✓</div><div class="content"><h3>Yes, this is A</h3><p>Keep it as the entry point that feeds B, C and D</p></div></div>
+  <div class="option" data-choice="impact-no" onclick="toggleSelect(this)"><div class="letter">✗</div><div class="content"><h3>Still not useful</h3><p>Drop A; B/C/D are enough</p></div></div>
+</div>
