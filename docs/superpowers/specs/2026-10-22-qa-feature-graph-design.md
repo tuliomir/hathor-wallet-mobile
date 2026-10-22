@@ -1,6 +1,6 @@
 # QA feature graph — design
 
-Date: 2026-10-22 · Status: draft for review · Author: Tulio Miranda (with Claude)
+Date: 2026-10-22 · Status: approved 2026-10-22 · Author: Tulio Miranda (with Claude)
 
 ## Intent and why
 
@@ -45,7 +45,7 @@ The QA specialist and their immediate senior technical leads. They know the doma
 - A graph that looks like random boxes and lines. Every edge must carry its reason; every view must answer a workflow question.
 - A hand-drawn visual that drifts from the data. Visuals are always rendered from the YAML.
 - A YAML that goes stale the moment the next feature lands.
-- Unstable IDs: if renaming or reorganizing the YAML silently breaks the link between past run results and scenarios, the history is worthless.
+- A run result that can't be traced back to the exact YAML that produced it. (IDs themselves are *not* required to be stable: the YAML is expected to be refactored as the app evolves; history is anchored by commit hash, see "QA run results".)
 - Treating "no app-side branching" as "low risk". Lib-only distinctions stay in the matrix.
 
 ## Scope of v1: core money paths
@@ -63,13 +63,13 @@ Plus the setups and flags these actions depend on. Out of v1: Reown/dApp request
 
 Decided:
 
-- **Feature**: a user-facing capability (stable id, name, business-language description, entry screens, main source files, links to other features with a stated reason).
+- **Feature**: a user-facing capability (id, name, business-language description, entry screens, main source files, links to other features with a stated reason).
 - **Flag**: an Unleash flag (exact name, default, what it gates, other conditions it combines with, whether a change applies live or at next wallet start).
 - **Action**: something the user does that has a happy path and error paths (send, create token…). Actions are where combinatorics live.
 - **Axis**: a dimension an action varies on, with its values and a **switching cost**. Actions declare which axes they vary on. This is what lets view A spread impact "via axis" to actions whose code didn't change.
 - **Setup**: a combination of expensive axis values that is established once and swept inside (e.g. testnet · wallet service · seed wallet).
 - **Constraint**: rules over axis combinations classifying them as *valid*, *rejected by design* (with the expected rejection message), *known edge*, or *lib-only risk*.
-- **Scenario**: one concrete combination for one action, with expected outcome. Scenarios have **stable ids** and may be generated from axes × constraints or written explicitly.
+- **Scenario**: one concrete combination for one action, with expected outcome. Scenarios have ids (unique within one YAML version) and may be generated from axes × constraints or written explicitly.
 - **Path**: the screens/steps of an action, with the happy path and each branch to an error message (where in the code it originates).
 
 ### Axes and switching cost found in v1 scope
@@ -82,7 +82,7 @@ Values below come from a codebase pass and must be re-verified when populating t
 | facade | wallet service, fullnode | expensive | empty/restore WS fields in Custom Network, or Unleash; failed WS start silently falls back to fullnode for 24h (`IGNORE_WS_TOGGLE_FLAG`) |
 | wallet type | seed, passkey (with/without shielded xpubs) | very expensive | reset wallet + onboarding |
 | flag state | per flag on/off | expensive | Unleash dashboard by device id; 15s polling; some apply only at next start |
-| address mode | single, multi | medium | Settings → Address mode; reloads wallet; single unavailable on shielded chain |
+| address mode | single, multi | **directional**: single → multi is cheap; multi → single is possible only if no address past index 0 has transactions and no shielded chain is active, otherwise **impossible** for that wallet | Settings → Address mode; reloads wallet. The app also auto-flips single → multi at start if it detects tx past index 0 (`src/screens/AddressMode.js`) |
 | private balance state | locked, unlocked, broken key | medium | lock/unlock flow |
 | funding precondition | sufficient HTR, zero HTR, has token X | medium | send funds / create tokens beforehand |
 | destination address | simple (P2PKH), multisig (P2SH), shielded | cheap | type/scan address |
@@ -119,7 +119,7 @@ All rendered from the YAML into **one self-contained HTML page** (opens offline 
 
 Results are **never stored in the graph YAML**. One file per run, because each run has its own scope. A run file records:
 
-- the commit hash of the YAML it was generated from — QA never runs on an uncommitted YAML; prefer a commit reachable from `master` or an RC tag, since those aren't rewritten
+- the date and commit hash of the YAML it was generated from, stated in plain words at the top (e.g. "This test was run based on the YAML of 22-Oct-2026, version from commit `ab123cde`"), so an analyst can go back in time to the exact instructions behind a result. Scenario ids in a run file mean what they meant *at that commit*; a later refactor that renames, splits or removes them is not a problem. QA never runs on an uncommitted YAML; prefer a commit reachable from `master` or an RC tag, since those aren't rewritten
 - app build (RC tag or store version) and device/platform
 - the selected scope and why (e.g. impact of a PR, full regression)
 - per scenario id: passed / failed / skipped, with notes
@@ -131,7 +131,7 @@ Where run files are stored is **open** and not needed for v1; v1 only defines th
 - New `CLAUDE.md` and `AGENTS.md` at the repo root (neither exists today) so both Claude and Codex agents learn the graph exists and must change along with features, and must call the skill before opening a PR.
 - A **skill committed to this repository** (not on anyone's machine) so colleagues and open-source contributors run it too. The repo already commits agent tooling (`.claude/commands/release.md`).
 - The skill is designed for a cheaper model (Haiku/Sonnet): compare the PR diff to the YAML and report what's missing (new flag, screen, axis value, error path). When the change is structural (a new feature with new axes, like inter-chain) it says an Opus-level agent should do the update rather than patching it.
-- A deterministic script does the mechanical part (e.g. flags in `src/constants.js`, routes in `src/App.js` vs nodes in the YAML; schema validity; stable-id preservation) so the model only judges what a diff can't tell.
+- A deterministic script does the mechanical part (e.g. flags in `src/constants.js`, routes in `src/App.js` vs nodes in the YAML; schema validity; id uniqueness and dangling references) so the model only judges what a diff can't tell.
 - A stale graph produces a **warning**, not a block. CI enforcement can come later.
 
 ## Constraints
@@ -139,12 +139,11 @@ Where run files are stored is **open** and not needed for v1; v1 only defines th
 - No app code changes in this work.
 - Any new dependency is pinned to an exact version (no `^`/`~`) — repo supply-chain rule. `js-yaml` and `yaml` are already present in `node_modules` transitively; adding one as a pinned devDependency is acceptable.
 - Rendered HTML must be self-contained and work offline (no CDN fetches).
-- Stable ids are immutable once committed; renames must keep an alias or be flagged by the check.
+- Switching costs can be **directional and conditional**: the schema must model a switch as a transition `from → to` with its cost and preconditions, and the run-plan ordering must never schedule an impossible transition (e.g. returning a used wallet to single-address mode). Where a setup needs the "hard" side of a one-way switch, it is reached with a fresh wallet instead.
 - Checked-in Markdown in this repo is not hard-wrapped.
 
-## Calls made during design review (Claude's, not yet confirmed by the QA specialist)
+## Calls made during design review (Claude's, accepted with the design)
 
-- **Scenario id evolution.** Scenario ids are hand-assigned readable slugs, not derived from axis values. When an action gains an axis, existing scenarios keep their ids and are read as pinned to that axis's *pre-existing default* (e.g. "same chain" when inter-chain adds a chain axis); only new values get new ids. A scenario that stops making sense is retired, never deleted, with a `superseded_by` pointer. The id-preservation check enforces this.
 - **Out-of-scope inventory.** Every feature and flag found in the codebase is listed in the YAML, with those outside v1 marked `status: out-of-scope` (id, name, flag link, no axes or scenarios). This keeps the mechanical check quiet on PRs that touch only out-of-scope areas, and gives view A a complete inventory. A PR touching an out-of-scope stub gets an informational note, not a warning.
 - **Expected messages come from code, unverified until QA confirms.** Rejection and error messages are copied from the code (with file reference) and marked `verified: false` until the QA specialist confirms them on a device. Where code and `QA/*.md` disagree, both are recorded and flagged. The v1 plan ends with a QA review pass of the populated YAML before it is treated as true.
 
