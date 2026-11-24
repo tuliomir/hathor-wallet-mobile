@@ -1318,10 +1318,22 @@ constraints:
     note: 'The amount screen checks only the fee token''s balance (SendAmountInput.js:126-136), so the missing HTR for the fee shows only when Confirm builds the tx. On the fullnode facade wallet-lib throws "Token: 00. Insufficient amount of tokens to fill the amount." (lib/new/sendTransaction.js:678), which mapTxError maps to this message. The installed wallet-lib is 3.1.1 while package.json pins 4.3.0: confirm the lib message.'
   - id: c-send-fee-token-zero-htr-ws
     action: send
-    when: { token: fee, funding: zero-htr, facade: wallet-service, privacy: public }
+    when: { network: testnet, token: fee, funding: zero-htr, facade: wallet-service, privacy: public }
     class: edge
     outcome: err-no-htr-for-fee
-    note: 'As on the fullnode, the missing HTR shows only on Confirm. On the wallet service wallet-lib throws "No UTXOs available for the token 00..." (sendTransactionWalletService.js:392). The installed wallet-lib is 3.1.1 while package.json pins 4.3.0: confirm the lib message.'
+    note: 'As on the fullnode, the missing HTR shows only on Confirm. Without shielded keys the wallet service builds the send itself, and wallet-lib throws "No UTXOs available for the token 00." (sendTransactionWalletService.js), which mapTxError maps to this message.'
+  - id: c-send-fee-token-zero-htr-ws-shielded
+    action: send
+    when: { network: [testnet-shielded, local-privnet], token: fee, funding: zero-htr, facade: wallet-service, privacy: public, private-balance: unlocked }
+    class: edge
+    outcome: err-htr-and-fees
+    note: 'A wallet with shielded keys builds every send with the fullnode facade''s engine (usesSharedEngine in wallet-lib''s sendTransactionWalletService.js), so it gives the fullnode''s message. Seen on the local privnet with 0.41.0-rc.1.'
+  - id: c-send-fee-token-zero-htr-ws-not-unlocked
+    action: send
+    when: { network: [testnet-shielded, local-privnet], token: fee, funding: zero-htr, facade: wallet-service, privacy: public, private-balance: [locked, broken-key] }
+    class: edge
+    outcome: err-no-htr-for-fee
+    note: 'Unverified: the message of the wallet service''s own build (c-send-fee-token-zero-htr-ws), if these wallets have no registered shielded keys. With registered keys it is err-htr-and-fees.'
   - id: c-send-zero-htr-private
     action: send
     when: { token: [deposit, fee], funding: zero-htr, privacy: [hide-amount, private] }

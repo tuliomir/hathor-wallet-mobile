@@ -1,0 +1,66 @@
+# This test was run based on the YAML of 2026-11-24, version from commit 3eb3e240, with the tools at commit ca39c142 (with uncommitted changes).
+yamlCommit: 3eb3e240
+yamlDate: 2026-11-24
+toolsCommit: ca39c142 (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-24 10:19:58
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: send scenarios of pn-ws-seed-multi, with tokens created in
+    the app, unlocked private balance only"
+  picks: []
+results:
+  - scenario: send:pn-ws-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-privacy-needs-shielded"
+  - scenario: send:pn-ws-seed-multi:simple.fee.public.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-htr-and-fees"
+  - scenario: send:pn-ws-seed-multi:multisig.deposit.public.decimals.zero-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:shielded.deposit.hide-amount.max.zero-htr.unlocked
+    status: skipped
+    notes: 'open finding: the graph expects "Insufficient HTR to cover the privacy
+      fees of this transaction." and the app shows "Insufficient HTR to cover
+      this transaction and its fees."'
+  - scenario: send:pn-ws-seed-multi:shielded.deposit.private.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-privacy-fee"
+  - scenario: send:pn-ws-seed-multi:simple.deposit.public.over-balance.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-insufficient-funds"
+  - scenario: send:pn-ws-seed-multi:simple.deposit.public.empty.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-invalid-amount"
+  - scenario: send:pn-ws-seed-multi:simple.deposit.hide-amount.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-privacy-needs-shielded"
+  - scenario: send:pn-ws-seed-multi:simple.deposit.public.max.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:simple.deposit.public.decimals.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:multisig.deposit.public.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:multisig.fee.public.max.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:shielded.deposit.public.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.deposit.hide-amount.decimals.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.deposit.private.max.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.fee.hide-amount.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.fee.private.decimals.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
