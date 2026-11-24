@@ -164,7 +164,7 @@ describe('qa graph impact on QA/graph/graph.yaml', () => {
   it('flag wallet-service reaches every action on the wallet-service facade', () => {
     const impact = impactOf('flag', 'wallet-service');
     const onWs = impact.scenarios.filter((s) => s.values.facade === 'wallet-service');
-    expect(actionsOf({ scenarios: onWs })).toEqual(['create-token', 'history', 'receive', 'send']);
+    expect(actionsOf({ scenarios: onWs })).toEqual(['create-token', 'history', 'receive', 'send', 'start-wallet']);
   });
 
   it('flag fee-based-tokens reaches the fee-token sends', () => {

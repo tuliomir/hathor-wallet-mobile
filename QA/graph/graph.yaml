@@ -217,7 +217,7 @@ features:
       - { to: feature-flags, reason: Turning the wallet-service flag off mid-session reloads the wallet }
     # Every action runs on one facade; the wallet-service one is reached via its value.
     introduces: ['facade:wallet-service']
-    actions: []
+    actions: [start-wallet]
 
   - id: network-settings
     name: Network settings
@@ -1164,13 +1164,13 @@ actions:
           note: 'The amount shows in red next to "You have ${amountAvailableText} available" (CreateTokenAmount.js:159).'
         - id: err-locked
           kind: error
-          at: confirm
+          at: authorize
           message: Your private balance is locked. Unlock it and try again.
           source: 'src/shielded/newAddress.js:32'
           verified: false
         - id: err-private-unavailable
           kind: error
-          at: confirm
+          at: authorize
           message: Private transfers are not available for this wallet.
           source: 'src/shielded/newAddress.js:36'
           verified: false
@@ -1243,6 +1243,30 @@ actions:
           source: 'src/components/Shielded/ShieldedBalanceSplit.js:97'
           verified: false
 
+  - id: start-wallet
+    name: Start a wallet with each private balance state
+    feature: wallet-service
+    axes: [private-balance]
+    setups: [tns-ws-seed-multi, tns-fn-seed-multi, pn-fn-seed-multi, pn-ws-seed-multi]
+    path:
+      steps:
+        - { id: unlock, screen: PinScreen, name: Enter the PIN on the lock screen }
+        - { id: server, screen: Settings, name: Read the server at the bottom of Settings }
+      outcomes:
+        - id: ok-started
+          kind: success
+          at: server
+          message: The server shown is the setup's facade's
+          source: 'src/screens/Settings.js:350'
+          verified: true
+        - id: edge-fallback
+          kind: error
+          at: server
+          message: The server shown is the fullnode, though the setup's facade is the wallet service
+          source: 'src/sagas/wallet.js:745'
+          verified: true
+          note: The app says nothing about it, and ignores the wallet service for a day (featureFlags:ignoreWalletServiceFlag in its storage).
+
 constraints:
   # send
   - id: c-send-shielded-dest-outside
@@ -1261,6 +1285,11 @@ constraints:
     when: { network: testnet, private-balance: [locked, broken-key] }
     class: invalid
     note: There is no private balance outside the shielded environment.
+  - id: c-send-ws-private-balance
+    action: send
+    when: { facade: wallet-service, private-balance: [locked, broken-key] }
+    class: invalid
+    note: 'The wallet service has neither state: the app falls back to the fullnode facade (start-wallet, c-start-ws-fallback).'
   - id: c-send-privacy-broken-key
     action: send
     when: { private-balance: broken-key, privacy: [hide-amount, private] }
@@ -1328,36 +1357,24 @@ constraints:
     class: edge
     outcome: err-htr-and-fees
     note: 'A wallet with shielded keys builds every send with the fullnode facade''s engine (usesSharedEngine in wallet-lib''s sendTransactionWalletService.js), so it gives the fullnode''s message. Seen on the local privnet with 0.41.0-rc.1.'
-  - id: c-send-fee-token-zero-htr-ws-not-unlocked
-    action: send
-    when: { network: [testnet-shielded, local-privnet], token: fee, funding: zero-htr, facade: wallet-service, privacy: public, private-balance: [locked, broken-key] }
-    class: edge
-    outcome: err-no-htr-for-fee
-    note: 'Unverified: the message of the wallet service''s own build (c-send-fee-token-zero-htr-ws), if these wallets have no registered shielded keys. With registered keys it is err-htr-and-fees.'
   - id: c-send-zero-htr-private
     action: send
-    when: { token: [deposit, fee], funding: zero-htr, privacy: [hide-amount, private] }
+    when: { token: [deposit, fee], funding: zero-htr, privacy: [hide-amount, private], amount: [normal, decimals], private-balance: unlocked }
     class: edge
     outcome: err-privacy-fee
-    note: 'A private send pays its privacy fee in HTR. mapShieldedSendError runs before the generic mapping (SendConfirmScreen.js:99), so with no HTR the privacy-fee text is the likely one. The installed wallet-lib is 3.1.1 while package.json pins 4.3.0: confirm the lib message.'
+    note: 'With a change left, the change is private too, and wallet-lib adds "The amount includes the fee to shield the change" to its error (changeShielded in new/sendTransaction.js), which mapShieldedSendError maps to this message.'
+  - id: c-send-zero-htr-private-max
+    action: send
+    when: { token: [deposit, fee], funding: zero-htr, privacy: [hide-amount, private], amount: max, private-balance: unlocked }
+    class: edge
+    outcome: err-htr-and-fees
+    note: 'A whole-balance send leaves no change, so wallet-lib''s error doesn''t mention the change''s fee, and mapTxError gives the generic message. What the app does; the privacy fee is all the HTR it needs (QA/e2e/ROADMAP.md "Findings").'
   - id: c-send-htr-max-with-fee
     action: send
     when: { token: htr, amount: max, privacy: [hide-amount, private] }
     class: edge
     outcome: err-htr-and-fees
     note: 'Exactly the available HTR leaves nothing for the privacy fee, which is paid in HTR; it passes the amount screen and fails when Confirm builds the tx. The message may instead be the privacy-fee one from mapShieldedSendError (src/utils/shieldedSend.js:245).'
-  - id: c-send-ws-shielded-dest-public
-    action: send
-    when: { facade: wallet-service, dest: shielded, privacy: public, private-balance: [locked, broken-key] }
-    class: rejected
-    outcome: err-ws-shielded-dest
-    note: On the wallet service a send to a shielded address needs shielded capability full (SendConfirmScreen.js:200-218); below it a public send fails with shieldedAddressNotSupportedText.
-  - id: c-send-ws-private-not-full
-    action: send
-    when: { facade: wallet-service, dest: shielded, privacy: [hide-amount, private], private-balance: locked }
-    class: rejected
-    outcome: err-private-unavailable
-    note: On the wallet service a private send needs shielded capability full (SendConfirmScreen.js:209-216); there is no unlock phase on this facade.
   - id: c-send-fn-locked-private
     action: send
     when: { facade: fullnode, private-balance: locked, privacy: [hide-amount, private], dest: shielded }
@@ -1386,6 +1403,11 @@ constraints:
     when: { network: testnet, private-balance: [locked, broken-key] }
     class: invalid
     note: There is no private balance outside the shielded environment.
+  - id: c-ct-ws-private-balance
+    action: create-token
+    when: { facade: wallet-service, private-balance: [locked, broken-key] }
+    class: invalid
+    note: 'The wallet service has neither state: the app falls back to the fullnode facade (start-wallet, c-start-ws-fallback).'
   - id: c-ct-passkey-broken-key
     action: create-token
     when: { wallet: passkey, private-balance: broken-key }
@@ -1439,25 +1461,25 @@ constraints:
     note: The deposit, rounded down, is above the available HTR.
   - id: c-ct-rounding-fn
     action: create-token
-    when: { facade: fullnode, token: deposit, mint-amount: over-by-rounding }
+    when: { facade: fullnode, token: deposit, mint-amount: over-by-rounding, private-balance: unlocked }
     class: edge
     outcome: err-late-deposit-fn
     note: 'The amount screen floors the deposit (value / 100n, CreateTokenAmount.js), while the confirm screen and wallet-lib round it up (getDepositAmount), so Next is enabled and the creation fails after the PIN. This is what the app does, not what it should do; QA/e2e/ROADMAP.md "Findings".'
   - id: c-ct-rounding-ws
     action: create-token
-    when: { facade: wallet-service, token: deposit, mint-amount: over-by-rounding }
+    when: { facade: wallet-service, token: deposit, mint-amount: over-by-rounding, private-balance: unlocked }
     class: edge
     outcome: err-late-deposit-ws
     note: As on the fullnode, with the wallet service's message.
   - id: c-ct-zero-htr-small-deposit-fn
     action: create-token
-    when: { facade: fullnode, token: deposit, funding: zero-htr, mint-amount: cents }
+    when: { facade: fullnode, token: deposit, funding: zero-htr, mint-amount: cents, private-balance: unlocked }
     class: edge
     outcome: err-late-deposit-fn
     note: With zero HTR and an amount below 1.00 the amount screen shows a zero deposit and Next is enabled; the same rounding as c-ct-rounding-fn.
   - id: c-ct-zero-htr-small-deposit-ws
     action: create-token
-    when: { facade: wallet-service, token: deposit, funding: zero-htr, mint-amount: cents }
+    when: { facade: wallet-service, token: deposit, funding: zero-htr, mint-amount: cents, private-balance: unlocked }
     class: edge
     outcome: err-late-deposit-ws
     note: As on the fullnode, with the wallet service's message.
@@ -1485,6 +1507,11 @@ constraints:
     when: { network: testnet, private-balance: [locked, broken-key] }
     class: invalid
     note: There is no private balance outside the shielded environment.
+  - id: c-rcv-ws-private-balance
+    action: receive
+    when: { facade: wallet-service, private-balance: [locked, broken-key] }
+    class: invalid
+    note: 'The wallet service has neither state: the app falls back to the fullnode facade (start-wallet, c-start-ws-fallback).'
   - id: c-rcv-single-shielded-chain
     action: receive
     when: { network: [testnet-shielded, local-privnet], wallet: seed, addr: single }
@@ -1520,6 +1547,11 @@ constraints:
     when: { network: testnet, private-balance: [locked, broken-key] }
     class: invalid
     note: There is no private balance outside the shielded environment.
+  - id: c-hist-ws-private-balance
+    action: history
+    when: { facade: wallet-service, private-balance: [locked, broken-key] }
+    class: invalid
+    note: 'The wallet service has neither state: the app falls back to the fullnode facade (start-wallet, c-start-ws-fallback).'
   - id: c-hist-fee-row
     action: history
     when: { token: fee, facade: fullnode }
@@ -1542,3 +1574,11 @@ constraints:
     when: { facade: wallet-service, network: testnet-shielded }
     class: lib-risk
     note: On the wallet service the private part of the balance comes from the service (sagas/tokens.js:225-231 fetchWalletServiceSplitBalance), not from local UTXOs.
+
+  # start-wallet
+  - id: c-start-ws-fallback
+    action: start-wallet
+    when: { facade: wallet-service, private-balance: [locked, broken-key] }
+    class: edge
+    outcome: edge-fallback
+    note: 'The wallet registers without shielded keys (unlockScanKeyForRegistration in wallet-lib), and the app starts it again on the fullnode facade (fallBackToFullnodeFacade in src/sagas/wallet.js).'
