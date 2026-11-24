@@ -14,7 +14,9 @@ services:
     command: ["run_node", "--listen", "tcp:40404", "--status", "8080",
       "--wallet-index",
       "--allow-mining-without-peers",
-      "--data", "./tmp", "--nc-indexes"]
+      "--data", "./tmp", "--nc-indexes",
+      # What the wallet service's daemon reads (profile "ws").
+      "--enable-event-queue"]
     environment:
       HATHOR_CONFIG_YAML: privnet/conf/privnet.yml
     ports: ["18083:8080"]
@@ -52,3 +54,134 @@ services:
       # The same throwaway seed privnet.yml pays; the helper defaults to it too.
       GENESIS_SEED_WORDS: avocado spot town typical traffic vault danger century property shallow divorce festival spend attack anchor afford rotate green audit adjust fade wagon depart level
     ports: ["13020:3020"]
+
+  # The wallet service, for the setups on that facade (pn-ws-*). Off unless asked for:
+  #   docker compose --profile ws up -d     API on 18300, websocket on 18301
+  # Images and settings as in wallet-lib's integration tests
+  # (__tests__/integration/configuration/docker-compose.yml), but on this fullnode's network.
+  mysql:
+    profiles: [ws]
+    image: mysql:8.0
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    environment:
+      MYSQL_ROOT_PASSWORD: hathor
+      MYSQL_DATABASE: wallet_service
+      MYSQL_USER: wallet_service_user
+      MYSQL_PASSWORD: password
+    healthcheck:
+      # Over TCP: the image's first-run server, which restarts, listens on the socket only.
+      test: ["CMD", "mysql", "-h", "127.0.0.1", "-u", "wallet_service_user", "-ppassword", "-e", "SELECT 1", "wallet_service"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+  redis:
+    profiles: [ws]
+    image: redis:6.2
+  ws-migrator:
+    profiles: [ws]
+    image: hathornetwork/hathor-wallet-service-migrator:dev
+    restart: "no"
+    depends_on:
+      mysql: {condition: service_healthy}
+    environment: &ws-db
+      DB_ENDPOINT: mysql
+      DB_NAME: wallet_service
+      DB_USER: wallet_service_user
+      DB_PASS: password
+      DB_PORT: 3306
+  ws-daemon:
+    profiles: [ws]
+    image: hathornetwork/hathor-wallet-service-sync-daemon:dev
+    # Alerts go to AWS, with fake keys: keep them on this machine.
+    extra_hosts: ["sqs.us-east-1.amazonaws.com:127.0.0.1", "sns.us-east-1.amazonaws.com:127.0.0.1", "lambda.us-east-1.amazonaws.com:127.0.0.1"]
+    depends_on:
+      ws-migrator: {condition: service_completed_successfully}
+      fullnode: {condition: service_healthy}
+    environment:
+      <<: *ws-db
+      FETCH_FULLNODE_IDS: "true"
+      FULLNODE_HOST: fullnode:8080
+      FULLNODE_NETWORK: testnet-shielded-outputs
+      REDIS_URL: redis://redis:6379
+      USE_SSL: "false"
+      # The queue stand-in (sqs below); the daemon signs the request, with any credentials.
+      NEW_TX_SQS: http://sqs:9324/new-tx
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: fake
+      AWS_SECRET_ACCESS_KEY: fake
+      PUSH_NOTIFICATION_ENABLED: "false"
+      WALLET_SERVICE_LAMBDA_ENDPOINT: ""
+      ACCOUNT_ID: "1234"
+      ALERT_MANAGER_TOPIC: alert-topic
+      ALERT_MANAGER_REGION: us-east-1
+      APPLICATION_NAME: hathor-wallet-service
+      NODE_ENV: test-privnet
+      STAGE: local
+      MAX_ADDRESS_GAP: "20"
+      NETWORK: testnet
+  sqs:
+    profiles: [ws]
+    image: node:22-alpine
+    command: ["node", "/sqs/server.js"]
+    volumes:
+      - {type: bind, source: ../sqs, target: /sqs, read_only: true}
+  ws-serverless:
+    profiles: [ws]
+    image: hathornetwork/hathor-wallet-service-lambdas:dev
+    # Alerts go to AWS, with fake keys: keep them on this machine.
+    extra_hosts: ["sqs.us-east-1.amazonaws.com:127.0.0.1", "sns.us-east-1.amazonaws.com:127.0.0.1", "lambda.us-east-1.amazonaws.com:127.0.0.1"]
+    depends_on:
+      ws-daemon: {condition: service_started}
+      redis: {condition: service_started}
+    ports: ["18300:3000", "18301:3001"]
+    environment:
+      <<: *ws-db
+      DEFAULT_SERVER: http://fullnode:8080/v1a/
+      IS_OFFLINE: "true"
+      MOCK_AWS: "true"
+      NODE_ENV: test
+      LOG_LEVEL: debug
+      DEV_DB: mysql
+      # A URL: a bare host name is taken for a socket file, and the app's websocket then crashes the API.
+      REDIS_URL: redis://redis:6379
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      STAGE: local
+      NETWORK: testnet
+      SERVICE_NAME: hathor-wallet-service
+      APPLICATION_NAME: hathor-wallet-service
+      MAX_ADDRESS_GAP: "20"
+      VOIDED_TX_OFFSET: "5"
+      BLOCK_REWARD_LOCK: "1"
+      CONFIRM_FIRST_ADDRESS: "false"
+      WS_DOMAIN: http://fakehost:3002
+      AUTH_SECRET: foobar
+      EXPLORER_SERVICE_LAMBDA_ENDPOINT: http://fakehost:3001
+      WALLET_SERVICE_LAMBDA_ENDPOINT: http://fakehost:3000
+      NFT_AUTO_REVIEW_ENABLED: "false"
+      TX_HISTORY_MAX_COUNT: ""
+      PUSH_NOTIFICATION: "false"
+      PUSH_NOTIFICATION_ENABLED: "false"
+      FIREBASE_PROJECT_ID: fake
+      FIREBASE_PRIVATE_KEY_ID: fake
+      FIREBASE_PRIVATE_KEY: fake
+      FIREBASE_CLIENT_EMAIL: fake@example.com
+      FIREBASE_CLIENT_ID: fake
+      FIREBASE_AUTH_URI: fake
+      FIREBASE_TOKEN_URI: fake
+      FIREBASE_AUTH_PROVIDER_X509_CERT_URL: fake
+      FIREBASE_CLIENT_X509_CERT_URL: fake
+      PUSH_ALLOWED_PROVIDERS: fake
+      ACCOUNT_ID: "1234"
+      ALERT_MANAGER_REGION: us-east-1
+      ALERT_MANAGER_TOPIC: alert-topic
+      ALERT_MANAGER_ACCOUNT_ID: fake
+      AWS_VPC_DEFAULT_SG_ID: "1"
+      AWS_SUBNET_ID_1: "2"
+      AWS_SUBNET_ID_2: "3"
+      AWS_SUBNET_ID_3: "4"
+      AWS_ACCESS_KEY_ID: fake
+      AWS_SECRET_ACCESS_KEY: fake
+      AWS_REGION: us-east-1
+      AWS_SHARED_CREDENTIALS_FILE: .aws/credentials
+      AWS_CONFIG_FILE: .aws/config

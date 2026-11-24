@@ -11,5 +11,9 @@
   "passkey-onboarding.rollout": true,
   "amount-format-mobile.rollout": true,
   "shielded-outputs.rollout": true,
-  "shielded-outputs-network.rollout": true
+  "shielded-outputs-network.rollout": true,
+  "multichain.rollout": false,
+  "multichain-network.rollout": false,
+  "multichain-dev-backend.rollout": false,
+  "multichain-token-create.rollout": false
 }

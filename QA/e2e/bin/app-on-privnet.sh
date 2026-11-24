@@ -9,6 +9,7 @@
 # to the fake Unleash, so no flag from the real one (push notifications, say) is ever on.
 #
 #   app-on-privnet.sh [--fresh]   --fresh: wipe the app's data first (a new install, no wallet)
+#   WALLET_SERVICE=1              the app's network has the kit's wallet service (compose profile ws)
 #
 # Emulators only: store builds share this app id, so --fresh on a phone would erase its wallet.
 # Needs the privnet running and an emulator image without Play Store, where adb can run as root:
@@ -22,11 +23,14 @@ NODE_URL=http://localhost:18083/v1a/
 NETWORK=$(curl -sf "${NODE_URL}status" | python3 -c 'import json, sys; print(json.load(sys.stdin)["server"]["network"])') \
   || { echo "app-on-privnet: no privnet at $NODE_URL (docker compose up -d in QA/e2e/privnet)" >&2; exit 1; }
 
+WS_URL= WS_WS_URL=
+if [ "${WALLET_SERVICE:-}" = 1 ]; then WS_URL=http://localhost:18300/dev/ WS_WS_URL=ws://localhost:18301/; fi
+
 # What the app saves after Settings > Network Settings > Customize with these URLs.
 SETTINGS="{\"stage\":\"testnet\",\"network\":\"testnet\",\"fullNetwork\":\"$NETWORK\",\"nodeUrl\":\"$NODE_URL\""
 SETTINGS+=",\"explorerUrl\":\"https://explorer.testnet.hathor.network/\""
 SETTINGS+=",\"explorerServiceUrl\":\"https://explorer-service.testnet.hathor.network/\""
-SETTINGS+=",\"txMiningServiceUrl\":\"http://localhost:18035/\",\"walletServiceUrl\":\"\",\"walletServiceWsUrl\":\"\"}"
+SETTINGS+=",\"txMiningServiceUrl\":\"http://localhost:18035/\",\"walletServiceUrl\":\"$WS_URL\",\"walletServiceWsUrl\":\"$WS_WS_URL\"}"
 
 # adbd restarts as root, which drops the reverse ports: set them after. adb root exits 0 even when
 # adbd refuses, and everything below needs root, so check it took.
@@ -36,7 +40,7 @@ $ADB wait-for-device
 $ADB shell am force-stop $APP
 if [ "${1:-}" = --fresh ]; then $ADB shell pm clear $APP >/dev/null; fi
 # 8081: Metro, for a debug build.
-for port in 8081 18083 18035 18042; do $ADB reverse tcp:$port tcp:$port >/dev/null; done
+for port in 8081 18083 18035 18042 18300 18301; do $ADB reverse tcp:$port tcp:$port >/dev/null; done
 
 # AsyncStorage's table as @react-native-async-storage creates it, and its schema version: it
 # deletes a database without one and starts over.
