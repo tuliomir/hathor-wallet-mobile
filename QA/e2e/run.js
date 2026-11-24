@@ -42,6 +42,7 @@ const { assertEmulator } = require('./lib/device');
 const sendFlow = require('./lib/sendFlow');
 const createTokenFlow = require('./lib/createTokenFlow');
 const { runOrder } = require('./lib/runOrder');
+const { htrOnDashboard } = require('./lib/dashboard');
 const { startRecording } = require('./lib/recorder');
 const { entriesFrom, runnerEntry, skipRanges } = require('./lib/timeline');
 
@@ -420,6 +421,21 @@ async function centreOf(testID) {
 }
 
 /**
+ * The HTR the dashboard shows, in cents, once it is what `expected` wants. A payment the app
+ * misses would make every "not enough HTR" scenario pass for the wrong reason.
+ */
+async function htrShown(expected) {
+  let shown = null;
+  for (let i = 0; i < 20; i += 1) {
+    shown = htrOnDashboard(execFileSync(ADB, ['exec-out', 'uiautomator', 'dump', '/dev/tty'], { encoding: 'utf8' }));
+    if (shown !== null && expected(shown)) return shown;
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(1000);
+  }
+  throw new Error(`the dashboard shows ${shown === null ? 'no HTR balance' : `${shown} cents of HTR`}, not what this scenario needs`);
+}
+
+/**
  * Empties the address the Send tab keeps from the last scenario. A flow can't do it reliably:
  * eraseText deletes only what's before the cursor, and a tap can land mid-way through a 3-line
  * shielded address. Ctrl+A then Delete clears it wherever the cursor is; Maestro sends neither.
@@ -464,10 +480,13 @@ async function runScenario(scenario, outcome, ctx, dir, api) {
   const { step, flow } = api;
   const { values } = scenario;
   if (values.funding === 'enough-htr') {
-    await step(`runner: pay the app wallet ${TOP_UP_HTR} HTR`, async () => {
+    await step(`runner: pay the app wallet ${TOP_UP_HTR} HTR, and wait until it shows`, async () => {
+      const had = await htrShown(() => true);
       await fund(ctx.appAddress, TOP_UP_HTR);
-      await sleep(6000); // the app picks the payment up over its websocket
+      await htrShown((cents) => cents === had + BigInt(TOP_UP_HTR) * 100n);
     });
+  } else {
+    await step('runner: check that the app shows no HTR', () => htrShown((cents) => cents === 0n));
   }
   const address = ctx.destinations[values.dest];
   let token = ctx.tokens[tokenFor(values)];
