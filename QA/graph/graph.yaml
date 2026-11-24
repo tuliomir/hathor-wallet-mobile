@@ -878,6 +878,33 @@ axes:
       cost: cheap # QA: confirm
       transitions: []
 
+  - id: mint-amount
+    name: Amount of the new token
+    kind: action
+    values:
+      - { id: normal, name: A whole amount whose deposit the wallet can pay }
+      - { id: cents, name: An amount below 1.00 (its deposit rounds up to 0.01) }
+      - { id: exact, name: The amount whose deposit is all the available HTR }
+      - { id: over-balance, name: An amount whose deposit is above the available HTR }
+      - { id: over-by-rounding, name: 'An amount whose deposit fits rounded down, and not rounded up' }
+      - { id: empty, name: Zero or empty }
+    how: Type it on the create token amount screen.
+    switch:
+      cost: cheap
+      transitions: []
+
+  - id: naming
+    name: Name and symbol of the new token
+    kind: action
+    values:
+      - { id: valid, name: A valid name and symbol }
+      - { id: empty-name, name: An empty name }
+      - { id: short-symbol, name: A one-letter symbol }
+    how: Type them on the create token name and symbol screens.
+    switch:
+      cost: cheap
+      transitions: []
+
   - id: funding
     name: Funding before the action
     kind: action
@@ -966,8 +993,8 @@ setups:
     name: Local privnet, wallet service, seed, multi address
     values: { network: local-privnet, facade: wallet-service, wallet: seed, addr: multi, flag-fbt: on }
     environment: local-privnet
-    runnable: false
-    notes: Unreachable today. The kit's privnet/docker-compose.yml runs only a fullnode and a tx-mining service, with no wallet service.
+    runnable: true # QA: confirm
+    notes: The kit's privnet runs the wallet service with `docker compose --profile ws up -d` (QA/e2e/README.md).
 
   # Passkey wallets: the passkey's RP ID needs a store-signed build on a physical device.
   - id: tn-ws-passkey-multi
@@ -1078,8 +1105,8 @@ actions:
   - id: create-token
     name: Create a token
     feature: token-create
-    axes: [token, funding, private-balance]
-    setups: [tn-ws-seed-multi, tn-ws-seed-multi-nofbt, tn-fn-seed-multi, tns-ws-seed-multi, tns-fn-seed-multi, tn-ws-passkey-multi]
+    axes: [token, naming, mint-amount, funding, private-balance]
+    setups: [tn-ws-seed-multi, tn-ws-seed-multi-nofbt, tn-fn-seed-multi, tns-ws-seed-multi, tns-fn-seed-multi, pn-fn-seed-multi, pn-ws-seed-multi, tn-ws-passkey-multi]
     path:
       steps:
         - { id: type, screen: CreateTokenTypeNotice, name: Pick deposit or fee token (or accept the deposit notice when the flag is off) }
@@ -1096,6 +1123,38 @@ actions:
           message: '**${name}** created successfully'
           source: 'src/screens/CreateTokenConfirm.js:241'
           verified: false
+        - id: err-empty-name
+          kind: error
+          at: name
+          message: Next stays disabled
+          source: 'src/screens/CreateTokenName.js:82'
+          verified: false
+        - id: err-short-symbol
+          kind: error
+          at: symbol
+          message: Next stays disabled
+          source: 'src/screens/CreateTokenSymbol.js:56'
+          verified: false
+        - id: err-empty-amount
+          kind: error
+          at: amount
+          message: Next stays disabled
+          source: 'src/screens/CreateTokenAmount.js:128'
+          verified: false
+        - id: err-late-deposit-fn
+          kind: error
+          at: authorize
+          message: 'Not enough HTR tokens for deposit or fee: ${required} required, ${available} available'
+          source: 'node_modules/@hathor/wallet-lib/lib/utils/tokens.js:440'
+          verified: false
+          note: wallet-lib's text, as the modal shows it, after the PIN.
+        - id: err-late-deposit-ws
+          kind: error
+          at: authorize
+          message: "Don't have enough utxos to fill total amount."
+          source: 'node_modules/@hathor/wallet-lib/lib/utils/transaction.js:537'
+          verified: false
+          note: wallet-lib's text, as the modal shows it, after the PIN.
         - id: err-not-enough-htr
           kind: error
           at: amount
@@ -1320,17 +1379,76 @@ constraints:
     when: { wallet: passkey, private-balance: broken-key }
     class: invalid
     note: Mismatched keys are forced only in a debug build, and passkey setups run on a store build.
-  - id: c-ct-zero-htr
+  - id: c-ct-empty-name
     action: create-token
-    when: { funding: zero-htr }
+    when: { naming: empty-name }
+    class: rejected
+    outcome: err-empty-name
+    note: Next needs a name (CreateTokenName.js).
+  - id: c-ct-short-symbol
+    action: create-token
+    when: { naming: short-symbol }
+    class: rejected
+    outcome: err-short-symbol
+    note: Next needs a symbol of 2 to 5 characters (isButtonDisabled in CreateTokenSymbol.js).
+  - id: c-ct-empty-amount
+    action: create-token
+    when: { mint-amount: empty }
+    class: rejected
+    outcome: err-empty-amount
+    note: Next needs an amount above zero (isButtonDisabled in CreateTokenAmount.js).
+  - id: c-ct-fee-deposit-amounts
+    action: create-token
+    when: { token: fee, mint-amount: [exact, over-balance, over-by-rounding] }
+    class: invalid
+    note: A fee token locks no deposit; its creation fee doesn't depend on the amount.
+  - id: c-ct-zero-htr-deposit-amounts
+    action: create-token
+    when: { funding: zero-htr, mint-amount: [exact, over-balance, over-by-rounding] }
+    class: invalid
+    note: Defined by the available HTR; with none, normal and cents cover them.
+  - id: c-ct-zero-htr-fee
+    action: create-token
+    when: { funding: zero-htr, token: fee, mint-amount: [normal, cents] }
     class: rejected
     outcome: err-not-enough-htr
-    note: Next stays disabled when the deposit or fee is above the available HTR (CreateTokenAmount.js:133); the amount shows in red under the available HTR. Not always, for a deposit token; see c-ct-zero-htr-small-deposit.
-  - id: c-ct-zero-htr-small-deposit
+    note: Next stays disabled when the fee is above the available HTR (CreateTokenAmount.js); the amount shows in red under the available HTR.
+  - id: c-ct-zero-htr
     action: create-token
-    when: { funding: zero-htr, token: deposit }
+    when: { funding: zero-htr, token: deposit, mint-amount: normal }
+    class: rejected
+    outcome: err-not-enough-htr
+    note: Next stays disabled when the deposit is above the available HTR (CreateTokenAmount.js).
+  - id: c-ct-over-balance
+    action: create-token
+    when: { mint-amount: over-balance }
+    class: rejected
+    outcome: err-not-enough-htr
+    note: The deposit, rounded down, is above the available HTR.
+  - id: c-ct-rounding-fn
+    action: create-token
+    when: { facade: fullnode, token: deposit, mint-amount: over-by-rounding }
     class: edge
-    note: 'The amount screen floors the deposit (value / 100n, CreateTokenAmount.js:87), while the confirm screen and wallet-lib round it up (getDepositAmount, CreateTokenConfirm.js:105). With zero HTR and an amount below 1.00 the screen shows a zero deposit and Next is enabled, and the creation fails later. Try an amount of 0.50 as well as a normal amount.'
+    outcome: err-late-deposit-fn
+    note: 'The amount screen floors the deposit (value / 100n, CreateTokenAmount.js), while the confirm screen and wallet-lib round it up (getDepositAmount), so Next is enabled and the creation fails after the PIN. This is what the app does, not what it should do; QA/e2e/ROADMAP.md "Findings".'
+  - id: c-ct-rounding-ws
+    action: create-token
+    when: { facade: wallet-service, token: deposit, mint-amount: over-by-rounding }
+    class: edge
+    outcome: err-late-deposit-ws
+    note: As on the fullnode, with the wallet service's message.
+  - id: c-ct-zero-htr-small-deposit-fn
+    action: create-token
+    when: { facade: fullnode, token: deposit, funding: zero-htr, mint-amount: cents }
+    class: edge
+    outcome: err-late-deposit-fn
+    note: With zero HTR and an amount below 1.00 the amount screen shows a zero deposit and Next is enabled; the same rounding as c-ct-rounding-fn.
+  - id: c-ct-zero-htr-small-deposit-ws
+    action: create-token
+    when: { facade: wallet-service, token: deposit, funding: zero-htr, mint-amount: cents }
+    class: edge
+    outcome: err-late-deposit-ws
+    note: As on the fullnode, with the wallet service's message.
   - id: c-ct-fee-hardcoded
     action: create-token
     when: { token: fee }
