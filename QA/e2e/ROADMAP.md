@@ -8,7 +8,7 @@ Status on 2026-11-24. The kit runs the QA graph's send and create-token scenario
 |---|---|
 | Graph | 43 features, 13 setups, 4 actions modelled (send, create-token, receive, history): 337 scenarios. Create-token got its amounts and names as axes. Multichain isn't modelled. |
 | Automated | Two actions on two setups (`pn-fn-seed-multi`, `pn-ws-seed-multi`); the results are in "0.41.0-rc.1" below. Receive and history are modelled, not automated. |
-| Held back | 11 of the send suite's 24 scenarios: 10 need a locked or broken-key private balance, and one waits on a finding. The `--created-tokens` sends hold back only that last one. |
+| Held back | 11 of the send suite's 24 scenarios: 10 need a locked or broken-key private balance, and one waits on a finding. `--unlocked` and `--created-tokens` leave out the former without listing them. See "The path to no skipped scenarios". |
 | Official QA (`QA/QA*.md`) | On 2026-11-04 about 33 of its 756 numbered steps ran automatically (4%). Not recounted since: token creation, and sends of the created tokens, were added. |
 | Funds | A send run gives its HTR and minted deposits back to genesis. Tokens created in the app keep their deposits (about 10 HTR each for the sends; up to the whole balance in the create run), and the create run isn't cleaned up. |
 | Watching | Every flow is recorded with `screenrecord`, at no cost in time, into a playlist viewer with the steps beside the screen, long waits skipped, speeds and seeks on keys, and per-scenario validation marks. |
@@ -44,10 +44,10 @@ What the kit found in the app, still to decide unless marked settled.
 |---|---|
 | Verified | Dependencies install on Node 22, the patches apply, and `assembleE2e` builds (4 min 55 s cold). The graph's schema is valid. Send on `pn-fn-seed-multi`: 13 passed, 0 failed, 11 skipped, every scenario's status as in the 2026-11-04 run on 0.40.1; funds returned to genesis. |
 | Send, with minted tokens | Fullnode: 13 passed, 11 held back, rerun with the balance check below. Wallet service: 15 passed, 10 held back. The graph picks different scenarios for the two, since their rules differ. |
-| Create token | 12 of 12 pass on each facade. |
+| Create token | 12 of 12 pass on each facade, with `--unlocked`: the 10 locked and broken-key scenarios of each were left out, not run. |
 | Sends of created tokens | Fullnode: 16 passed, 1 held back. Wallet service: 16 passed, 1 held back, after the graph's rule was corrected (15 passed and 1 failed before). |
 | Not run | Other areas and setups. |
-| Weak spots | Sends to a shielded address are checked by the app's message only. In the minted-token runs the cleanup, which empties the peer, gave back exactly what most of those sends paid (1.50 HTR and the deposit tokens on both facades), but the runner doesn't assert it, and the fee tokens and the created-token runs have no such trace. The facade check was never run against an app that fell back. Successful fee-token sends cover multisig (public) and shielded, not a simple address. |
+| Weak spots | Sends to a shielded address are checked by the app's message only. In the minted-token runs the cleanup, which empties the peer, gave back exactly what most of those sends paid (1.50 HTR and the deposit tokens on both facades), but the runner doesn't assert it, and the fee tokens and the created-token runs have no such trace. The facade check was seen failing on an app that had fallen back. Successful fee-token sends cover multisig (public) and shielded, not a simple address. |
 | What was built | `createTokenFlow.js`, `--action`, `--unlocked` and `--created-tokens` in the runner, `testID`s on the creation screens and the token details, the wallet service on the privnet (profile `ws`) with a stand-in for its AWS queue, and checks that the app is on the wallet service and knows its HTR. Before each send the runner reads the HTR on the dashboard (`lib/dashboard.js`): it waits for the top-up to show, or checks there is none. Seen failing as it should, with the queue stopped. |
 | Traps met | Node 24, a System UI dialog on a fresh emulator, a Redis host that isn't a URL, no queue (the app never saw payments, and some passes were hollow), alerts sent to the real AWS, a check that could never pass, too few back presses. The README says how the ones of the checkout and of the wallet service are handled; on a fresh emulator, answer the System UI dialog with Wait before a run. |
 | Jest, with the kit, before the creation `testID`s | 5 suites fail, 2 tests fail, 2376 pass. |
@@ -71,16 +71,40 @@ Both facades, as above; then register and unregister a token. What is there and 
 3. **What to reuse.** `fund()` and `walletTool('send-private', ...)` pay the app; `htrShown()` reads the balance; the older kit's `run_phase2.sh` (README "Layout" of `mobile-e2e-flows`) has hand-written steps for receiving on all three privacy levels.
 4. **Known difference.** The fees row of a fee-token send shows on the fullnode only (`c-hist-fee-row`).
 
-## Next steps for the held-back scenarios
+## The path to no skipped scenarios
 
-1. Decide the finding on the zero-HTR message of a private send, then bring its scenario back.
-2. Build the locked and broken-key private balances (phase 1 below), which brings back the other 10.
+Tried by hand on 2026-11-24, on the e2e build, with no change to the app; not in the runner yet. `tools/privateBalance.js` replaces the encrypted scan key in the app's record (`asyncstorage:access` in its storage, written as root with the app stopped).
+
+| State | What the key becomes | Seen on the fullnode |
+|---|---|---|
+| `locked` | the wallet's own key, under another PIN | log `shielded-wrong-pin`; "Private receiving is locked"; the send screen counts the locked outputs and offers the unlock, and shows the privacy selector |
+| `broken-key` | another wallet's key, under the PIN | log `shielded-key-mismatch`; "Private receiving is unavailable"; no privacy selector |
+
+**The wallet service has neither state.** With the same record the app starts there, finds that the wallet registered without shielded keys, and starts again on the fullnode (`fallBackToFullnodeFacade` in `src/sagas/wallet.js`), ignoring the wallet service for a day. Seen for `locked`. For `broken-key` it follows from wallet-lib (`unlockScanKeyForRegistration` handles both alike); the one try was with the wallet service already ignored. So the graph asks for states that can't exist there, with expectations that can't hold.
+
+What is skipped or left out, and what each needs:
+
+| Scenarios | Why | To do |
+|---|---|---|
+| Fullnode send: 10 locked or broken-key | not in the runner | 1 to 3 |
+| Fullnode create token: 10 | left out by `--unlocked`, so never counted as skipped | 1 to 4 |
+| Wallet-service send: 10, create token: 10 (these left out by `--unlocked`) | can't exist | 5 |
+| Fullnode send, and the sends of created tokens on both facades: `shielded.deposit.hide-amount.max.zero-htr` | an open finding | 6 |
+
+1. In the runner, a group of scenarios per private balance state: unlocked first, then locked, then broken-key. Between groups: stop the app, write the record, start it, enter the PIN, check the state on Receive. Both groups need a private output received first (`wallet.js send-private`).
+2. Balances: the private funds leave the balance in both states, so the runner's dashboard check has to expect the public HTR only.
+3. `sendFlow.js`: no privacy step in `broken-key`, where the selector isn't shown.
+4. `createTokenFlow.js`: `err-locked` and `err-private-unavailable` are at `confirm`, but show after Create token and the PIN, while the flow stops before tapping it. Then drop `--unlocked` from the runs.
+5. The graph: `locked` and `broken-key` invalid on the wallet service (also in receive and history), without the rules that only they reach (`c-send-ws-shielded-dest-public`, `c-send-ws-private-not-full`, `c-send-fee-token-zero-htr-ws-not-unlocked`), and a scenario for the fallback itself instead.
+6. Decide the finding on the zero-HTR message of a private send, then remove its check in `unrunnableReason`.
+
+Not covered by this: an unlock that works. The app reads its record from memory, so the right key can't be put back while it runs; that needs a switch in the e2e build. No scenario expects it: `edge-locked-unlock` ends at the request to unlock.
 
 ## Shortcomings
 
 - **Selectors.** Screens no flow goes through yet have no `testID`s. The success modals and the import banner are still found by a point or by text (README "Selectors").
 - **Two setups.** The privnet with a seed wallet, on either facade. The public testnets can't have their flags set (by rule) or their funds controlled; passkey setups need a ceremony the emulator can't do yet.
-- **Unbuildable states.** A locked or broken-key private balance can't be set up yet, which skips 10 scenarios. Forcing a shielded-key mismatch, which both need, works only in a debug build, and runs now use the `e2e` build: these scenarios need a debug-build run, or a way to force the mismatch from outside the app.
+- **Private balance states.** Locked and broken-key can be set up ("The path to no skipped scenarios"), but the runner doesn't do it yet.
 - **Speed.** Each Maestro tap costs 1 to 3.5 s, mostly waiting for the screen to settle; the return to the dashboard takes about 10 s of back presses; every setup onboards a wallet from scratch.
 - **Graph breadth.** The graph models 4 actions; the official QA covers about 30 to 40. A scenario can only be automated once its action is in the graph.
 - **Clearing the address field.** The Send tab keeps the last address, and Maestro can't clear a multi-line field reliably, so the runner does it with adb (Ctrl+A, Delete).
@@ -95,7 +119,7 @@ Both facades, as above; then register and unregister a token. What is there and 
 - Runs on a release build with its JS in the APK: no Metro, no LogBox, no dev keys. Done: the `e2e` build type is the release build plus plain HTTP to a local node; the network settings are written as root on the emulator, not through `run-as`. It didn't make the scenarios faster: Maestro's waits dominate.
 - A deep link, or the tab bar by id, to return to the dashboard.
 - A failed scenario retried once on a fresh wallet, and flaky ones kept in a quarantine list.
-- Setup for the locked and broken-key private balances.
+- Setup for the locked and broken-key private balances: proven by hand, to put in the runner ("The path to no skipped scenarios").
 - Faster taps: tune Maestro's wait for the screen to settle; a snapshot of the app after onboarding, so a setup costs seconds.
 
 ### Phase 2: the whole app on the privnet with the fullnode
