@@ -51,6 +51,7 @@ class CreateTokenName extends React.Component {
           <View style={{ flex: 1, padding: 16, justifyContent: 'space-between' }}>
             <SimpleInput
               label={t`Token Name`}
+              testID='create-token-name'
               autoFocus
               subtitle={this.state.subtitle}
               onChangeText={this.onNameChange}
@@ -64,6 +65,7 @@ class CreateTokenName extends React.Component {
                 ]}
               />
               <NewHathorButton
+                testID='create-token-name-next'
                 title={t`Next`}
                 disabled={!this.state.name}
                 onPress={this.onButtonPress}

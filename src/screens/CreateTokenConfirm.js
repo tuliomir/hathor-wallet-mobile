@@ -299,6 +299,7 @@ const CreateTokenConfirm = () => {
           { tokenVersion != null && <TokenTypeInfoBox tokenVersion={tokenVersion} /> }
         </View>
         <NewHathorButton
+          testID='create-token-confirm'
           title={t`Create token`}
           onPress={onSendPress}
           disabled={isCreatingToken}

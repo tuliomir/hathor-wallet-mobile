@@ -93,6 +93,7 @@ const TokenDetails = (props) => {
       </View>
       <View style={styles.configStringWrapper}>
         <CopyClipboard
+          testID='token-details-config'
           text={configString}
           textStyle={{ fontSize: 14, color: COLORS.textColorShadow }}
         />

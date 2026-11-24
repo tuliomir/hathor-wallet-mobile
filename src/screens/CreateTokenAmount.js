@@ -155,7 +155,7 @@ const CreateTokenAmount = () => {
   // Compute infoBoxItems directly instead of storing in state to avoid stale balance data
   const getInfoBoxItems = () => {
     const availableText = (
-      <Text key='available'>
+      <Text key='available' testID='create-token-available'>
         {jt`You have ${amountAvailableText} available`}
       </Text>
     );
@@ -193,6 +193,7 @@ const CreateTokenAmount = () => {
                 {t`Amount of ${name} (${symbol})`}
               </InputLabel>
               <AmountTextInput
+                testID='create-token-amount'
                 ref={inputRef}
                 autoFocus
                 decimalPlaces={decimalPlaces}
@@ -208,6 +209,7 @@ const CreateTokenAmount = () => {
             <View>
               <InfoBox items={getInfoBoxItems()} />
               <NewHathorButton
+                testID='create-token-amount-next'
                 title={t`Next`}
                 disabled={isButtonDisabled()}
                 onPress={onButtonPress}

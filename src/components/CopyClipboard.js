@@ -56,6 +56,7 @@ class CopyClipboard extends React.Component {
     }
     return (
       <Text
+        testID={this.props.testID}
         onPress={this.textCopy}
         onLongPress={this.textCopy}
         style={[style.text, this.props.textStyle]}
@@ -72,6 +73,9 @@ CopyClipboard.propTypes = {
 
   // The text to be copied. If not set, text will be used
   copyText: PropTypes.string,
+
+  // The id e2e tests find the text by
+  testID: PropTypes.string,
 
   // Style of the text component
   textStyle: TextPropTypes.style,

@@ -129,12 +129,14 @@ class CreateTokenTypeNotice extends React.Component {
           <View style={this.style.buttonsContainer}>
             <View style={this.style.buttonView}>
               <NewHathorButton
+                testID='create-token-type-deposit'
                 onPress={() => this.props.navigation.navigate('CreateTokenName', { tokenVersion: TokenVersion.DEPOSIT })}
                 title={t`DEPOSIT TOKEN`}
               />
             </View>
             <View style={this.style.buttonView}>
               <NewHathorButton
+                testID='create-token-type-fee'
                 onPress={() => this.props.navigation.navigate('CreateTokenName', { tokenVersion: TokenVersion.FEE })}
                 title={t`FEE TOKEN`}
               />

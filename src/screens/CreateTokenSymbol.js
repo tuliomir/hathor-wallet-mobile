@@ -69,6 +69,7 @@ class CreateTokenSymbol extends React.Component {
           <View style={{ flex: 1, padding: 16, justifyContent: 'space-between' }}>
             <SimpleInput
               label={t`Token symbol`}
+              testID='create-token-symbol'
               autoFocus
               autoCapitalize='characters'
               subtitle={t`Between 2 and 5 characters`}
@@ -83,6 +84,7 @@ class CreateTokenSymbol extends React.Component {
                 ]}
               />
               <NewHathorButton
+                testID='create-token-symbol-next'
                 title={t`Next`}
                 disabled={this.isButtonDisabled()}
                 onPress={this.onButtonPress}
