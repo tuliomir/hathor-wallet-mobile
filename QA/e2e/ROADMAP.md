@@ -29,6 +29,29 @@ What the kit found in the app, still to decide.
 
 - **The zero-HTR message of a private send.** `shielded.deposit.hide-amount.max.zero-htr` sends a whole deposit-token balance with Hide amount, from a wallet with no HTR. The graph expects "Insufficient HTR to cover the privacy fees of this transaction.", the message a Private send of 1.50 shows. The app shows "Insufficient HTR to cover this transaction and its fees.": wallet-lib throws "Token: 00. Insufficient amount of tokens to fill the amount." and `mapTxError` maps it to the generic message. That message looks misleading, since only the privacy fee needs HTR here. Which axis flips it, the whole balance or Hide amount, is untested. The graph's rule is unverified too, so either side may be the one to change. The runner holds the scenario back until this is decided; removing the check in `unrunnableReason` brings it back.
 
+## 0.41.0-rc.1: what is known (2026-11-24)
+
+`qa/e2e` is `release-candidate` at `d33b1bbb` with `feat/e2e-testids` (`238b15dc`) merged in. One conflict, in `SendAddressInput.js`: the release wrapped Next in a view beside "Transfer between chains", so the `testID` moved onto the new Next.
+
+| | |
+|---|---|
+| Verified | Dependencies install on Node 22, the patches apply, and `assembleE2e` builds (4 min 55 s cold). The graph's schema is valid. Send on `pn-fn-seed-multi`: 13 passed, 0 failed, 11 skipped, every scenario's status as in the 2026-11-04 run on 0.40.1; funds returned to genesis. |
+| Not run | Any other area than send; any other setup. Lint. |
+| Weak spots of the send pass | The 2 private sends that succeed are checked by the app's message only, not by what the destination received. No successful fee-token send runs: the graph's other fee scenarios need locked or broken-key balances. |
+| Jest, with the kit | 5 suites fail, 2 tests fail, 2376 pass. |
+| Jest, plain `release-candidate` | The same 5 suites fail, 5 tests fail, 2229 pass: `App.test.tsx`, `nanoContracts/fixtures.js`, `historyNanoContract`, `registerNanoContract`, `reown`. |
+
+Open questions:
+
+- **`reown.test.js` fails differently**: 3 failing tests on plain `release-candidate`, a suite-level failure or a filtered-out error with the kit. The baseline had a symlinked `node_modules` and ran under load, so this may be the environment. Repeat it as README "Comparing Jest" says. The causes of the other four are not diagnosed either.
+- **The version string doesn't identify the code.** PR 971 landed after the bump to `0.41.0-rc.1`, so builds with and without it show the same version in About, and no `v0.41.0-rc.1` tag was in the repo. Record the commit tested.
+- **The e2e build is not the release binary**: it adds `testID`s, changes `src/sagas/featureToggle.js` and `src/App.js`, and allows plain HTTP to a local node. Store signing, the Play build and iOS need a check of their own.
+- **The fake Unleash doesn't list the 4 `multichain*` flags** (`unleash/flags.json`). Their defaults in the app are off; whether an unlisted flag takes the default is untested. Set them to false explicitly for a run without multichain.
+- **`tools/` has wallet-lib 4.3.0; the app has 4.4.0.** Untested whether it matters to funding and minting.
+- **The graph lacks multichain**: 4 flags and 8 routes are in the code only. Out of scope of the regression run; tested by hand.
+
+Next: create-token (deposit and fee) on the fullnode and wallet-service facades, then sends of the tokens it made. The kit has no wallet service; wallet-lib's `__tests__/integration/configuration/docker-compose.yml` runs one (untested with this kit's shielded fullnode). `create-token` isn't listed for `pn-fn-seed-multi` in the graph, and its zero-HTR case below 1.00 units is a likely bug (`c-ct-zero-htr-small-deposit`). The "Selectors" and "Debug build" shortcomings below predate phase 1, which fixed both for the send screens.
+
 ## Next steps for the held-back scenarios
 
 1. Decide the finding above, then bring its scenario back.

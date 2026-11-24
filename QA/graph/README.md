@@ -106,6 +106,8 @@ Scenarios are grouped by setup. Runnable setups are ordered greedily by the chea
 
 ## Run files
 
+Commit the file of a full, finished run: the next run of that setup is compared with it. Leave out partial runs (`--scenarios`) and runs broken by the environment.
+
 `runs/TEMPLATE.yaml` shows the shape of one QA run result. Copy it to `runs/<date>-<platform>.yaml` and fill it in. Fields: `yamlCommit`, `yamlDate`, `toolsCommit` (the commit of the tools that generated the scenarios, shown on the page label), `appBuild`, `device`, `platform`, `environment`, `scope: { reason, picks }`, and `results`, a list of `{ scenario, status, notes }` with `status` one of `passed`, `failed`, `skipped`.
 
 Scenario ids mean what they meant at `yamlCommit`. A run is anchored to that commit, not to ids that are stable across versions, so to interpret an old run, read the graph as of its `yamlCommit` (for example with `git show <yamlCommit>:QA/graph/graph.yaml`) and run the tools as of its `toolsCommit`.

@@ -95,6 +95,20 @@ Runs use the `e2e` build type (`android/app/build.gradle`): the release build, w
 
 `app-on-privnet.sh` writes the app's storage as root (`adb root`), which the emulator allows on an image without Play Store (the `default` system image), so it works on a build that isn't debuggable. It stops if adb didn't get root, and it refuses anything but an emulator. A debug build with Metro still runs: the runner records which build it found in the results file.
 
+## Preparing a checkout
+
+On Node 22, the version CI runs (`.nvmrc`): with Node 24's npm 11, `npm ci` stops with `EUSAGE`, "Missing: @sentry/cli-linux-...@2.42.4 from lock file". The lockfile installs fine on Node 22; regenerating it for this is not needed.
+
+```bash
+npm ci && ./node_modules/.bin/allow-scripts
+npx rn-nodeify --install stream,process,path,events,crypto,console,buffer,zlib --hack && npx patch-package
+# What `make i18n` would generate; this step alone needs no gettext.
+for l in da pt-br ru-ru; do mkdir -p src/locale/$l; npx ttag po2json locale/$l/texts.po > src/locale/$l/texts.po.json; done
+(cd QA/e2e/tools && npm ci)
+```
+
+Run the first line alone and check that it worked before the rest: `rn-nodeify` and `patch-package` fail with unrelated-looking errors when `node_modules` is missing.
+
 ## Run
 
 ```bash
@@ -110,4 +124,18 @@ node run.js --setup pn-fn-seed-multi
 
 To drive one flow by hand: `bin/app-on-privnet.sh --fresh`, then `~/.maestro/maestro/bin/maestro test flows/onboard.yaml`.
 
+A pipeline or a trailing `ls` hides Gradle's exit code; look for `BUILD SUCCESSFUL` and the APK's date.
+
 Always tear down afterwards, or the miner and the emulator keep the CPU busy: `adb emu kill` and `docker compose down` in `privnet/`. With a debug build, also stop Metro and close the React Native DevTools windows it opened (`close_devtools` in the `mobile-e2e-flows` kit).
+
+## Comparing Jest with the app's own failures
+
+The app has failing Jest suites of its own, so a kit branch is judged against the same commit without the kit. What makes that comparison mislead:
+
+- A filter for `●.*›` drops a suite that failed to run ("Test suite failed to run" has no `›`). Compare the `FAIL` lines and the `Tests:` line, and read each failing suite's error.
+- A baseline worktree whose `node_modules` is a symlink, or a run while Gradle builds, is a different environment. Give the baseline its own `npm ci` and an idle machine.
+- Run a single suite under `timeout 120`: `__tests__/sagas/reown.test.js` alone once ran for over 5 min without finishing (cause unknown; ROADMAP "0.41.0-rc.1").
+
+## The graph's freshness check
+
+`qa:graph:check` compares `<base>...HEAD`, so a kit branch that lacks the app's newer commits reports nothing about them. Merge the app's branch first, then use the last release as the base: `node QA/graph/tools/cli.js check --base origin/release`.
