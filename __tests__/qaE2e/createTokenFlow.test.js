@@ -10,7 +10,7 @@
 /* eslint-disable no-template-curly-in-string -- the app's messages carry ${placeholders} */
 import { describe, expect, it } from '@jest/globals';
 import YAML from 'yaml';
-import { buildCreateTokenFlow, unrunnableReason } from '../../QA/e2e/lib/createTokenFlow';
+import { buildCreateTokenFlow } from '../../QA/e2e/lib/createTokenFlow';
 
 const scenario = (values) => ({
   id: 'create-token:pn:x',
@@ -93,12 +93,5 @@ describe('create-token flow', () => {
     const list = steps({ 'mint-amount': 'cents' }, error('authorize', 'Not enough HTR: ${required} required'));
     expect(list).toContainEqual({ runFlow: '../enter_pin.yaml' });
     expect(list[list.length - 1].extendedWaitUntil.visible).toBe('Not enough HTR: .* required');
-  });
-});
-
-describe('unrunnableReason', () => {
-  it('holds back the private balance states the kit can\'t set up', () => {
-    expect(unrunnableReason(scenario({}))).toBeNull();
-    expect(unrunnableReason(scenario({ 'private-balance': 'locked' }))).toMatch(/locked/);
   });
 });

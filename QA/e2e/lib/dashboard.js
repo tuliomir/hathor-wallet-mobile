@@ -16,4 +16,13 @@ function htrOnDashboard(xml) {
   return at < 0 ? null : BigInt(texts[at + 1].replace(/[,.]/g, ''));
 }
 
-module.exports = { htrOnDashboard };
+/** The centre of each key of the app's keypad, by digit, from Maestro's hierarchy. */
+function numpadKeys(hierarchy) {
+  const bounds = String.raw`"bounds" : "\[(\d+),(\d+)\]\[(\d+),(\d+)\]"`;
+  const pattern = new RegExp(`"resource-id" : "numpad-key-([0-9])"[^}]*?${bounds}`, 'g');
+  return Object.fromEntries([...hierarchy.matchAll(pattern)].map(([, digit, x1, y1, x2, y2]) => [
+    digit, [String(Math.round((Number(x1) + Number(x2)) / 2)), String(Math.round((Number(y1) + Number(y2)) / 2))],
+  ]));
+}
+
+module.exports = { htrOnDashboard, numpadKeys };

@@ -35,20 +35,6 @@ function messagePattern(message) {
     .join('.*');
 }
 
-/** Why the kit can't run this scenario yet, or null when it can. */
-function unrunnableReason({ values }) {
-  if (values['private-balance'] !== 'unlocked') {
-    return `the private balance state '${values['private-balance']}' can't be set up yet`;
-  }
-  // ROADMAP.md "Findings". Remove once the app's copy or the graph's rule is decided.
-  if (values.dest === 'shielded' && values.token === 'deposit' && values.privacy === 'hide-amount'
-    && values.amount === 'max' && values.funding === 'zero-htr') {
-    return 'open finding: the graph expects "Insufficient HTR to cover the privacy fees of this transaction." '
-      + 'and the app shows "Insufficient HTR to cover this transaction and its fees."';
-  }
-  return null;
-}
-
 function amountSteps(amount) {
   if (amount === 'empty') {
     return [];
@@ -64,6 +50,19 @@ function amountSteps(amount) {
     ];
   }
   return [{ inputText: AMOUNTS[amount] }];
+}
+
+// With a broken key the wallet can't send privately, and the app shows no privacy selector.
+function privacySteps(values) {
+  if (values['private-balance'] === 'broken-key') {
+    return [{ assertNotVisible: { id: 'send-amount-privacy-mode' } }];
+  }
+  return [
+    // The privacy card hides the keyboard as it opens the sheet.
+    tap('send-amount-privacy-mode'),
+    tap(`privacy-mode-switch-${PRIVACY_MODES[values.privacy]}`),
+    tap('transaction-privacy-done'),
+  ];
 }
 
 function outcomeCheck(outcome) {
@@ -111,13 +110,11 @@ function buildSendFlow(scenario, outcome, { address, token }) {
       // The screen opens on the last token picked, so always pick: the token box, then the token
       // by its name in the list.
       tap('send-amount-token'),
+      { scrollUntilVisible: { element: token.name, direction: 'DOWN', timeout: 20000 } },
       { tapOn: token.name },
       { extendedWaitUntil: { visible: `[0-9][0-9,.]* ${token.symbol} available`, timeout: 15000 } },
       ...amountSteps(values.amount),
-      // The privacy card hides the keyboard as it opens the sheet.
-      tap('send-amount-privacy-mode'),
-      tap(`privacy-mode-switch-${PRIVACY_MODES[values.privacy]}`),
-      tap('transaction-privacy-done'),
+      ...privacySteps(values),
     ];
     // The amount screen sets its errors when Next is tapped; a disabled Next is checked as is.
     if (stopAt > 1 || outcome.message !== 'Next stays disabled') {
@@ -140,4 +137,4 @@ function buildSendFlow(scenario, outcome, { address, token }) {
   return `${yaml({ appId: 'network.hathor.wallet', name: scenario.id })}---\n${yaml(groups)}`;
 }
 
-module.exports = { buildSendFlow, unrunnableReason, messagePattern };
+module.exports = { buildSendFlow, messagePattern };

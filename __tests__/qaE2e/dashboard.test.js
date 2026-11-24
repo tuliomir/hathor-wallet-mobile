@@ -8,7 +8,7 @@
  */
 
 import { describe, expect, it } from '@jest/globals';
-import { htrOnDashboard } from '../../QA/e2e/lib/dashboard';
+import { htrOnDashboard, numpadKeys } from '../../QA/e2e/lib/dashboard';
 
 const dump = (...texts) => texts.map((text) => `<node index="0" text="${text}" resource-id="" />`).join('');
 
@@ -24,5 +24,15 @@ describe('htrOnDashboard', () => {
     expect(htrOnDashboard(dump('Hathor', '', 'HTR'))).toBeNull();
     expect(htrOnDashboard(dump('You have', '20.00', 'HTR'))).toBeNull();
     expect(htrOnDashboard('')).toBeNull();
+  });
+});
+
+describe('numpadKeys', () => {
+  it('reads each key\'s centre', () => {
+    const node = (digit, bounds) => `{ "attributes" : { "text" : "", "resource-id" : "numpad-key-${digit}", "clickable" : "true", "bounds" : "${bounds}" } }`;
+    expect(numpadKeys(node(1, '[49,1585][374,1732]') + node(0, '[374,2080][706,2227]'))).toEqual({
+      1: ['212', '1659'], 0: ['540', '2154'],
+    });
+    expect(numpadKeys('{}')).toEqual({});
   });
 });

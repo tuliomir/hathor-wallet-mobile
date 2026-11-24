@@ -23,12 +23,6 @@ const AMOUNTS = { normal: '100.00', cents: '0.50', thousand: '1000.00' };
 // What the typed amount adds to 100 times the available HTR (the deposit is 1%).
 const ABOVE_EXACT = { exact: '0', 'over-balance': '1', 'over-by-rounding': '0.01' };
 
-/** Why the kit can't run this scenario yet, or null when it can. */
-function unrunnableReason({ values }) {
-  return values['private-balance'] === 'unlocked' ? null
-    : `the private balance state '${values['private-balance']}' can't be set up yet`;
-}
-
 // The HTR the app itself knows of: a payment it missed would pass every "not enough HTR" scenario.
 function fundingCheck(funding) {
   if (!funding) return [];
@@ -128,4 +122,4 @@ function buildCreateTokenFlow(scenario, outcome, { name, symbol }) {
   return `${yaml({ appId: 'network.hathor.wallet', name: scenario.id })}---\n${yaml(groups)}`;
 }
 
-module.exports = { buildCreateTokenFlow, unrunnableReason };
+module.exports = { buildCreateTokenFlow };

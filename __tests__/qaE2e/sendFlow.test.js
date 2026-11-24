@@ -10,7 +10,7 @@
 /* eslint-disable no-template-curly-in-string -- the app's messages carry ${placeholders} */
 import { describe, expect, it } from '@jest/globals';
 import YAML from 'yaml';
-import { buildSendFlow, unrunnableReason, messagePattern } from '../../QA/e2e/lib/sendFlow';
+import { buildSendFlow, messagePattern } from '../../QA/e2e/lib/sendFlow';
 
 const scenario = (values) => ({
   id: 'send:pn:x',
@@ -96,8 +96,9 @@ describe('token and confirm steps', () => {
     const flow = steps(buildSendFlow(scenario({ token: 'deposit' }), outcome('amount', 'x'), target({ name: 'E2E Deposit', symbol: 'E2ED' })));
     const box = flow.findIndex(tapsId('send-amount-token'));
     expect(box).toBeGreaterThan(-1);
-    expect(flow[box + 1]).toEqual({ tapOn: 'E2E Deposit' });
-    expect(flow[box + 2].extendedWaitUntil.visible).toBe('[0-9][0-9,.]* E2ED available');
+    expect(flow[box + 1].scrollUntilVisible.element).toBe('E2E Deposit');
+    expect(flow[box + 2]).toEqual({ tapOn: 'E2E Deposit' });
+    expect(flow[box + 3].extendedWaitUntil.visible).toBe('[0-9][0-9,.]* E2ED available');
   });
 
   it('types 2^40 units for a private over-limit amount', () => {
@@ -119,36 +120,18 @@ describe('message patterns', () => {
   });
 });
 
-describe('what the kit can run today', () => {
-  it('runs HTR sends with an unlocked private balance', () => {
-    expect(unrunnableReason(scenario({}))).toBeNull();
-    expect(unrunnableReason(scenario({ dest: 'shielded', privacy: 'private' }))).toBeNull();
+describe('a broken-key private balance', () => {
+  it('has no privacy selector to pick from, and checks there is none', () => {
+    const flow = steps(buildSendFlow(scenario({ 'private-balance': 'broken-key' }), outcome('confirm', 'x'), target()));
+    expect(has(flow, tapsId('send-amount-privacy-mode'))).toBe(false);
+    expect(flow).toContainEqual({ assertNotVisible: { id: 'send-amount-privacy-mode' } });
+    expect(has(flow, tapsId('send-amount-next'))).toBe(true);
   });
 
-  it('runs custom-token sends, including 2^40 amounts', () => {
-    expect(unrunnableReason(scenario({ token: 'deposit', amount: 'private-over-limit' }))).toBeNull();
-    expect(unrunnableReason(scenario({ token: 'fee', funding: 'zero-htr' }))).toBeNull();
-  });
-
-  it('says why it cannot run the rest', () => {
-    expect(unrunnableReason(scenario({ 'private-balance': 'locked' }))).toMatch(/private balance/);
-  });
-
-  describe('the zero-HTR message the graph and the app disagree on', () => {
-    const disputed = {
-      token: 'deposit', privacy: 'hide-amount', amount: 'max', funding: 'zero-htr',
-    };
-
-    it('holds it back and names both messages', () => {
-      const reason = unrunnableReason(scenario({ dest: 'shielded', ...disputed }));
-      expect(reason).toMatch(/privacy fees of this transaction/);
-      expect(reason).toMatch(/this transaction and its fees/);
-    });
-
-    it('still runs its neighbours, which pin down the rule', () => {
-      expect(unrunnableReason(scenario({ ...disputed, privacy: 'private', amount: 'normal' }))).toBeNull();
-      expect(unrunnableReason(scenario({ ...disputed, amount: 'normal' }))).toBeNull();
-      expect(unrunnableReason(scenario({ ...disputed, privacy: 'private' }))).toBeNull();
+  it('is the only one without it', () => {
+    ['unlocked', 'locked'].forEach((state) => {
+      const flow = steps(buildSendFlow(scenario({ 'private-balance': state }), outcome('confirm', 'x'), target()));
+      expect(has(flow, tapsId('send-amount-privacy-mode'))).toBe(true);
     });
   });
 });
