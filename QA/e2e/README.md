@@ -15,7 +15,7 @@ The host setup (KVM, JDK 17, NDK, Maestro, the AVD) and the Android and Maestro 
 | `tools/` | A small Node package of its own (wallet-lib 4.3.0, ct-crypto-node 0.5.0; `npm install` there once). `wallet.js` derives the app wallet's addresses from its seed, gives a peer wallet's shielded address, mints custom tokens (`mint <address> <deposit\|fee> <name> <symbol> <units> <treasury-seed-file>`), gives a run's funds back to genesis (`cleanup <evidence dir>`), and sends private outputs (temporary, see below). |
 | `run.js` | The runner: `node QA/e2e/run.js --setup <setup> [--action send\|create-token] [--unlocked] [--created-tokens] [--scenarios <id>,...] [--dry-run] [--no-cleanup] [--no-record]`. Runs that setup's scenarios of one action and writes a results file to `QA/graph/runs/`; evidence goes to `evidence/` (git-ignored). |
 | `bin/app-on-privnet.sh` | Points the app at the privnet before it starts, writing its storage as root. `--fresh` wipes it first. Refuses anything but an emulator: store builds share the app id, so a wipe on a phone would erase its wallet. |
-| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow; `runOrder.js` orders a setup's scenarios; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
+| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow; `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
 | `viewer/` | `viewer.html`, the run viewer; `bin/serve-viewer.js` serves the runs' viewers. |
 | `flows/` | Maestro flows. `onboard.yaml`: new wallet on the privnet, ending on the dashboard. `import_tokens.yaml`: registers the minted tokens through the dashboard's "New tokens" banner. |
 
@@ -34,7 +34,7 @@ The app fetches flags when it connects to a network and then every 15 s. Set fla
 What the stack needs beyond wallet-lib's integration-test compose, which it comes from:
 
 - **`REDIS_URL` must be a URL.** With a bare host name the API starts and works until a client opens the websocket, then dies (`connect ENOENT redis`).
-- **The queue stand-in (`sqs/server.js`).** On AWS a queue carries new transactions from the daemon to the lambda that notifies the websocket. Without it the app never sees a payment that arrives while it's open, and every "not enough HTR" scenario passes for the wrong reason. The create flows check the HTR the app shows; the send flows don't yet.
+- **The queue stand-in (`sqs/server.js`).** On AWS a queue carries new transactions from the daemon to the lambda that notifies the websocket. Without it the app never sees a payment that arrives while it's open, and every "not enough HTR" scenario passes for the wrong reason. So each scenario first checks the HTR the app itself shows: on the dashboard before a send, on the amount screen when creating a token. Stopping `sqs` after setup is a quick way to see that check fail.
 - **AWS is mapped to localhost (`extra_hosts`).** The service sends its alerts to AWS, with fake keys. serverless-offline answers a delivered websocket message with 204 where the service expects 200, so it raises an alert each time.
 
 `docker compose --profile ws down` to stop it; without the profile its containers stay.

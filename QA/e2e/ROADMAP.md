@@ -43,11 +43,12 @@ What the kit found in the app, still to decide unless marked settled.
 | | |
 |---|---|
 | Verified | Dependencies install on Node 22, the patches apply, and `assembleE2e` builds (4 min 55 s cold). The graph's schema is valid. Send on `pn-fn-seed-multi`: 13 passed, 0 failed, 11 skipped, every scenario's status as in the 2026-11-04 run on 0.40.1; funds returned to genesis. |
+| Send, with minted tokens | Fullnode: 13 passed, 11 held back, rerun with the balance check below. Wallet service: 15 passed, 10 held back. The graph picks different scenarios for the two, since their rules differ. |
 | Create token | 12 of 12 pass on each facade. |
 | Sends of created tokens | Fullnode: 16 passed, 1 held back. Wallet service: 16 passed, 1 held back, after the graph's rule was corrected (15 passed and 1 failed before). |
-| Not run | Other areas and setups; send with minted tokens on the wallet service. |
-| Weak spots | Sends to a shielded address are checked by the app's message only, not by what arrived. Send flows don't check the HTR the app shows. The facade check was never run against an app that fell back. Successful fee-token sends cover multisig (public) and shielded, not a simple address. |
-| What was built | `createTokenFlow.js`, `--action`, `--unlocked` and `--created-tokens` in the runner, `testID`s on the creation screens and the token details, the wallet service on the privnet (profile `ws`) with a stand-in for its AWS queue, and checks that the app is on the wallet service and knows its HTR. |
+| Not run | Other areas and setups. |
+| Weak spots | Sends to a shielded address are checked by the app's message only. In the minted-token runs the cleanup, which empties the peer, gave back exactly what most of those sends paid (1.50 HTR and the deposit tokens on both facades), but the runner doesn't assert it, and the fee tokens and the created-token runs have no such trace. The facade check was never run against an app that fell back. Successful fee-token sends cover multisig (public) and shielded, not a simple address. |
+| What was built | `createTokenFlow.js`, `--action`, `--unlocked` and `--created-tokens` in the runner, `testID`s on the creation screens and the token details, the wallet service on the privnet (profile `ws`) with a stand-in for its AWS queue, and checks that the app is on the wallet service and knows its HTR. Before each send the runner reads the HTR on the dashboard (`lib/dashboard.js`): it waits for the top-up to show, or checks there is none. Seen failing as it should, with the queue stopped. |
 | Traps met | Node 24, a System UI dialog on a fresh emulator, a Redis host that isn't a URL, no queue (the app never saw payments, and some passes were hollow), alerts sent to the real AWS, a check that could never pass, too few back presses. The README says how the ones of the checkout and of the wallet service are handled; on a fresh emulator, answer the System UI dialog with Wait before a run. |
 | Jest, with the kit, before the creation `testID`s | 5 suites fail, 2 tests fail, 2376 pass. |
 | Jest, plain `release-candidate` | The same 5 suites fail, 5 tests fail, 2229 pass: `App.test.tsx`, `nanoContracts/fixtures.js`, `historyNanoContract`, `registerNanoContract`, `reown`. |
@@ -61,7 +62,14 @@ Open questions:
 - **`tools/` has wallet-lib 4.3.0; the app has 4.4.0.** Untested whether it matters to funding and minting.
 - **The graph lacks multichain**: 4 flags and 8 routes are in the code only. Out of scope of the regression run; tested by hand.
 
-Next: receive and history, then register and unregister a token. Receive and history are modelled, but not listed for the privnet setups in the graph yet.
+### Next session: receive and history
+
+Both facades, as above; then register and unregister a token. What is there and what isn't:
+
+1. **Model first.** Both actions are in the graph, but not listed for the privnet setups. As modelled they yield little: receive varies only the private balance (one runnable scenario, about the address), and history adds the token (three). No action covers a payment arriving: public or private (amount, full), in HTR or a token, a token not registered yet, with the app open or closed. The wallet service and the fullnode learn of payments by different paths, so that is where the facades can differ.
+2. **Then the flows.** A builder per action beside `lib/createTokenFlow.js`, chosen where `run.js` picks `unrunnableReason` and lists the actions it can run. `ok-balance` and `ok-new-address` have a prose message, not a text on screen, so they need a check of their own. `Receive`, `MainScreen` and `Dashboard` have no `testID`s.
+3. **What to reuse.** `fund()` and `walletTool('send-private', ...)` pay the app; `htrShown()` reads the balance; the older kit's `run_phase2.sh` (README "Layout" of `mobile-e2e-flows`) has hand-written steps for receiving on all three privacy levels.
+4. **Known difference.** The fees row of a fee-token send shows on the fullnode only (`c-hist-fee-row`).
 
 ## Next steps for the held-back scenarios
 
@@ -96,7 +104,7 @@ Creating tokens is done. Model the remaining actions in the graph, then automate
 
 ### Phase 3: the wallet-service facade locally
 
-Done: compose profile `ws` (README "The wallet service"), from the public images. Create token and the sends of created tokens run on it; the send suite with minted tokens hasn't yet.
+Done: compose profile `ws` (README "The wallet service"), from the public images. Send, create token and the sends of created tokens run on it.
 
 ### Phase 4: CI
 
