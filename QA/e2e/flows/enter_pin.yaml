@@ -1,0 +1,9 @@
+appId: network.hathor.wallet
+---
+# PIN 123456 on the app's keypad (NumPad).
+- tapOn: {id: numpad-key-1}
+- tapOn: {id: numpad-key-2}
+- tapOn: {id: numpad-key-3}
+- tapOn: {id: numpad-key-4}
+- tapOn: {id: numpad-key-5}
+- tapOn: {id: numpad-key-6}

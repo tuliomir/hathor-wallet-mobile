@@ -1,0 +1,9 @@
+appId: network.hathor.wallet
+---
+- extendedWaitUntil:
+    visible: "RESET WALLET"
+    timeout: 120000
+- runFlow: enter_pin.yaml
+- extendedWaitUntil:
+    visible: "HTR"
+    timeout: 120000

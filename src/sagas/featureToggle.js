@@ -19,7 +19,7 @@ import {
   spawn,
   takeEvery,
 } from 'redux-saga/effects';
-import { getUniqueId } from 'react-native-device-info';
+import { getUniqueId, getVersion } from 'react-native-device-info';
 import {
   types,
   setUnleashClient,
@@ -30,6 +30,7 @@ import {
   networkSettingsKeyMap,
   UNLEASH_URL,
   UNLEASH_CLIENT_KEY,
+  E2E_UNLEASH_PORT,
   UNLEASH_POLLING_INTERVAL,
   FEATURE_TOGGLE_DEFAULTS,
 } from '../constants';
@@ -44,6 +45,30 @@ import { version as appVersion } from '../../package.json';
 const MAX_RETRIES = 5;
 
 const log = logger('featureToggle');
+
+// Hosts a local node is reached through: the emulator's adb reverse and its alias for the host.
+const LOCAL_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2'];
+
+// The e2e build type adds this to the native version (android/app/build.gradle).
+const E2E_VERSION_SUFFIX = '-e2e';
+
+/**
+ * Debug builds and the e2e build, on a node on this device or its host (the e2e kit's local
+ * privnet), read their flags from the e2e fake Unleash next to the node, so a test run controls
+ * every flag. Store builds always read the real one: that port is unauthenticated, and anything
+ * answering on it would set their flags. So do public networks: they can misbehave with a flag on
+ * that their servers expect off.
+ */
+export function getUnleashUrl(nodeUrl) {
+  if (!__DEV__ && !getVersion().endsWith(E2E_VERSION_SUFFIX)) {
+    return UNLEASH_URL;
+  }
+  const match = /^(https?):\/\/(\[[^\]]+\]|[^/:]+)/.exec(nodeUrl || '');
+  if (!match || !LOCAL_HOSTS.includes(match[2])) {
+    return UNLEASH_URL;
+  }
+  return `${match[1]}://${match[2]}:${E2E_UNLEASH_PORT}/proxy`;
+}
 
 export function* handleInitFailed(currentRetry) {
   if (currentRetry >= MAX_RETRIES) {
@@ -100,14 +125,15 @@ export function* handleToggleUpdate() {
 export function* monitorFeatureFlags(currentRetry = 0, createRoutine = true) {
   let stage;
   let fullNetwork;
+  let nodeUrl;
   // We try to get the network settings from the storage (which is updated as soon
   // as we persist the networkSettings update) and if it's empty, we get the default state
   const networkSettingsStorage = STORE.getItem(networkSettingsKeyMap.networkSettings);
   if (networkSettingsStorage) {
-    ({ stage, fullNetwork } = networkSettingsStorage);
+    ({ stage, fullNetwork, nodeUrl } = networkSettingsStorage);
   } else {
     const networkSettingsState = yield select((state) => state.networkSettings);
-    ({ stage, fullNetwork } = networkSettingsState);
+    ({ stage, fullNetwork, nodeUrl } = networkSettingsState);
   }
   const options = {
     userId: getUniqueId(),
@@ -120,7 +146,7 @@ export function* monitorFeatureFlags(currentRetry = 0, createRoutine = true) {
   };
 
   const unleashClient = new UnleashClient({
-    url: UNLEASH_URL,
+    url: getUnleashUrl(nodeUrl),
     clientKey: UNLEASH_CLIENT_KEY,
     refreshInterval: -1,
     disableRefresh: true, // Disable it, we will handle it ourselves

@@ -88,3 +88,5 @@ ios/HathorMobile.xcodeproj/project.xcworkspace/
 
 .yalc/
 yalc.lock
+QA/graph/dist/
+QA/e2e/evidence/
