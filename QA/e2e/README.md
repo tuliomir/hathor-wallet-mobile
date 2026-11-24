@@ -13,9 +13,9 @@ The host setup (KVM, JDK 17, NDK, Maestro, the AVD) and the Android and Maestro 
 | `bin/flags.js` | Lists and sets the flags: `flags.js set fee-based-tokens.rollout=off --wait`. |
 | `bin/fund.js` | Sends HTR from the genesis wallet to a public address: `fund.js W... 10.50`. Uses the helper's `POST /fund`; shielded addresses are refused. |
 | `tools/` | A small Node package of its own (wallet-lib 4.3.0, ct-crypto-node 0.5.0; `npm install` there once). `wallet.js` derives the app wallet's addresses from its seed, gives a peer wallet's shielded address, mints custom tokens (`mint <address> <deposit\|fee> <name> <symbol> <units> <treasury-seed-file>`), gives a run's funds back to genesis (`cleanup <evidence dir>`), and sends private outputs (temporary, see below). |
-| `run.js` | The runner: `node QA/e2e/run.js --setup pn-fn-seed-multi [--scenarios <id>,...] [--dry-run] [--no-cleanup] [--no-record]`. Runs that setup's send scenarios and writes a results file to `QA/graph/runs/`; evidence goes to `evidence/` (git-ignored). |
+| `run.js` | The runner: `node QA/e2e/run.js --setup <setup> [--action send\|create-token] [--unlocked] [--created-tokens] [--scenarios <id>,...] [--dry-run] [--no-cleanup] [--no-record]`. Runs that setup's scenarios of one action and writes a results file to `QA/graph/runs/`; evidence goes to `evidence/` (git-ignored). |
 | `bin/app-on-privnet.sh` | Points the app at the privnet before it starts, writing its storage as root. `--fresh` wipes it first. Refuses anything but an emulator: store builds share the app id, so a wipe on a phone would erase its wallet. |
-| `lib/` | `sendFlow.js` turns a send scenario into a Maestro flow; `runOrder.js` orders a setup's scenarios; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
+| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow; `runOrder.js` orders a setup's scenarios; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
 | `viewer/` | `viewer.html`, the run viewer; `bin/serve-viewer.js` serves the runs' viewers. |
 | `flows/` | Maestro flows. `onboard.yaml`: new wallet on the privnet, ending on the dashboard. `import_tokens.yaml`: registers the minted tokens through the dashboard's "New tokens" banner. |
 
@@ -26,6 +26,22 @@ The e2e build and debug builds, on a local node (`localhost`, `127.0.0.1` or `10
 The app fetches flags when it connects to a network and then every 15 s. Set flags before the app reaches the privnet and they apply from the start. A change mid-run takes up to 15 s; `--wait` returns once the app has fetched it.
 
 `app-on-privnet.sh` writes the privnet into the app's storage before launch, so the app's very first flag fetch already goes to the fake Unleash. That keeps push notifications off from the start; with the e2e build's placeholder `google-services.json`, push on means an "Unexpected error" dialog. It also skips the Network Settings screens in setup.
+
+## The wallet service
+
+`docker compose --profile ws up -d` in `privnet/` adds the wallet service, from the public `:dev` images (`docker compose --profile ws pull` first: they move). A setup with `facade: wallet-service` (`pn-ws-seed-multi`) then runs on it. The runner checks the API before it starts, and after onboarding checks in Settings that the app uses it: a failed start falls back to the fullnode without a word, and the app then ignores the wallet service for a day (`featureFlags:ignoreWalletServiceFlag` in its storage).
+
+What the stack needs beyond wallet-lib's integration-test compose, which it comes from:
+
+- **`REDIS_URL` must be a URL.** With a bare host name the API starts and works until a client opens the websocket, then dies (`connect ENOENT redis`).
+- **The queue stand-in (`sqs/server.js`).** On AWS a queue carries new transactions from the daemon to the lambda that notifies the websocket. Without it the app never sees a payment that arrives while it's open, and every "not enough HTR" scenario passes for the wrong reason. The create flows check the HTR the app shows; the send flows don't yet.
+- **AWS is mapped to localhost (`extra_hosts`).** The service sends its alerts to AWS, with fake keys. serverless-offline answers a delivered websocket message with 204 where the service expects 200, so it raises an alert each time.
+
+`docker compose --profile ws down` to stop it; without the profile its containers stay.
+
+## Create token, and sends of created tokens
+
+`--action create-token --unlocked` runs the creation scenarios: name, symbol, amount, deposit and fee, up to the details screen. A creation that works is checked on the fullnode by the uid in the configuration string. `--created-tokens` runs sends of a deposit and a fee token the run makes in the app. It pays the wallet exactly what each costs (10.00 and 0.01 HTR), so the wallet is left with no HTR, as the zero-HTR scenarios need; a `max` send gets a token of its own. Deposits of created tokens stay locked: the app's wallet keeps their authorities, and the cleanup doesn't melt them. `--unlocked` picks scenarios as if an unlocked private balance were the only one; `--created-tokens` implies it.
 
 ## Custom tokens and the run order
 

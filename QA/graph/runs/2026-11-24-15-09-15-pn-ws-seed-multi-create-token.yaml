@@ -1,0 +1,52 @@
+# This test was run based on the YAML of 2026-11-04, version from commit 8e799b59, with the tools at commit 16ed2a9b (with uncommitted changes).
+yamlCommit: 8e799b59
+yamlDate: 2026-11-04
+toolsCommit: 16ed2a9b (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-24 10:19:58
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: create-token scenarios of pn-ws-seed-multi, unlocked
+    private balance only"
+  picks: []
+results:
+  - scenario: create-token:pn-ws-seed-multi:deposit.valid.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-not-enough-htr"
+  - scenario: create-token:pn-ws-seed-multi:deposit.valid.cents.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-late-deposit-ws"
+  - scenario: create-token:pn-ws-seed-multi:fee.valid.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-not-enough-htr"
+  - scenario: create-token:pn-ws-seed-multi:deposit.valid.over-balance.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-not-enough-htr"
+  - scenario: create-token:pn-ws-seed-multi:deposit.valid.over-by-rounding.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-late-deposit-ws"
+  - scenario: create-token:pn-ws-seed-multi:deposit.valid.empty.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-empty-amount"
+  - scenario: create-token:pn-ws-seed-multi:deposit.empty-name.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-empty-name"
+  - scenario: create-token:pn-ws-seed-multi:deposit.short-symbol.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-short-symbol"
+  - scenario: create-token:pn-ws-seed-multi:deposit.valid.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-created; on chain: E2E Created 09 (EC09), 10000 units,
+      version 1"
+  - scenario: create-token:pn-ws-seed-multi:deposit.valid.exact.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-created; on chain: E2E Created 10 (EC10), 1390000 units,
+      version 1"
+  - scenario: create-token:pn-ws-seed-multi:fee.valid.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-created; on chain: E2E Created 11 (EC11), 10000 units,
+      version 2"
+  - scenario: create-token:pn-ws-seed-multi:fee.valid.cents.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-created; on chain: E2E Created 12 (EC12), 50 units, version 2"
