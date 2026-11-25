@@ -43,6 +43,7 @@ const sendFlow = require('./lib/sendFlow');
 const createTokenFlow = require('./lib/createTokenFlow');
 const { runOrder } = require('./lib/runOrder');
 const { tokenPlan } = require('./lib/tokenPlan');
+const { createdTokenOutcome } = require('./lib/createdTokens');
 const walletStart = require('./lib/walletStart');
 const { htrOnDashboard, numpadKeys } = require('./lib/dashboard');
 const { unrunnableReason } = require('./lib/unrunnable');
@@ -670,8 +671,12 @@ async function main() {
     .filter((s) => s.setup === setup.id && s.action === action.id)
     .filter((s) => !args.scenarios || args.scenarios.includes(s.id));
 
+  const expected = (s) => {
+    const outcome = outcomes[s.expected[0]];
+    return args.createdTokens ? createdTokenOutcome(s, outcome, outcomes) : outcome;
+  };
   const plan = runOrder(scenarios.map((s) => ({
-    scenario: s, skip: unrunnableReason(s), outcome: outcomes[s.expected[0]],
+    scenario: s, skip: unrunnableReason(s), outcome: expected(s),
   })));
   log(`${plan.length} scenarios, ${plan.filter((p) => !p.skip).length} runnable`);
   if (args.dryRun) {
