@@ -13,7 +13,7 @@ description: Run the app's end-to-end scenarios on an emulator, only those a cha
 |---|---|
 | on a branch without `QA/e2e/` (most code branches) | from your checkout: `<a checkout of qa/e2e>/QA/e2e/bin/try-branch.sh`. It merges your branch, uncommitted changes included, with the kit in a sibling worktree and runs `dev` there. Options after `--` go to `dev` |
 | changing the app | `npm run e2e:dev -- --quick` while you iterate, `npm run e2e:dev` before the PR |
-| writing or fixing scenarios | `npm run e2e:dev -- --only <job>` (`history`, `fn/send`, ...). One scenario: `node QA/e2e/run.js --setup pn-fn-seed-multi --action <action> --scenarios <id> --reuse` |
+| writing or fixing scenarios | `npx jest __tests__/qaE2e __tests__/qaGraph` first: 6 s, no emulator. Then `npm run e2e:dev -- --only <job>`: a job of `e2e:status` (`fn/send`), a facade (`fn`, `ws`) or a name on both (`send`); add `--quick` for a sample. One scenario: `node QA/e2e/run.js --setup pn-fn-seed-multi --action <action> --scenarios <id> --reuse` |
 | about to push | `npm run e2e:smoke` |
 | checking a release, or ending a change to the suite | `npm run e2e:full -- --minutes 110`, then with `--resume` too until it says it is done |
 
