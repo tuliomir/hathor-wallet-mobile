@@ -1,11 +1,30 @@
 appId: network.hathor.wallet
 ---
 # Back out of wherever a scenario ended (a dialog, the send or create screens) to the dashboard.
+# Looks for the dashboard with a short wait of its own: as the loop's condition, Maestro would give
+# a dashboard that shows its full 7 s to go away. A back on the dashboard would leave the app.
+- evalScript: ${output.atDashboard = false}
+- runFlow:
+    label: "is this the dashboard?"
+    optional: true
+    commands:
+      - extendedWaitUntil:
+          visible: "Nano Contracts"
+          timeout: 500
+      - evalScript: ${output.atDashboard = true}
 - repeat:
     times: 14
     while:
-      notVisible: "Nano Contracts"
+      true: ${!output.atDashboard}
     commands:
       - back
       - waitForAnimationToEnd
+      - runFlow:
+          label: "is this the dashboard?"
+          optional: true
+          commands:
+            - extendedWaitUntil:
+                visible: "Nano Contracts"
+                timeout: 500
+            - evalScript: ${output.atDashboard = true}
 - assertVisible: "Nano Contracts"
