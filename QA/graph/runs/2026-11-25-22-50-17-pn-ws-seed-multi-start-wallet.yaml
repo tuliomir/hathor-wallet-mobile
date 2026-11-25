@@ -1,0 +1,21 @@
+# This test was run based on the YAML of 2026-11-25, version from commit 68b8d6f3, with the tools at commit a1ce8fd1 (with uncommitted changes).
+yamlCommit: 68b8d6f3
+yamlDate: 2026-11-25
+toolsCommit: a1ce8fd1 (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-25 13:31:19
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: start-wallet scenarios of pn-ws-seed-multi"
+  picks: []
+results:
+  - scenario: start-wallet:pn-ws-seed-multi:unlocked
+    status: passed
+    notes: on the wallet-service; the app does not ignore the wallet service
+  - scenario: start-wallet:pn-ws-seed-multi:locked
+    status: passed
+    notes: on the fullnode; the app ignores the wallet service
+  - scenario: start-wallet:pn-ws-seed-multi:broken-key
+    status: passed
+    notes: on the fullnode; the app ignores the wallet service

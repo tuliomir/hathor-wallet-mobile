@@ -1,0 +1,77 @@
+# This test was run based on the YAML of 2026-11-25, version from commit 68b8d6f3, with the tools at commit a1ce8fd1 (with uncommitted changes).
+yamlCommit: 68b8d6f3
+yamlDate: 2026-11-25
+toolsCommit: a1ce8fd1 (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-25 13:31:19
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: receive-payment scenarios of pn-fn-seed-multi"
+  picks: []
+results:
+  - scenario: receive-payment:pn-fn-seed-multi:htr.legacy-public.registered.closed.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.01 HTR in
+      00479719f8199d0eaf8238b67361502b7141af9ceb5bd15d502b07b0a68cf2fe"
+  - scenario: receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.unlocked
+    status: passed
+    notes: "reached: ok-import-banner; received 1.02 EN02 in
+      00b12d379f9db71bbf2b718a9f693b1b53337d04e674ca2aa5ec32c9fce82e2e"
+  - scenario: receive-payment:pn-fn-seed-multi:deposit.shown-public.registered.open.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.03 E2ED in
+      00ba8b53b720a59897a085869a5aef22a6bcd31f119ab4b411ac4d7a413de26f"
+  - scenario: receive-payment:pn-fn-seed-multi:deposit.private.registered.open.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.04 E2ED in
+      002ecfd98a60af8cd04aeed2629782509bde4960628d61b41d8b3c696be5673f"
+  - scenario: receive-payment:pn-fn-seed-multi:fee.legacy-public.registered.open.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.05 E2EF in
+      0076dfd5cb2ff49d4e2ec66728c68e8e14b859009bfead755d47976c9b3db77e"
+  - scenario: receive-payment:pn-fn-seed-multi:fee.hide-amount.unregistered.open.unlocked
+    status: passed
+    notes: "reached: ok-import-banner; received 1.06 EN06 in
+      00c6fef149949b157b450d7621800456f352786a7d1e74758a38eda6fc9d6ed3"
+  - scenario: receive-payment:pn-fn-seed-multi:fee.private.registered.closed.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.07 E2EF in
+      00f430768ceed3e883c50a08fca039affcef9d0dc7ff1237bcd9a541f87b78bd"
+  - scenario: receive-payment:pn-fn-seed-multi:htr.hide-amount.registered.open.locked
+    status: passed
+    notes: "reached: edge-locked-count;
+      00f74871e3df49fca738d760850601801215a5a74346b60a84ef158cace18a02 does not
+      show, while a later public payment does; 2 private outputs are locked"
+  - scenario: receive-payment:pn-fn-seed-multi:htr.private.registered.open.locked
+    status: passed
+    notes: "reached: edge-locked-count;
+      001c17305d6ff914671170c0b32ad5cc22670d7e12321c997338c34de3b34f37 does not
+      show, while a later public payment does; 3 private outputs are locked"
+  - scenario: receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.locked
+    status: passed
+    notes: "reached: ok-import-banner; received 1.03 EN03 in
+      0001ec22ca492b9e091a28f32df5e395ee484b30b999cb545df89f0591bcfd39"
+  - scenario: receive-payment:pn-fn-seed-multi:fee.shown-public.unregistered.closed.locked
+    status: passed
+    notes: "reached: ok-import-banner; received 1.04 EN04 in
+      002024361687e59dcf5b5b4d099abef641deb472efad494919977453ce103450"
+  - scenario: receive-payment:pn-fn-seed-multi:htr.shown-public.registered.open.broken-key
+    status: passed
+    notes: "reached: edge-not-shown;
+      00ceb32c9664a56f401f7fabe548a523b891835468553f792b5720e238f97a8f does not
+      show, while a later public payment does"
+  - scenario: receive-payment:pn-fn-seed-multi:deposit.hide-amount.registered.closed.broken-key
+    status: passed
+    notes: "reached: edge-not-shown;
+      002fcf1fc93d4291bef6cf2a59a284fa7e4f5945713ee0036272dec4c106dcaf does not
+      show, while a later public payment does"
+  - scenario: receive-payment:pn-fn-seed-multi:fee.private.unregistered.open.broken-key
+    status: passed
+    notes: "reached: edge-not-shown;
+      00f1bd257742539b90c95dcf17385db9fa18cd1b0af8c691cbbf4adeaadb1833 does not
+      show, while a later public payment does"
+  - scenario: receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.broken-key
+    status: passed
+    notes: "reached: ok-import-banner; received 1.04 EN04 in
+      007abf31222455aca3e92040f47e3ebe4805214cf6ba59885c58da4b541789c7"

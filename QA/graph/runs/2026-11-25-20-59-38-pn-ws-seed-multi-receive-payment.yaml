@@ -1,0 +1,65 @@
+# This test was run based on the YAML of 2026-11-25, version from commit 68b8d6f3, with the tools at commit a1ce8fd1 (with uncommitted changes).
+yamlCommit: 68b8d6f3
+yamlDate: 2026-11-25
+toolsCommit: a1ce8fd1 (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-25 13:31:19
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: receive-payment scenarios of pn-ws-seed-multi"
+  picks: []
+results:
+  - scenario: receive-payment:pn-ws-seed-multi:deposit.shown-public.unregistered.open.unlocked
+    status: passed
+    notes: "reached: edge-late-offer; received 1.01 EN01 in
+      00e5f1967ab49b9b16e2e71af020f16307ddd027c06d8a20e7c70b733c9337df, offered
+      only after a restart"
+  - scenario: receive-payment:pn-ws-seed-multi:htr.legacy-public.registered.open.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.02 HTR in
+      0066be51748e8d33fb8ca036c7cc101b0c9e69be3d46a83b6b843eee407759e9"
+  - scenario: receive-payment:pn-ws-seed-multi:htr.shown-public.registered.open.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.03 HTR in
+      0046715beed9ae33bc17cc6c0a8a734146f80f216a7b1bcd28bbe20d53423668"
+  - scenario: receive-payment:pn-ws-seed-multi:htr.hide-amount.registered.closed.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.04 HTR in
+      003bc0bf6f1d556c9df3bcbf6b6de7131d8efe4d06dc406762b259efeddc8227"
+  - scenario: receive-payment:pn-ws-seed-multi:htr.private.registered.open.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.05 HTR in
+      008c772c69ddf885acfeb50e6403aa32fec85f663e8c9f81f7d2f4ecc534b3ed"
+  - scenario: receive-payment:pn-ws-seed-multi:deposit.legacy-public.unregistered.open.unlocked
+    status: passed
+    notes: "reached: ok-import-banner; received 1.06 EN06 in
+      00f2a8dc0adb21e8399f4187b9c974c36c8f13eba97397754bfd01e4997d5357"
+  - scenario: receive-payment:pn-ws-seed-multi:deposit.shown-public.unregistered.closed.unlocked
+    status: passed
+    notes: "reached: ok-import-banner; received 1.07 EN07 in
+      00785b5933050ff805c99e2adb95b1040043ce6940504ef97fc98c83f0c54df1"
+  - scenario: receive-payment:pn-ws-seed-multi:deposit.hide-amount.unregistered.open.unlocked
+    status: passed
+    notes: "reached: ok-import-banner; received 1.08 EN08 in
+      00aebdfa2f39c28ed6c4647fe13ea11ed4f648891ba76eb4828e0166d732f056"
+  - scenario: receive-payment:pn-ws-seed-multi:deposit.private.registered.closed.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.09 E2ED in
+      00c3e55dd65a221f61171f014209525b3ac95fdb6fc3a7ac335673561c9aad85"
+  - scenario: receive-payment:pn-ws-seed-multi:fee.legacy-public.registered.closed.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.10 E2EF in
+      00bf308c45ff604c2f20c21bdc2614ecbf8f8a5fad1f254301e7d5e59e63edc5"
+  - scenario: receive-payment:pn-ws-seed-multi:fee.shown-public.registered.open.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.11 E2EF in
+      00735170edfa94f79cd04cfd28990be9d8206b34b462798c23e691257eb1621f"
+  - scenario: receive-payment:pn-ws-seed-multi:fee.hide-amount.registered.open.unlocked
+    status: passed
+    notes: "reached: ok-received; received 1.12 E2EF in
+      00acedf9d16e7032b7be61190603f4630cf6367c53940f31b80dfcfb68e82436"
+  - scenario: receive-payment:pn-ws-seed-multi:fee.private.unregistered.open.unlocked
+    status: passed
+    notes: "reached: ok-import-banner; received 1.13 EN13 in
+      0007e4360b8c911453b0c6a000755a2a8d004d06feb2080f23dfdffece8ef4a6"
