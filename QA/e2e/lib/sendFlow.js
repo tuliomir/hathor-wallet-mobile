@@ -12,6 +12,7 @@
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 const YAML = require('yaml');
+const { pinSteps, reachedStep, backGroup } = require('./flowSteps');
 
 const STEP_ORDER = ['address', 'amount', 'confirm', 'authorize'];
 
@@ -85,8 +86,9 @@ const PRIVACY_NAMES = { public: 'Public', 'hide-amount': 'Hide amount', private:
  * @param {object} target
  * @param {string} target.address the destination address for the scenario's dest
  * @param {{ name: string, symbol: string }} target.token the token to send
+ * @param {string} [target.pinUrl] where the runner taps the PIN (lib/flowSteps.js)
  */
-function buildSendFlow(scenario, outcome, { address, token }) {
+function buildSendFlow(scenario, outcome, { address, token, pinUrl }) {
   const { values } = scenario;
   const stopAt = STEP_ORDER.indexOf(outcome.at);
   const groups = [];
@@ -128,11 +130,12 @@ function buildSendFlow(scenario, outcome, { address, token }) {
       { extendedWaitUntil: { visible: 'Transaction summary', timeout: 30000 } },
       tap('send-confirm-send'),
     ]);
-    group('authorize', 'enter the PIN', [{ runFlow: '../enter_pin.yaml' }]);
+    group('authorize', 'enter the PIN', pinSteps(pinUrl));
   }
   // Maestro evaluates ${...} in a label, so the message's placeholders become <name>.
   const expected = outcome.message.replace(/\*\*/g, '').replace(/\$\{([^}]+)\}/g, '<$1>');
-  groups.push({ runFlow: { label: `expect ${outcome.id}: ${expected}`, commands: [outcomeCheck(outcome)] } });
+  groups.push({ runFlow: { label: `expect ${outcome.id}: ${expected}`, commands: [outcomeCheck(outcome), reachedStep(outcome)] } });
+  groups.push(backGroup());
   const yaml = (doc) => YAML.stringify(doc, { lineWidth: 0 });
   return `${yaml({ appId: 'network.hathor.wallet', name: scenario.id })}---\n${yaml(groups)}`;
 }

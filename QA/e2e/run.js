@@ -10,11 +10,16 @@
 // and writes one results file in QA/graph/runs/.
 //
 //   node QA/e2e/run.js --setup pn-fn-seed-multi [--scenarios <id>,<id>] [--dry-run] [--no-cleanup]
-//                      [--no-record] [--action send|create-token] [--unlocked] [--created-tokens]
+//                      [--no-record] [--action send|create-token|start-wallet] [--unlocked]
+//                      [--created-tokens] [--affected <pick>,<pick>] [--since <git ref>]
 //
 // --unlocked picks scenarios as if an unlocked private balance were the only one, so the cover
-// isn't spent on the states the kit can't set up. --created-tokens (send only, implies --unlocked)
+// is all spent on that state. --created-tokens (send only, implies --unlocked)
 // sends only custom tokens, made in the app by the run instead of minted from outside.
+//
+// --affected runs only the scenarios the graph's impact tool says a change reaches, each pick a
+// feature, a flag or an <axis>:<value>; --since picks the features whose files changed since a
+// git ref, uncommitted changes included. For while developing: the full suite comes at the end.
 //
 // The run records the emulator's screen through each flow but onboarding, and writes viewer.html
 // in its evidence dir: the recordings as a playlist, each beside its steps, the running one
@@ -33,7 +38,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { execFileSync, spawnSync } = require('child_process');
+const { execFileSync, spawn, spawnSync } = require('child_process');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const YAML = require('yaml');
 const { loadGraph } = require('../graph/tools/load');
@@ -47,6 +52,9 @@ const { createdTokenOutcome } = require('./lib/createdTokens');
 const walletStart = require('./lib/walletStart');
 const { htrOnDashboard, numpadKeys } = require('./lib/dashboard');
 const { unrunnableReason } = require('./lib/unrunnable');
+const { reachedIn, BACK } = require('./lib/flowSteps');
+const { keysTapped, startPinServer } = require('./lib/pinServer');
+const { pickOf, picksOfFiles, affectedIds } = require('./lib/affected');
 const { startRecording } = require('./lib/recorder');
 const { entriesFrom, runnerEntry, skipRanges } = require('./lib/timeline');
 
@@ -84,13 +92,15 @@ function parseArgs(argv) {
     else if (argv[i] === '--unlocked') args.unlocked = true;
     else if (argv[i] === '--created-tokens') args.createdTokens = true;
     else if (argv[i] === '--scenarios') args.scenarios = argv[i += 1].split(',');
+    else if (argv[i] === '--affected') args.affected = argv[i += 1].split(',');
+    else if (argv[i] === '--since') args.since = argv[i += 1];
     else if (argv[i] === '--dry-run') args.dryRun = true;
     else if (argv[i] === '--no-cleanup') args.noCleanup = true;
     else if (argv[i] === '--no-record') args.noRecord = true;
     else throw new Error(`unknown argument ${argv[i]}`);
   }
   if (!args.setup) {
-    throw new Error('usage: run.js --setup <setup id> [--action send|create-token] [--unlocked] [--created-tokens] [--scenarios <id>,<id>] [--dry-run] [--no-cleanup] [--no-record]');
+    throw new Error('usage: run.js --setup <setup id> [--action send|create-token|start-wallet] [--unlocked] [--created-tokens] [--scenarios <id>,<id>] [--affected <pick>,<pick>] [--since <git ref>] [--dry-run] [--no-cleanup] [--no-record]');
   }
   return args;
 }
@@ -115,10 +125,18 @@ const walletTool = (...args) => execFileSync('node', [path.join(E2E, 'tools', 'w
   .trim().split('\n').pop();
 const git = (...args) => execFileSync('git', args, { cwd: REPO, encoding: 'utf8' }).trim();
 
-function maestro(flow, outDir, retries = 1) {
-  const result = spawnSync(MAESTRO, ['test', `--test-output-dir=${outDir}`, `--debug-output=${outDir}`, flow], {
-    encoding: 'utf8',
-    env: MAESTRO_ENV,
+/** Runs a flow, leaving the runner free to answer it (lib/pinServer.js). */
+async function maestro(flow, outDir, retries = 1) {
+  const args = ['test', `--test-output-dir=${outDir}`, `--debug-output=${outDir}`, flow];
+  const result = await new Promise((resolve, reject) => {
+    const child = spawn(MAESTRO, args, { env: MAESTRO_ENV, stdio: ['ignore', 'pipe', 'pipe'] });
+    const out = { stdout: '', stderr: '' };
+    ['stdout', 'stderr'].forEach((name) => {
+      child[name].setEncoding('utf8');
+      child[name].on('data', (text) => { out[name] += text; });
+    });
+    child.on('error', reject);
+    child.on('close', (status) => resolve({ ...out, status }));
   });
   fs.writeFileSync(path.join(outDir, 'maestro.out'), `${result.stdout}\n${result.stderr}`);
   // Maestro's on-device driver sometimes fails to start; that's not the flow's doing.
@@ -196,9 +214,9 @@ async function chapter(ctx, info, dir, body) {
         parts.push({ start, end: Date.now(), text });
       }
     },
-    flow(file, outDir, as) {
+    async flow(file, outDir, as) {
       const start = Date.now();
-      const result = maestro(file, outDir);
+      const result = await maestro(file, outDir);
       parts.push({ start, end: Date.now(), text: as, outDir });
       return result;
     },
@@ -274,6 +292,31 @@ async function createdToken(dir) {
   throw new Error(`the fullnode does not know the new token ${uid}`);
 }
 
+/**
+ * Runs a scenario's flow, which ends by going back to the dashboard. When it fails before that,
+ * a flow of its own goes back; `back` is false when the app is still elsewhere.
+ */
+async function runToOutcome(flow, flowFile, dir, outcome, ctx, as) {
+  ['enter_pin.yaml', 'to_dashboard.yaml'].forEach((name) => {
+    fs.copyFileSync(path.join(E2E, 'flows', name), path.join(dir, '..', name));
+  });
+  const result = await flow(flowFile, dir, as);
+  const logs = findFiles(dir, 'maestro.log').map((file) => fs.readFileSync(file, 'utf8')).join('\n');
+  const ok = reachedIn(logs, outcome);
+  if (!ctx.pinUrl) {
+    const keys = keysTapped(logs);
+    if ([...PIN].every((digit) => keys[digit])) {
+      Object.assign(ctx, { pinKeys: keys, pinUrl: ctx.pinServer.url });
+    }
+  }
+  let notes = ok ? `reached: ${outcome.id}` : `${result.failed || 'flow failed'}`;
+  if (!result.ok) {
+    const back = await flow(path.join(E2E, 'flows', 'to_dashboard.yaml'), path.join(dir, 'reset'), BACK);
+    if (!back.ok) notes += '; could not return to the dashboard';
+  }
+  return { ok, notes };
+}
+
 // The graph's outcome of a creation that works.
 const CREATED = {
   id: 'ok-created',
@@ -287,22 +330,21 @@ const CREATED = {
  * Makes a custom token of 1000.00 in the app, paid with exactly what it costs: a wallet that held
  * no HTR holds none after, as the zero-HTR scenarios need.
  */
-async function createInApp(appAddress, kind, { name, symbol }, dir, { step, flow }) {
+async function createInApp(ctx, kind, { name, symbol }, dir, { step, flow }) {
   const cost = kind === 'deposit' ? '10' : '0.01';
   await step(`runner: pay the app wallet ${cost} HTR, what ${symbol} costs`, async () => {
-    await fund(appAddress, cost);
+    await fund(ctx.appAddress, cost);
     await sleep(6000);
   });
   const scenario = { id: `setup: create ${symbol}`, values: { token: kind, naming: 'valid', 'mint-amount': 'thousand' } };
   const flowFile = path.join(dir, 'flow.yaml');
   fs.mkdirSync(dir, { recursive: true });
-  const yaml = createTokenFlow.buildCreateTokenFlow(scenario, CREATED, { name, symbol });
+  const { pinUrl } = ctx;
+  const yaml = createTokenFlow.buildCreateTokenFlow(scenario, CREATED, { name, symbol, pinUrl });
   fs.writeFileSync(flowFile, yaml);
-  fs.copyFileSync(path.join(E2E, 'flows', 'enter_pin.yaml'), path.join(dir, '..', 'enter_pin.yaml'));
-  const result = flow(flowFile, dir, `setup: create ${symbol} in the app`);
-  if (!result.ok) throw new Error(`creating ${symbol} failed: ${result.failed}`);
+  const result = await runToOutcome(flow, flowFile, dir, CREATED, ctx, `setup: create ${symbol} in the app`);
+  if (!result.ok) throw new Error(`creating ${symbol} failed: ${result.notes}`);
   const token = await createdToken(dir);
-  flow(path.join(E2E, 'flows', 'to_dashboard.yaml'), path.join(dir, 'reset'), 'runner: back to the dashboard');
   return { name, symbol, uid: token.uid };
 }
 
@@ -313,7 +355,7 @@ async function createTokensInApp(ctx, dir, wanted) {
     const info = { kind: 'setup', id: `create-${key}`, title: `Setup: create ${token.symbol} in the app` };
     // eslint-disable-next-line no-await-in-loop
     await chapter(ctx, info, tokenDir, async (api) => {
-      made[key] = await createInApp(ctx.appAddress, token.kind, token, path.join(tokenDir, 'flow'), api);
+      made[key] = await createInApp(ctx, token.kind, token, path.join(tokenDir, 'flow'), api);
     });
     log(`app: created ${token.symbol} ${made[key].uid}`);
   }
@@ -328,8 +370,8 @@ const facadeOf = (scenario, outcome) => (
  * uses it to tell which scenarios changed since someone watched them. */
 function flowVersion(scenario, outcome, token) {
   const build = {
-    send: () => sendFlow.buildSendFlow(scenario, outcome, { address: '<address>', token }),
-    'create-token': () => createTokenFlow.buildCreateTokenFlow(scenario, outcome, { name: '<name>', symbol: '<symbol>' }),
+    send: () => sendFlow.buildSendFlow(scenario, outcome, { address: '<address>', token, pinUrl: '<pin>' }),
+    'create-token': () => createTokenFlow.buildCreateTokenFlow(scenario, outcome, { name: '<name>', symbol: '<symbol>', pinUrl: '<pin>' }),
     'start-wallet': () => walletStart.buildServerFlow(facadeOf(scenario, outcome)),
   };
   const flow = build[scenario.action]();
@@ -359,7 +401,7 @@ async function onboard(setup, dir, ctx) {
   const onboardInfo = { kind: 'setup', id: 'onboard', title: 'Onboarding: a new wallet on the privnet' };
   // Not recorded: its screen shows the seed, and the viewer and recordings are made to be shared.
   await chapter({ ...ctx, record: false }, onboardInfo, onboardDir, async ({ flow }) => {
-    const result = flow(path.join(E2E, 'flows', 'onboard.yaml'), onboardDir);
+    const result = await flow(path.join(E2E, 'flows', 'onboard.yaml'), onboardDir);
     if (!result.ok) throw new Error(`onboarding failed: ${result.failed}`);
   });
   const seed = findFiles(onboardDir, 'maestro.log')
@@ -375,7 +417,7 @@ async function onboard(setup, dir, ctx) {
     const checkInfo = { kind: 'setup', id: 'check-wallet-service', title: 'Setup: the app is on the wallet service' };
     await chapter(ctx, checkInfo, checkDir, async ({ flow }) => {
       const yaml = walletStart.buildServerFlow('wallet-service');
-      const check = runWritten(flow, checkDir, 'flow.yaml', yaml);
+      const check = await runWritten(flow, checkDir, 'flow.yaml', yaml);
       if (!check.ok) throw new Error(`the app is not on the wallet service: ${check.failed}`);
     });
   }
@@ -406,7 +448,7 @@ async function prepareSends(dir, ctx, plan) {
     const importInfo = { kind: 'setup', id: 'import-tokens', title: `Setup: import the ${minted.length} minted tokens` };
     await chapter(ctx, importInfo, importDir, async ({ flow }) => {
       const names = Object.values(wanted).map(({ name }) => name);
-      const imported = runWritten(flow, importDir, 'flow.yaml', walletStart.buildImportFlow(names));
+      const imported = await runWritten(flow, importDir, 'flow.yaml', walletStart.buildImportFlow(names));
       if (!imported.ok) throw new Error(`importing the minted tokens failed: ${imported.failed}`);
     });
   }
@@ -457,7 +499,7 @@ async function startInState(state, dir, ctx) {
       adbShell(`sqlite3 ${DB} < /data/local/tmp/e2e-record.sql; rm /data/local/tmp/e2e-record.sql`);
     });
     await step('runner: start the app and enter the PIN (adb)', unlock);
-    const result = runWritten(flow, stateDir, 'flow.yaml', walletStart.buildStartedFlow(state));
+    const result = await runWritten(flow, stateDir, 'flow.yaml', walletStart.buildStartedFlow(state));
     if (!result.ok) throw new Error(`the app did not start with the private balance ${state}: ${result.failed}`);
   });
 }
@@ -549,25 +591,22 @@ async function runCreateScenario(scenario, outcome, ctx, dir, { step, flow }) {
   const id = path.basename(dir);
   const wanted = { name: `E2E Created ${id}`, symbol: `EC${id}` };
   const flowFile = path.join(dir, 'flow.yaml');
-  fs.writeFileSync(flowFile, createTokenFlow.buildCreateTokenFlow(scenario, outcome, wanted));
-  fs.copyFileSync(path.join(E2E, 'flows', 'enter_pin.yaml'), path.join(dir, '..', 'enter_pin.yaml'));
-  const result = flow(flowFile, dir);
-  let { ok } = result;
-  let notes = ok ? `reached: ${outcome.id}` : `${result.failed || 'flow failed'}`;
+  const { pinUrl } = ctx;
+  const yaml = createTokenFlow.buildCreateTokenFlow(scenario, outcome, { ...wanted, pinUrl });
+  fs.writeFileSync(flowFile, yaml);
+  let { ok, notes } = await runToOutcome(flow, flowFile, dir, outcome, ctx);
   if (ok && outcome.kind === 'success') {
     const token = await createdToken(dir);
     ok = token.name === wanted.name && token.symbol === wanted.symbol && token.total > 0n;
     notes += `; on chain: ${token.name} (${token.symbol}), ${token.total} units, version ${token.version}`;
   }
-  const back = flow(path.join(E2E, 'flows', 'to_dashboard.yaml'), path.join(dir, 'reset'), 'runner: back to the dashboard for the next scenario');
-  if (!back.ok) notes += '; could not return to the dashboard';
   return { status: ok ? 'passed' : 'failed', notes };
 }
 
 /** The group's setup started the wallet; this reads which facade it ended on. */
 async function runStartScenario(scenario, outcome, dir, { flow }) {
   const facade = facadeOf(scenario, outcome);
-  const result = runWritten(flow, dir, 'flow.yaml', walletStart.buildServerFlow(facade));
+  const result = await runWritten(flow, dir, 'flow.yaml', walletStart.buildServerFlow(facade));
   // The app's own mark of a fallback, so that each outcome has a second witness.
   const ignored = adbShell(`sqlite3 ${DB} "select count(*) from catalystLocalStorage where key='featureFlags:ignoreWalletServiceFlag'"`) === '1';
   const ok = result.ok && ignored === (outcome.id === 'edge-fallback');
@@ -595,20 +634,15 @@ async function runScenario(scenario, outcome, ctx, dir, api) {
   const token = ctx.tokens[scenario.id];
   const before = values.dest !== 'shielded' ? await receivedBy(address, token.uid) : null;
   const flowFile = path.join(dir, 'flow.yaml');
-  fs.writeFileSync(flowFile, sendFlow.buildSendFlow(scenario, outcome, { address, token }));
-  // The generated flow refers to ../enter_pin.yaml; keep a copy of the sub-flows beside it.
-  fs.copyFileSync(path.join(E2E, 'flows', 'enter_pin.yaml'), path.join(dir, '..', 'enter_pin.yaml'));
+  const { pinUrl } = ctx;
+  fs.writeFileSync(flowFile, sendFlow.buildSendFlow(scenario, outcome, { address, token, pinUrl }));
   await step('runner: empty the Send tab\'s address field (adb)', clearSendAddress);
-  const result = flow(flowFile, dir);
-  let notes = result.ok ? `reached: ${outcome.id}` : `${result.failed || 'flow failed'}`;
-  let { ok } = result;
+  let { ok, notes } = await runToOutcome(flow, flowFile, dir, outcome, ctx);
   if (ok && outcome.kind === 'success' && before !== null) {
     const landed = (await receivedBy(address, token.uid)) > before;
     ok = landed;
     notes += landed ? '; the destination received it' : '; but the destination received nothing';
   }
-  const back = flow(path.join(E2E, 'flows', 'to_dashboard.yaml'), path.join(dir, 'reset'), 'runner: back to the dashboard for the next scenario');
-  if (!back.ok) notes += '; could not return to the dashboard';
   return { status: ok ? 'passed' : 'failed', notes };
 }
 
@@ -636,7 +670,7 @@ function writeResults(setupId, results, startedAt, ctx) {
     device: 'Android emulator (AVD hnni, android-36 x86_64)',
     platform: 'android',
     environment: 'local-privnet',
-    scope: { reason: `e2e runner: ${ctx.action} scenarios of ${setupId}${ctx.createdTokens ? ', with tokens created in the app' : ''}${ctx.unlocked ? ', unlocked private balance only' : ''}`, picks: [] },
+    scope: { reason: `e2e runner: ${ctx.action} scenarios of ${setupId}${ctx.createdTokens ? ', with tokens created in the app' : ''}${ctx.unlocked ? ', unlocked private balance only' : ''}${ctx.subset ? `, only ${ctx.subset}` : ''}`, picks: ctx.picks.map((pick) => pick.id) },
     results,
   };
   const file = path.join(REPO, 'QA', 'graph', 'runs', `${startedAt.slice(0, 19).replace(/[:T]/g, '-')}-${setupId}-${ctx.action}${ctx.createdTokens ? '-created-tokens' : ''}.yaml`);
@@ -644,6 +678,25 @@ function writeResults(setupId, results, startedAt, ctx) {
     + `with the tools at commit ${toolsCommit}${dirty}.\n`;
   fs.writeFileSync(file, header + YAML.stringify(doc));
   return file;
+}
+
+/** What --affected and --since pick, and the ids of the scenarios they reach, or null for all. */
+function affectedBy(args, graph, scenarios) {
+  const picks = (args.affected || []).map((name) => pickOf(graph, name));
+  if (args.since) {
+    const files = [
+      git('diff', '--name-only', git('merge-base', args.since, 'HEAD')),
+      git('ls-files', '--others', '--exclude-standard'),
+    ].flatMap((list) => list.split('\n')).filter(Boolean);
+    const changed = picksOfFiles(graph, files);
+    picks.push(...changed.picks);
+    if (changed.unlisted.length) {
+      log(`no feature of the graph lists these changed files; what they reach is not in this run:\n  ${changed.unlisted.join('\n  ')}`);
+    }
+  }
+  if (!args.affected && !args.since) return { picks, affected: null };
+  log(`picked: ${picks.map((pick) => pick.id).join(', ') || 'nothing'}`);
+  return { picks, affected: affectedIds(graph, picks, scenarios) };
 }
 
 async function main() {
@@ -667,9 +720,12 @@ async function main() {
     axes: graph.axes.map((axis) => (only[axis.id]
       ? { ...axis, values: axis.values.filter((v) => only[axis.id].includes(v.id)) } : axis)),
   };
-  const scenarios = allScenarios(picked)
-    .filter((s) => s.setup === setup.id && s.action === action.id)
-    .filter((s) => !args.scenarios || args.scenarios.includes(s.id));
+  const all = allScenarios(picked)
+    .filter((s) => s.setup === setup.id && s.action === action.id);
+  const { picks, affected } = affectedBy(args, graph, all);
+  const scenarios = all
+    .filter((s) => !args.scenarios || args.scenarios.includes(s.id))
+    .filter((s) => !affected || affected.has(s.id));
 
   const expected = (s) => {
     const outcome = outcomes[s.expected[0]];
@@ -678,7 +734,7 @@ async function main() {
   const plan = runOrder(scenarios.map((s) => ({
     scenario: s, skip: unrunnableReason(s), outcome: expected(s),
   })));
-  log(`${plan.length} scenarios, ${plan.filter((p) => !p.skip).length} runnable`);
+  log(`${plan.length} of ${all.length} scenarios, ${plan.filter((p) => !p.skip).length} runnable`);
   if (args.dryRun) {
     plan.forEach((p) => {
       console.log(`${p.skip ? 'skip' : 'run '}  ${p.scenario.id}  ${p.skip || `-> ${p.outcome.id}`}`);
@@ -686,10 +742,11 @@ async function main() {
     return;
   }
 
+  if (!plan.length) return;
   await preflight(setup);
   const runDir = path.join(E2E, 'evidence', startedAt.slice(0, 19).replace(/[:T]/g, '-'));
   fs.mkdirSync(runDir, { recursive: true });
-  await runPlan(setup, plan, runDir, startedAt, args);
+  await runPlan(setup, plan, runDir, startedAt, { ...args, picks });
   log('when done: tear down the emulator and the privnet, and Metro if a debug build ran (README)');
 }
 
@@ -769,13 +826,18 @@ async function runPlan(setup, plan, runDir, startedAt, args) {
     action: args.action,
     createdTokens: args.createdTokens,
     unlocked: args.unlocked,
+    picks: args.picks,
+    subset: [args.scenarios && 'the scenarios named', (args.affected || args.since) && 'what the picks reach'].filter(Boolean).join(', of those '),
   };
+  const pinServer = await startPinServer(ADB, PIN, () => ctx.pinKeys);
+  ctx.pinServer = pinServer;
   const results = [];
   for (const state of STATES) {
     const group = plan.filter((p) => p.scenario.values['private-balance'] === state);
     // eslint-disable-next-line no-await-in-loop
     if (group.length) results.push(...await runGroup(setup, state, group, ctx, args, record));
   }
+  pinServer.close();
   const file = writeResults(setup.id, results, startedAt, ctx);
   const count = (status) => results.filter((result) => result.status === status).length;
   log(`passed ${count('passed')}, failed ${count('failed')}, skipped ${count('skipped')}`);

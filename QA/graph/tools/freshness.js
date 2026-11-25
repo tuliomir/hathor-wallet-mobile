@@ -95,5 +95,5 @@ function describeVersion({ commit, date, dirty, toolsCommit, toolsDirty, }) {
 }
 
 module.exports = {
-  extractFlagNames, extractRoutes, checkFreshness, describeVersion,
+  extractFlagNames, extractRoutes, matchesEntry, checkFreshness, describeVersion,
 };

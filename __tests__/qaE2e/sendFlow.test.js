@@ -23,9 +23,11 @@ const HTR = { name: 'Hathor', symbol: 'HTR' };
 const target = (token = HTR) => ({ address: 'Wabc', token });
 const tapsId = (id) => (s) => Boolean(s.tapOn && s.tapOn.id === id);
 const docs = (flow) => YAML.parseAllDocuments(flow).map((doc) => doc.toJS());
+// Every flow's end (the mark for the runner, the way back) has its tests in flowSteps.test.js.
+const groups = (flow) => docs(flow)[1].slice(0, -1);
 // The commands of every labelled group, in order.
-const steps = (flow) => docs(flow)[1].flatMap((group) => group.runFlow.commands);
-const labels = (flow) => docs(flow)[1].map((group) => group.runFlow.label);
+const steps = (flow) => groups(flow).flatMap((group) => group.runFlow.commands).slice(0, -1);
+const labels = (flow) => groups(flow).map((group) => group.runFlow.label);
 const has = (list, predicate) => list.some(predicate);
 
 describe('send flow', () => {

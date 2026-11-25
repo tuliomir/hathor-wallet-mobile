@@ -23,7 +23,9 @@ const OK = { id: 'ok-created', kind: 'success', at: 'confirm', message: '**${nam
 const error = (at, message = 'Next stays disabled') => ({ id: 'e', kind: 'error', at, message });
 const steps = (values, outcome) => YAML.parseAllDocuments(
   buildCreateTokenFlow(scenario(values), outcome, TOKEN),
-)[1].toJS().flatMap((group) => group.runFlow.commands);
+)[1].toJS().slice(0, -1).flatMap((group) => group.runFlow.commands)
+  // Every flow's end (the mark for the runner, the way back) has its tests in flowSteps.test.js.
+  .slice(0, -1);
 const taps = (list) => list.map((s) => s.tapOn && s.tapOn.id).filter(Boolean);
 const typed = (list) => list.map((s) => s.inputText).filter(Boolean);
 

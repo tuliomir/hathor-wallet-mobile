@@ -12,6 +12,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const YAML = require('yaml');
 const { messagePattern } = require('./sendFlow');
+const { pinSteps, reachedStep, backGroup } = require('./flowSteps');
 
 const STEP_ORDER = ['type', 'name', 'symbol', 'amount', 'confirm', 'authorize', 'detail'];
 const tap = (id) => ({ tapOn: { id } });
@@ -47,9 +48,10 @@ function amountSteps(amount) {
  *
  * @param {{ id: string, values: object }} scenario from the graph
  * @param {{ id: string, at: string, message: string, kind: string }} outcome the expected outcome
- * @param {{ name: string, symbol: string }} token what to type
+ * @param {{ name: string, symbol: string, pinUrl?: string }} token what to type, and where the
+ *   runner taps the PIN (lib/flowSteps.js)
  */
-function buildCreateTokenFlow(scenario, outcome, { name, symbol }) {
+function buildCreateTokenFlow(scenario, outcome, { name, symbol, pinUrl }) {
   const { values } = scenario;
   const success = outcome.kind === 'success';
   const stopAt = success ? STEP_ORDER.length : STEP_ORDER.indexOf(outcome.at);
@@ -98,14 +100,14 @@ function buildCreateTokenFlow(scenario, outcome, { name, symbol }) {
       ...(values.token === 'fee' ? [{ assertVisible: '0.01 HTR' }] : []),
       tap('create-token-confirm'),
     ]);
-    group('authorize', 'enter the PIN', [{ runFlow: '../enter_pin.yaml' }]);
+    group('authorize', 'enter the PIN', pinSteps(pinUrl));
   }
 
   const expected = outcome.message.replace(/\*\*/g, '').replace(/\$\{([^}]+)\}/g, '<$1>');
   const check = outcome.message.startsWith('Next stays disabled')
     ? { assertVisible: { id: `create-token-${outcome.at}-next`, enabled: false } }
     : waitFor(messagePattern(outcome.message), 60000);
-  groups.push({ runFlow: { label: `expect ${outcome.id}: ${expected}`, commands: [check] } });
+  groups.push({ runFlow: { label: `expect ${outcome.id}: ${expected}`, commands: [check, ...(success ? [] : [reachedStep(outcome)])] } });
   if (success) {
     group('detail', 'check the new token\'s details', [
       // The success modal has no button: it closes on a tap on its backdrop (README "Selectors").
@@ -116,8 +118,10 @@ function buildCreateTokenFlow(scenario, outcome, { name, symbol }) {
       // The runner reads the token's uid from this line.
       // eslint-disable-next-line no-template-curly-in-string
       { evalScript: '${console.log("E2E_TOKEN " + maestro.copiedText)}' },
+      reachedStep(outcome),
     ]);
   }
+  groups.push(backGroup());
   const yaml = (doc) => YAML.stringify(doc, { lineWidth: 0 });
   return `${yaml({ appId: 'network.hathor.wallet', name: scenario.id })}---\n${yaml(groups)}`;
 }
