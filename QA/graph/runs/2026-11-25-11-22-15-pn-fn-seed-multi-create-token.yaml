@@ -1,0 +1,74 @@
+# This test was run based on the YAML of 2026-11-24, version from commit e749d426, with the tools at commit d194f417 (with uncommitted changes).
+yamlCommit: e749d426
+yamlDate: 2026-11-24
+toolsCommit: d194f417 (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-24 10:19:58
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: create-token scenarios of pn-fn-seed-multi"
+  picks: []
+results:
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-not-enough-htr"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.cents.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-late-deposit-fn"
+  - scenario: create-token:pn-fn-seed-multi:fee.valid.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-not-enough-htr"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.over-balance.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-not-enough-htr"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.over-by-rounding.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-late-deposit-fn"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.empty.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-empty-amount"
+  - scenario: create-token:pn-fn-seed-multi:deposit.empty-name.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-empty-name"
+  - scenario: create-token:pn-fn-seed-multi:deposit.short-symbol.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-short-symbol"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.exact.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-created; on chain: E2E Created 09 (EC09), 1200000 units,
+      version 1"
+  - scenario: create-token:pn-fn-seed-multi:fee.valid.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-created; on chain: E2E Created 10 (EC10), 10000 units,
+      version 2"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.cents.zero-htr.locked
+    status: passed
+    notes: "reached: err-locked"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.normal.enough-htr.locked
+    status: passed
+    notes: "reached: err-locked"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.exact.enough-htr.locked
+    status: passed
+    notes: "reached: err-locked"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.over-by-rounding.enough-htr.locked
+    status: passed
+    notes: "reached: err-locked"
+  - scenario: create-token:pn-fn-seed-multi:fee.valid.cents.enough-htr.locked
+    status: passed
+    notes: "reached: err-locked"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.cents.zero-htr.broken-key
+    status: passed
+    notes: "reached: err-private-unavailable"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.normal.enough-htr.broken-key
+    status: passed
+    notes: "reached: err-private-unavailable"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.exact.enough-htr.broken-key
+    status: passed
+    notes: "reached: err-private-unavailable"
+  - scenario: create-token:pn-fn-seed-multi:deposit.valid.over-by-rounding.enough-htr.broken-key
+    status: passed
+    notes: "reached: err-private-unavailable"
+  - scenario: create-token:pn-fn-seed-multi:fee.valid.normal.enough-htr.broken-key
+    status: passed
+    notes: "reached: err-private-unavailable"
