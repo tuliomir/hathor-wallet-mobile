@@ -164,7 +164,7 @@ describe('qa graph impact on QA/graph/graph.yaml', () => {
   it('flag wallet-service reaches every action on the wallet-service facade', () => {
     const impact = impactOf('flag', 'wallet-service');
     const onWs = impact.scenarios.filter((s) => s.values.facade === 'wallet-service');
-    expect(actionsOf({ scenarios: onWs })).toEqual(['create-token', 'history', 'receive', 'send', 'start-wallet']);
+    expect(actionsOf({ scenarios: onWs })).toEqual(['create-token', 'history', 'receive', 'receive-payment', 'send', 'start-wallet']);
   });
 
   it('flag fee-based-tokens reaches the fee-token sends', () => {
@@ -189,6 +189,6 @@ describe('qa graph impact on QA/graph/graph.yaml', () => {
   });
 
   it('tx-history does not re-run the sends', () => {
-    expect(actionsOf(impactOf('feature', 'tx-history'))).toEqual(['history']);
+    expect(actionsOf(impactOf('feature', 'tx-history'))).toEqual(['history', 'receive-payment']);
   });
 });

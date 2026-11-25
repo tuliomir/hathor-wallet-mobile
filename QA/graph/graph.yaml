@@ -130,6 +130,23 @@ features:
     introduces: []
     actions: [receive]
 
+  - id: payment-arrival
+    name: Payments arriving
+    description: A payment to the wallet updates its balances and history, offers an unregistered token for import, and is found again when the app was closed as it arrived.
+    status: in-scope
+    screens: [Dashboard, MainScreen]
+    files:
+      - src/sagas/wallet.js
+      - src/sagas/tokens.js
+      - src/sagas/tokenImport.js
+    flags: []
+    links:
+      - { to: shielded, reason: A private payment counts in the balance only once the wallet decodes it }
+      - { to: token-import, reason: A payment in an unregistered token shows the banner to import it }
+      - { to: tx-history, reason: The payment's row and details are the token's history }
+    introduces: []
+    actions: [receive-payment]
+
   - id: address-mode
     name: Address mode
     description: The user chooses between one fixed address (single) and a new address after each receive (multi).
@@ -916,6 +933,53 @@ axes:
       cost: medium # QA: confirm
       transitions: []
 
+  - id: payment
+    name: How a payment arrives
+    kind: action
+    values:
+      - { id: legacy-public, name: 'Public, to a legacy (W...) address' }
+      - { id: shown-public, name: 'Public, to the private address Receive shows' }
+      - { id: hide-amount, name: 'Amount hidden, to the private address' }
+      - { id: private, name: 'Amount and token hidden, to the private address' }
+    how: Pay the wallet from another one, picking the privacy mode there (on the local privnet, `QA/e2e/tools/wallet.js send`).
+    switch:
+      cost: cheap
+      transitions: []
+
+  - id: known
+    name: Token registered
+    kind: action
+    values:
+      - { id: registered, name: The wallet has the token registered }
+      - { id: unregistered, name: The wallet never saw the token }
+    how: HTR is always registered. Import a custom token from the dashboard banner to register it; pay with a new one to have it unregistered.
+    switch:
+      cost: cheap
+      transitions: []
+
+  - id: app
+    name: The app as the payment arrives
+    kind: action
+    values:
+      - { id: open, name: Open }
+      - { id: closed, name: Closed and opened after }
+    how: Kill the app before paying, then open it and enter the PIN.
+    switch:
+      cost: cheap
+      transitions: []
+
+  - id: entry
+    name: What the transaction did
+    kind: action
+    values:
+      - { id: received, name: Received }
+      - { id: sent, name: Sent }
+      - { id: self, name: Sent by the wallet to itself }
+    how: Pay the wallet from another one, send from it, or send to an address of its own.
+    switch:
+      cost: cheap
+      transitions: []
+
   - id: private-balance
     name: Private balance state
     kind: action
@@ -1179,7 +1243,7 @@ actions:
     name: Receive (show and share an address)
     feature: receive
     axes: [private-balance]
-    setups: [tn-ws-seed-single, tn-ws-seed-multi, tn-fn-seed-single, tn-fn-seed-multi, tns-ws-seed-multi, tns-fn-seed-multi, tns-ws-seed-single]
+    setups: [tn-ws-seed-single, tn-ws-seed-multi, tn-fn-seed-single, tn-fn-seed-multi, tns-ws-seed-multi, tns-fn-seed-multi, tns-ws-seed-single, pn-fn-seed-multi, pn-ws-seed-multi]
     path:
       steps:
         - { id: open, screen: Receive, name: Open the Receive tab and read the address and QR code }
@@ -1212,11 +1276,57 @@ actions:
           source: 'src/components/Shielded/PrivateReceiveAddress.js:64'
           verified: false
 
+  - id: receive-payment
+    name: Receive a payment
+    feature: payment-arrival
+    axes: [token, payment, known, app, private-balance]
+    setups: [tns-ws-seed-multi, tns-fn-seed-multi, pn-fn-seed-multi, pn-ws-seed-multi]
+    path:
+      steps:
+        - { id: pay, screen: Dashboard, name: 'Pay the wallet from another one, with the app open or closed' }
+        - { id: list, screen: Dashboard, name: Read the token's balance on Home (import the token first when the banner offers it) }
+        - { id: token, screen: MainScreen, name: 'Open the token: its balance, its private and public parts, and the payment on top of its history' }
+      outcomes:
+        - id: ok-received
+          kind: success
+          at: token
+          message: 'Received ${symbol}'
+          source: 'src/models.js:106'
+          verified: false
+          note: 'The balance grows by exactly the amount, on Home and on the token screen, and so does its private or public part.'
+        - id: ok-import-banner
+          kind: success
+          at: list
+          message: 'We found tokens linked to your address that are not yet in your wallet.'
+          source: 'src/components/TokenImportBanner.js:63'
+          verified: false
+          note: 'Importing the token from the banner registers it with the amount paid.'
+        - id: edge-late-offer
+          kind: error
+          at: list
+          message: The token is not offered for import until the app starts again
+          source: 'src/sagas/wallet.js:1069'
+          verified: false
+        - id: edge-locked-count
+          kind: error
+          at: token
+          message: '${count} private output is locked'
+          source: 'src/components/Shielded/ShieldedBalanceSplit.js:48'
+          verified: false
+          note: 'The count, which is over the whole wallet, grows by one, and no balance changes.'
+        - id: edge-not-shown
+          kind: error
+          at: token
+          message: Private transfers are not available for this wallet.
+          source: 'src/components/Shielded/ShieldedBalanceSplit.js:97'
+          verified: false
+          note: 'The payment, a public one to the private address included, shows nowhere.'
+
   - id: history
     name: Token balance and history
     feature: tx-history
-    axes: [token, private-balance]
-    setups: [tn-ws-seed-multi, tn-fn-seed-multi, tns-ws-seed-multi, tns-fn-seed-multi]
+    axes: [token, entry, privacy, private-balance]
+    setups: [tn-ws-seed-multi, tn-fn-seed-multi, tns-ws-seed-multi, tns-fn-seed-multi, pn-fn-seed-multi, pn-ws-seed-multi]
     path:
       steps:
         - { id: list, screen: Dashboard, name: Read the token list balances on Home }
@@ -1541,7 +1651,82 @@ constraints:
     outcome: edge-private-unavailable
     note: 'With mismatched keys the receive screen says "Private transfers are not available for this wallet." (receiveState.js:177).'
 
+  # receive-payment
+  - id: c-pay-ws-private-balance
+    action: receive-payment
+    when: { facade: wallet-service, private-balance: [locked, broken-key] }
+    class: invalid
+    note: 'The wallet service has neither state: the app falls back to the fullnode facade (start-wallet, c-start-ws-fallback).'
+  - id: c-pay-htr-registered
+    action: receive-payment
+    when: { token: htr, known: unregistered }
+    class: invalid
+    note: HTR is always registered.
+  - id: c-pay-ws-late-offer
+    action: receive-payment
+    when: { facade: wallet-service, known: unregistered, payment: shown-public, app: open }
+    class: edge
+    outcome: edge-late-offer
+    note: "getTxBalance of wallet-lib's wallet-service facade knows the legacy addresses only, and the app asks for the wallet's token list only when a shielded output pays it (paysShieldedToWallet in src/sagas/wallet.js), so this public payment goes unnoticed (QA/e2e/ROADMAP.md \"Findings\")."
+  - id: c-pay-ws-offer-at-start
+    action: receive-payment
+    when: { facade: wallet-service, known: unregistered, payment: shown-public, app: closed }
+    class: edge
+    outcome: ok-import-banner
+    note: At its start the app asks for the wallet's token list (fetchUnregisteredTokens in src/sagas/tokenImport.js).
+  - id: c-pay-ws-unregistered
+    action: receive-payment
+    when: { facade: wallet-service, known: unregistered, payment: [legacy-public, hide-amount, private] }
+    class: edge
+    outcome: ok-import-banner
+    note: As on the fullnode.
+  - id: c-pay-unregistered
+    action: receive-payment
+    when: { facade: fullnode, known: unregistered, private-balance: unlocked }
+    class: edge
+    outcome: ok-import-banner
+    note: handleTx (src/sagas/wallet.js) finds the token in the transaction, or in the wallet's token list when a shielded output hides it.
+  - id: c-pay-unregistered-locked
+    action: receive-payment
+    when: { known: unregistered, private-balance: locked, payment: [legacy-public, shown-public] }
+    class: edge
+    outcome: ok-import-banner
+    note: A locked private balance hides only what is private.
+  - id: c-pay-unregistered-broken-key
+    action: receive-payment
+    when: { known: unregistered, private-balance: broken-key, payment: legacy-public }
+    class: edge
+    outcome: ok-import-banner
+    note: Payments to legacy addresses don't depend on the shielded keys.
+  - id: c-pay-locked-private
+    action: receive-payment
+    when: { private-balance: locked, payment: [hide-amount, private] }
+    class: edge
+    outcome: edge-locked-count
+    note: The wallet sees that its output is there, and neither its amount nor its token.
+  - id: c-pay-broken-key
+    action: receive-payment
+    when: { private-balance: broken-key, payment: [shown-public, hide-amount, private] }
+    class: edge
+    outcome: edge-not-shown
+    note: 'With mismatched keys the wallet uses none of its shielded keys, so it does not watch its shielded addresses (QA/e2e/ROADMAP.md "Findings"). Receive shows no address then, but a payer may have an old one.'
+  - id: c-pay-ws-hidden-token
+    action: receive-payment
+    when: { facade: wallet-service, payment: [hide-amount, private], known: unregistered }
+    class: lib-risk
+    note: On the wallet service a private payment names neither its amount nor its token, which the app finds in the service's token list (detectUnregisteredWalletTokens).
+
   # history
+  - id: c-hist-no-privacy-outside
+    action: history
+    when: { network: testnet, privacy: [hide-amount, private] }
+    class: invalid
+    note: Private sends need the shielded environment.
+  - id: c-hist-locked-public-only
+    action: history
+    when: { private-balance: [locked, broken-key], privacy: [hide-amount, private] }
+    class: invalid
+    note: 'What is private does not show in these states: receive-payment and send cover it.'
   - id: c-hist-private-balance-outside
     action: history
     when: { network: testnet, private-balance: [locked, broken-key] }
