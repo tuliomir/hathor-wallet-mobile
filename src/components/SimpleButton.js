@@ -21,6 +21,7 @@ import { PRIMARY_COLOR, SHRINK_TEXT_TO_FIT } from '../constants';
  * @property {Object} [containerStyle] - The style object for the container of the button.
  * @property {Function} onPress - The function to be called when the button is pressed.
  * @property {Object} children - The children component to be rendered.
+ * @property {string} [testID] - The id e2e tests find the button by.
  * @property {boolean} [adjustsFontSizeToFit=SHRINK_TEXT_TO_FIT] - Whether the font size should
  *   automatically adjust to fit. By default only on iOS (see SHRINK_TEXT_TO_FIT).
  *
@@ -35,6 +36,7 @@ const SimpleButton = ({
   containerStyle,
   onPress,
   children,
+  testID,
   adjustsFontSizeToFit = SHRINK_TEXT_TO_FIT
 }) => {
   const renderTitle = () => {
@@ -72,6 +74,7 @@ const SimpleButton = ({
   };
   return (
     <TouchableOpacity
+      testID={testID}
       onPress={onPress}
       style={[styles.container, containerStyle]}
     >

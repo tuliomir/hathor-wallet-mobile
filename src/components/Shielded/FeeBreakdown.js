@@ -51,13 +51,14 @@ export default function FeeBreakdown({
   return (
     <View style={style}>
       <TouchableOpacity
+        testID='fees'
         style={[styles.feeRow, rowStyle]}
         onPress={() => setIsExpanded((expanded) => !expanded)}
         activeOpacity={0.6}
       >
         <Text style={styles.feeRowLabel}>{t`Fees`}</Text>
         <View style={styles.feeRowValueWrapper}>
-          <Text style={styles.feeRowValue}>{formatFee(total)}</Text>
+          <Text testID='fees-total' style={styles.feeRowValue}>{formatFee(total)}</Text>
           {isExpanded
             ? <ChevronUpIcon size={16} color={COLORS.textColor} />
             : <ChevronDownIcon size={16} color={COLORS.textColor} />}
@@ -68,13 +69,13 @@ export default function FeeBreakdown({
           {network > 0n && (
             <View style={styles.feeBreakdownRow}>
               <Text style={styles.feeBreakdownLabel}>{t`Network fee`}</Text>
-              <Text style={styles.feeBreakdownValue}>{formatFee(network)}</Text>
+              <Text testID='fees-network' style={styles.feeBreakdownValue}>{formatFee(network)}</Text>
             </View>
           )}
           {privacy > 0n && (
             <View style={styles.feeBreakdownRow}>
               <Text style={styles.feeBreakdownLabel}>{t`Privacy fee`}</Text>
-              <Text style={styles.feeBreakdownValue}>{formatFee(privacy)}</Text>
+              <Text testID='fees-privacy' style={styles.feeBreakdownValue}>{formatFee(privacy)}</Text>
             </View>
           )}
         </View>

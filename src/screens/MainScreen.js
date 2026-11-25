@@ -595,15 +595,15 @@ class TxListItem extends React.Component {
         onPress={() => this.onItemPress(item)}
         underlayColor={COLORS.primaryOpacity30}
       >
-        <View style={style.view}>
+        <View testID={`tx-row-${item.txId}`} style={style.view}>
           {image}
           <View style={style.middleView}>
-            <Text style={style.description}>{description}</Text>
+            <Text testID={`tx-description-${item.txId}`} style={style.description}>{description}</Text>
             <Text style={style.secondaryText}>{timestamp}</Text>
             <Text style={[style.secondaryText, style.bold]}>{item.getVersionInfo()}</Text>
             {this.props.accessory ?? null}
           </View>
-          <Text style={style.balance}>{balanceStr}</Text>
+          <Text testID={`tx-amount-${item.txId}`} style={style.balance}>{balanceStr}</Text>
         </View>
       </TouchableHighlight>
     );
@@ -670,7 +670,7 @@ class BalanceView extends React.Component {
     const { style } = this;
     return (
       <View style={style.center}>
-        <FitText style={style.balanceAvailable}>
+        <FitText testID='token-available-balance' style={style.balanceAvailable}>
           {`${availableStr} ${token.symbol}`}
         </FitText>
         <Text style={style.text1}>{t`Available Balance`}</Text>

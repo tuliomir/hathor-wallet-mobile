@@ -85,11 +85,12 @@ function SharedAddress({ shielded = false }) {
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.qrcodeWrapper}>
+      <View testID='receive-qr-code' style={styles.qrcodeWrapper}>
         <QRCode value={`hathor:${lastSharedAddress}`} size={height < 650 ? 160 : 250} />
       </View>
       <View style={styles.addressWrapper}>
         <CopyClipboard
+          testID='receive-address'
           text={lastSharedAddress}
           textStyle={{ fontSize: height < 650 ? 11 : 13 }}
         />
@@ -97,12 +98,14 @@ function SharedAddress({ shielded = false }) {
       <View style={styles.buttonRow}>
         {addressMode !== ADDRESS_MODE.SINGLE && (
           <SimpleButton
+            testID='receive-new-address'
             title={t`New address`}
             onPress={getNextAddress}
             containerStyle={[styles.buttonContainer, styles.leftButtonBorder]}
           />
         )}
         <SimpleButton
+          testID='receive-share'
           onPress={shareAddress}
           title={t`Share`}
           color={COLORS.textColor}

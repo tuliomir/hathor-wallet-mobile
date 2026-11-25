@@ -45,9 +45,10 @@ export function fitFontSize(fontSize, minimumFontSize, availableWidth, widths) {
  * @param {Object} props
  * @param {Object|Object[]} props.style The style of the text, with its full font size
  * @param {number} [props.minimumFontScale=0.5] The smallest fraction of the font size to use
+ * @param {string} [props.testID] The id e2e tests find the visible text by
  * @param {React.ReactNode} props.children The text
  */
-const FitText = ({ style, minimumFontScale = 0.5, children }) => {
+const FitText = ({ style, minimumFontScale = 0.5, testID, children }) => {
   const [availableWidth, setAvailableWidth] = useState(0);
   const fontSize = StyleSheet.flatten(style)?.fontSize ?? DEFAULT_FONT_SIZE;
   // The widths measured for the current text; a new text or font size starts over.
@@ -75,6 +76,7 @@ const FitText = ({ style, minimumFontScale = 0.5, children }) => {
   if (SHRINK_TEXT_TO_FIT) {
     return (
       <Text
+        testID={testID}
         style={style}
         numberOfLines={1}
         adjustsFontSizeToFit
@@ -99,7 +101,7 @@ const FitText = ({ style, minimumFontScale = 0.5, children }) => {
       style={styles.container}
       onLayout={(e) => setAvailableWidth(e.nativeEvent.layout.width)}
     >
-      <Text style={[style, { fontSize: visibleSize }]} numberOfLines={1}>
+      <Text testID={testID} style={[style, { fontSize: visibleSize }]} numberOfLines={1}>
         {children}
       </Text>
       <View style={styles.measure} pointerEvents='none' importantForAccessibility='no-hide-descendants'>

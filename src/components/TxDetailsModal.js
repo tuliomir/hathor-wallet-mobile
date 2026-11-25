@@ -54,6 +54,7 @@ class TxDetailsModal extends Component {
 
   getCopyClipboard = ({ text, copyText }) => (
     <CopyClipboard
+      testID='tx-details-id'
       text={text}
       copyText={copyText}
       textStyle={{ fontSize: 16 }}
@@ -179,10 +180,10 @@ class BalanceView extends Component {
     const balanceStr = renderValue(tx.balance, isNFT, decimalPlaces, amountFormat);
     return (
       <View style={this.style.view}>
-        <FitText style={this.style.balance}>
+        <FitText testID='tx-details-amount' style={this.style.balance}>
           {`${balanceStr} ${this.props.token.symbol}`}
         </FitText>
-        <Text style={this.style.description}>{description}</Text>
+        <Text testID='tx-details-description' style={this.style.description}>{description}</Text>
       </View>
     );
   }

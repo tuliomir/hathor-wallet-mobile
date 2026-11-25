@@ -65,7 +65,7 @@ const TokenSelect = (props) => {
         onPress={() => { props.onItemPress(item); }}
         underlayColor={COLORS.primaryOpacity30}
       >
-        <View style={styles.itemWrapper}>
+        <View testID={`token-row-${item.uid}`} style={styles.itemWrapper}>
           <TokenAvatar uid={item.uid} symbol={item.symbol} size={40} />
           <View style={styles.itemCenterWrapper}>
             {item.idTag ? (
@@ -98,7 +98,7 @@ const TokenSelect = (props) => {
           </View>
           <View style={styles.itemRightWrapper}>
             {tokenState === TOKEN_DOWNLOAD_STATUS.READY && (
-              <Text style={styles.balanceText}>
+              <Text testID={`token-balance-${item.uid}`} style={styles.balanceText}>
                 {balanceLabel}
               </Text>
             )}
