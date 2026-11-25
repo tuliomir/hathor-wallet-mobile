@@ -1,0 +1,33 @@
+<!-- @dsCard height=300 -->
+<!doctype html>
+<html><body style="margin:0">
+<style>
+.cv{position:relative;width:960px;height:300px;background:var(--surface-0);overflow:hidden;font-family:var(--font-sans)}
+.slab{fill:var(--surface-1)}.done{fill:var(--pass-fill)}.run{fill:var(--run)}.amber{fill:var(--needs)}.fail{fill:var(--fail)}
+.est{fill:none;stroke:var(--estimate-line);stroke-width:1.5}.guess{stroke-dasharray:5 4}
+.tick{stroke:var(--line-strong);stroke-width:1}.now{fill:var(--run)}
+.bar{rx:var(--radius-xs)}
+.name{position:absolute;left:56px;top:168px;margin:0;font-size:64px;line-height:.95;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+.tag{position:absolute;left:58px;top:240px;margin:0;font-size:14px;color:var(--ink-dim);max-width:440px}
+</style>
+<div class="cv">
+<svg width="960" height="128" viewBox="0 0 960 128" aria-hidden="true" style="position:absolute;left:0;top:0">
+<!-- blocks: surface-1 slab 960×128, pass-fill bars (done jobs), run bar + now line, needs block 48×20, fail 12×20 (state, kept small) -->
+<!-- arrangement: a strip of unequal horizontal bands bleeding off the right edge, composed like the plan timeline -->
+<!-- pattern: hairline time-axis rules (line-strong), five of them — the brand is a precise instrument laid out on a real time axis -->
+<!-- scales: bar height 20 = space-5, row pitch 28, gaps space-2/space-1, corners radius-xs -->
+<rect class="slab" x="0" y="0" width="960" height="128"/>
+<line class="tick" x1="160" y1="0" x2="160" y2="128"/><line class="tick" x1="352" y1="0" x2="352" y2="128"/><line class="tick" x1="544" y1="0" x2="544" y2="128"/><line class="tick" x1="736" y1="0" x2="736" y2="128"/><line class="tick" x1="928" y1="0" x2="928" y2="128"/>
+<rect class="done bar" x="56" y="16" width="148" height="20"/>
+<rect class="done bar" x="208" y="44" width="232" height="20"/>
+<rect class="est bar" x="444" y="72" width="300" height="20"/>
+<rect class="run bar" x="444" y="76" width="88" height="12"/>
+<rect class="est bar guess" x="748" y="100" width="240" height="20"/>
+<rect class="amber bar" x="760" y="44" width="48" height="20"/>
+<rect class="fail bar" x="816" y="44" width="12" height="20"/>
+<rect class="now" x="532" y="0" width="3" height="128"/>
+</svg>
+<h1 class="name">E2E Run Dashboard</h1>
+<p class="tag">A calm instrument panel for a long mobile test run. Only failure is loud.</p>
+</div>
+</body></html>

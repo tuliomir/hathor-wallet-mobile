@@ -1,0 +1,95 @@
+/* E2E Run Dashboard — generated from tokens.json by tools/build-tokens-css.mjs; do not edit */
+:root, [data-theme="dark"] {
+  --surface-0: #0f1115;
+  --surface-1: #151922;
+  --surface-2: #1a1f2a;
+  --surface-3: #202633;
+  --line: #262c38;
+  --line-soft: #20252f;
+  --line-strong: #3a4252;
+  --ink: #e6e8ec;
+  --ink-soft: #c9cfd8;
+  --ink-dim: #8d96a6;
+  --ink-faint: #4b5466;
+  --link: #8cbcff;
+  --info-bg: #1f2a3a;
+  --info-line: #3d5a80;
+  --run: #5fd4c4;
+  --run-bg: #12302c;
+  --run-line: #2a5a54;
+  --pass: #7ad69a;
+  --pass-fill: #3f7f62;
+  --fail: #ff6b7a;
+  --fail-bg: #3a1a20;
+  --needs: #ffd27a;
+  --needs-bg: #2e2614;
+  --finding: #c4b5ff;
+  --finding-bg: #1b1828;
+  --finding-line: #4a3d6b;
+  --estimate-line: #6b7486;
+  --hatch: #8d96a6;
+}
+[data-theme="light"] {
+  --surface-0: #f5f6f8;
+  --surface-1: #ffffff;
+  --surface-2: #eef1f5;
+  --surface-3: #e3e7ee;
+  --line: #dde1e8;
+  --line-soft: #e9ecf1;
+  --line-strong: #c3cad5;
+  --ink: #161a21;
+  --ink-soft: #2e3542;
+  --ink-dim: #5a6372;
+  --ink-faint: #a3abb8;
+  --link: #1f5fbf;
+  --info-bg: #e4eefc;
+  --info-line: #9bb8e6;
+  --run: #0e7c6e;
+  --run-bg: #dff4f0;
+  --run-line: #9ad8cd;
+  --pass: #1f7a45;
+  --pass-fill: #8fd0ab;
+  --fail: #c0263a;
+  --fail-bg: #fde6e9;
+  --needs: #8a5a00;
+  --needs-bg: #fff4d6;
+  --finding: #5b3fc4;
+  --finding-bg: #f1edff;
+  --finding-line: #cfc3f5;
+  --estimate-line: #8a93a3;
+  --hatch: #5a6372;
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-14: 56px;
+  --radius-xs: 2px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+  --size-bar-run: 10px;
+  --size-bar-step: 6px;
+  --size-timeline-row: 22px;
+  --size-touch: 44px;
+  --size-shot-w: 112px;
+  --bp-phone: 390px;
+  --bp-desktop: 1440px;
+  --content-max: 1328px;
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.figure-xl { font-family: var(--font-sans); font-size: 34px; line-height: 40px; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.figure-m { font-family: var(--font-sans); font-size: 20px; line-height: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.figure-s { font-family: var(--font-sans); font-size: 16px; line-height: 22px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.title { font-family: var(--font-sans); font-size: 20px; line-height: 26px; font-weight: 600; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.body { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.small { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.caption { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.eyebrow { font-family: var(--font-sans); font-size: 11px; line-height: 14px; font-weight: 600; letter-spacing: 0.08em; font-variant-numeric: tabular-nums; }
+.id { font-family: var(--font-mono); font-size: 13px; line-height: 18px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.id-s { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 400; font-variant-numeric: tabular-nums; }

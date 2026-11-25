@@ -1,0 +1,34 @@
+{
+ "v": 3,
+ "layout": "files",
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-25T20:35:00Z"
+ },
+ "title": "E2E Run Dashboard",
+ "namespace": "E2EDash",
+ "libraries": [
+  {
+   "name": "react",
+   "version": "18"
+  },
+  {
+   "name": "react-dom",
+   "version": "18"
+  }
+ ],
+ "sections": {},
+ "groups": [],
+ "assetGroups": {},
+ "blobs": {},
+ "docs": {
+  "readme": "project/README.md",
+  "sections": []
+ },
+ "lastChange": {
+  "by": "Tulio",
+  "at": "2026-11-25T20:35:00Z",
+  "via": "Claude (chat)",
+  "note": "First version, from the state-1 screens of the run dashboard canvas."
+ }
+}

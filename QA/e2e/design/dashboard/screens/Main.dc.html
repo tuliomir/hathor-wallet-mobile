@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>E2E run · state 1 · desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0f1115}
+a{color:#8cbcff;text-decoration:none}a:hover{color:#b9d6ff;text-decoration:underline}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #8cbcff;outline-offset:2px}
+.hatch{background:repeating-linear-gradient(135deg,#8d96a6 0 2px,transparent 2px 5px)}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+</style>
+</helmet>
+<div style="width:1440px;box-sizing:border-box;padding:28px 56px 56px;background:#0f1115;color:#e6e8ec;font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.45;font-variant-numeric:tabular-nums;display:flex;flex-direction:column;gap:20px">
+
+<header style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;padding-bottom:18px;border-bottom:1px solid #262c38">
+<div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<span style="display:inline-flex;align-items:center;gap:7px;padding:3px 11px 3px 9px;border-radius:999px;background:#12302c;color:#5fd4c4;font-weight:600;font-size:13px"><span aria-hidden="true" style="width:8px;height:8px;border-radius:50%;background:#5fd4c4"></span>Running</span>
+<span style="padding:3px 9px;border-radius:999px;border:1px solid #3a4252;color:#e6e8ec;font-size:12px;font-weight:600;letter-spacing:.06em">FULL</span>
+<span style="padding:3px 9px;border-radius:999px;border:1px solid #3a4252;color:#8d96a6;font-size:12px">Part 1 of 3</span>
+<h1 style="margin:0 0 0 4px;font-size:20px;font-weight:600;letter-spacing:-.01em">Final validation of receive, payments and history</h1>
+</div>
+<div class="mono" style="font-size:12px;color:#8d96a6;display:flex;gap:16px;flex-wrap:wrap">
+<span>a1ce8fd1 · qa/e2e</span><span>✓ clean tree</span><span>app 0.41.0-rc.1-e2e, built from these sources</span><span>Android emulator (hnni)</span><span>started 14:59</span><span>179 of 179 scenarios</span>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;flex-shrink:0">
+<span style="font-size:12px;color:#8d96a6;display:inline-flex;align-items:center;gap:6px"><span aria-hidden="true" style="width:6px;height:6px;border-radius:50%;background:#5fd4c4"></span>Updated 2 s ago</span>
+<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#8d96a6">Run
+<select style="background:#151922;color:#e6e8ec;border:1px solid #262c38;border-radius:6px;padding:6px 8px;font:inherit;font-size:13px"><option>Today 14:59 · full (live)</option><option>Today 13:31 · full · thrown away</option><option>Yesterday 10:12 · dev</option></select></label>
+<button style="background:#151922;color:#e6e8ec;border:1px solid #262c38;border-radius:6px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer">Light</button>
+</div>
+</header>
+
+<section aria-label="Why this run" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+<div style="background:#151922;border:1px solid #262c38;border-radius:10px;padding:12px 16px;display:flex;gap:12px">
+<span style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6;padding-top:2px;flex-shrink:0;width:86px">WHY</span>
+<p style="margin:0">Full run to end the work on receive, payments and history: the last check of a change to the suite. Every scenario must pass on one commit before the baseline ledger is written.</p>
+</div>
+<div style="background:#151922;border:1px solid #262c38;border-radius:10px;padding:12px 16px;display:flex;gap:12px">
+<span style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#e6e8ec;padding-top:2px;flex-shrink:0;width:86px">↺ CORRECTION</span>
+<p style="margin:0">This is the second start. The first (16:31, 50 passed, 7 failed) was thrown away: the fund helper made two transactions in one second and broke one group's setup. Fixed in <span class="mono">a1ce8fd1</span>. <span style="color:#8d96a6">· 14:58</span></p>
+</div>
+</section>
+
+<section aria-label="Needs you" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 16px;border:1px dashed #3a4252;border-radius:10px;color:#8d96a6">
+<span><span style="color:#e6e8ec;font-weight:500">Nothing needs you now.</span> Next time it will: around 16:29, when part 1 ends and part 2 waits for a resume.</span>
+<span class="mono" style="font-size:12px">yarn e2e:resume full-20261125-1759</span>
+</section>
+
+<div style="display:grid;grid-template-columns:1.05fr 1.5fr .85fr;gap:16px;align-items:stretch">
+
+<section aria-label="Time" style="background:#151922;border:1px solid #262c38;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+<div style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6">WHEN IT ENDS</div>
+<div>
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font-size:13px;color:#8d96a6">Part 1 ends</span><span style="font-size:34px;font-weight:600;letter-spacing:-.02em">≈ 16:29</span></div>
+<div style="color:#8d96a6">in 40 min · between 16:24 and 16:36 · hard stop 16:53</div>
+</div>
+<div style="border-top:1px solid #262c38;padding-top:12px">
+<div style="display:flex;align-items:baseline;gap:10px"><span style="font-size:13px;color:#8d96a6">Whole run</span><span style="font-size:20px;font-weight:600">≈ 19:21</span><span style="color:#8d96a6">18:53 – 20:05</span></div>
+<div style="color:#8d96a6;font-size:13px">3 h 32 min of work left, if parts 2 and 3 are resumed at once. Half of it is guessed, so the range is wide.</div>
+</div>
+<div>
+<div style="position:relative;height:10px;border-radius:5px;background:#202633;overflow:hidden" role="img" aria-label="19 percent done by time; part breaks at 34 and 70 percent">
+<div style="position:absolute;left:0;top:0;bottom:0;width:19%;background:#5fd4c4"></div>
+<div style="position:absolute;left:34%;top:0;bottom:0;width:2px;background:#0f1115"></div>
+<div style="position:absolute;left:70%;top:0;bottom:0;width:2px;background:#0f1115"></div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:12px;color:#8d96a6;margin-top:6px"><span><span style="color:#e6e8ec;font-weight:600">19%</span> by time</span><span>part 1 · part 2 · part 3</span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;font-size:12px;color:#8d96a6">
+<div>Elapsed<div style="font-size:16px;color:#e6e8ec;font-weight:500">50:28</div></div>
+<div>Left<div style="font-size:16px;color:#e6e8ec;font-weight:500">3:31:50</div></div>
+<div>Drift<div style="font-size:16px;color:#e6e8ec;font-weight:500">−1:45 <span style="font-size:12px;color:#8d96a6;font-weight:400">ahead</span></div></div>
+</div>
+<div class="mono" style="font-size:12px;color:#8d96a6">fn/receive −2:50 · fn/receive-payment +0:40 · fn/history +0:25</div>
+</section>
+
+<section aria-label="Now" style="background:#151922;border:1px solid #262c38;border-radius:12px;padding:18px 20px;display:flex;gap:18px">
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6">NOW</span><span style="font-size:12px;color:#5fd4c4;border:1px solid #2a5a54;border-radius:999px;padding:1px 8px">▶ scenario</span></div>
+<div class="mono" style="font-size:13px;color:#8d96a6">fn/send <span aria-hidden="true">›</span> unlocked wallet <span style="color:#8d96a6">(group 1 of 3)</span> <span aria-hidden="true">›</span> 2 of 25</div>
+<div class="mono" style="font-size:16px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
+<span>simple</span><span style="color:#4b5466">.</span><span>deposit</span><span style="color:#4b5466">.</span><span style="color:#8cbcff">hide-amount</span><span style="color:#4b5466">.</span><span style="color:#8cbcff">max</span><span style="color:#4b5466">.</span><span>zero-htr</span><span style="color:#4b5466">.</span><span style="color:#8d96a6">unlocked</span>
+</div>
+<div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:12px;color:#8d96a6;flex-shrink:0;width:64px">Step 2 / 4</span><span><span style="font-weight:600">amount</span> — pick E2ED, type the max amount, pick Hide amount</span></div>
+<div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:12px;color:#8d96a6;flex-shrink:0;width:64px">Expects</span><span style="color:#c9cfd8">“The selected privacy mode requires a shielded address as the recipient…” <span class="mono" style="font-size:12px;color:#8d96a6">err-privacy-needs-shielded</span></span></div>
+<div>
+<div style="position:relative;height:6px;border-radius:3px;background:#202633"><div style="position:absolute;left:0;top:0;bottom:0;width:3%;border-radius:3px;background:#5fd4c4"></div><div style="position:absolute;left:66%;top:-3px;bottom:-3px;width:1px;background:#8d96a6"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:12px;color:#8d96a6;margin-top:5px"><span><span style="color:#e6e8ec">0:02</span> of 0:57 expected</span><span>bar runs to 150%; tick = 100%</span></div>
+</div>
+<div style="font-size:13px;color:#8d96a6;border-top:1px solid #262c38;padding-top:10px">Next <span class="mono" style="color:#c9cfd8">simple.fee.public.normal.zero-htr.unlocked</span> · ~1:07</div>
+</div>
+<figure style="margin:0;width:112px;flex-shrink:0;display:flex;flex-direction:column;gap:6px">
+<div style="width:112px;height:249px;border:1px dashed #3a4252;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;color:#8d96a6;font-size:12px;padding:10px;box-sizing:border-box">No screen yet</div>
+<figcaption style="font-size:11px;color:#8d96a6;text-align:center">phone screen</figcaption>
+</figure>
+</section>
+
+<section id="failures" aria-label="Results" style="background:#151922;border:1px solid #262c38;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+<div style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6">RESULTS</div>
+<div><span style="font-size:34px;font-weight:600;letter-spacing:-.02em">33</span><span style="color:#8d96a6"> of 179 done</span></div>
+<ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px">
+<li style="display:flex;justify-content:space-between"><span><span aria-hidden="true" style="color:#7ad69a">✓</span> passed</span><span>33</span></li>
+<li style="display:flex;justify-content:space-between"><span><span aria-hidden="true" style="color:#8d96a6">✕</span> failed</span><span>0</span></li>
+<li style="display:flex;justify-content:space-between"><span><span aria-hidden="true" style="color:#5fd4c4">▶</span> running</span><span>1</span></li>
+<li style="display:flex;justify-content:space-between;color:#8d96a6"><span><span aria-hidden="true">○</span> queued</span><span>145</span></li>
+<li style="display:flex;justify-content:space-between;color:#8d96a6"><span><span aria-hidden="true">↻</span> passed on a retry</span><span>0</span></li>
+</ul>
+<div style="margin-top:auto;border-top:1px solid #262c38;padding-top:10px;color:#8d96a6;font-size:13px">No failures. Press <kbd class="mono" style="border:1px solid #3a4252;border-radius:4px;padding:0 5px;font-size:11px">f</kbd> to jump here when there are.</div>
+</section>
+</div>
+
+<section aria-label="Plan" style="background:#151922;border:1px solid #262c38;border-radius:12px;padding:18px 20px 16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:baseline">
+<div style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6">PLAN · 14 JOBS IN ORDER</div>
+<div style="display:flex;gap:16px;font-size:12px;color:#8d96a6;align-items:center">
+<span style="display:inline-flex;align-items:center;gap:6px"><span aria-hidden="true" style="width:18px;height:8px;border:1px solid #6b7486;border-radius:2px"></span>estimate</span>
+<span style="display:inline-flex;align-items:center;gap:6px"><span aria-hidden="true" style="width:18px;height:8px;border:1px dashed #6b7486;border-radius:2px"></span>estimate is a guess</span>
+<span style="display:inline-flex;align-items:center;gap:6px"><span aria-hidden="true" style="width:18px;height:8px;background:#3f7f62;border-radius:2px"></span>actual</span>
+<span style="display:inline-flex;align-items:center;gap:6px"><span aria-hidden="true" class="hatch" style="width:18px;height:8px;border-radius:2px"></span>wallet setup</span>
+</div>
+</div>
+<div style="display:flex;gap:12px;font-size:11px;color:#8d96a6">
+<div style="width:180px;flex-shrink:0"></div>
+<div style="position:relative;width:880px;height:16px">
+<sc-for list="{{ticks}}" as="t" hint-placeholder-count="10"><span style="position:absolute;left:{{t.x}}px;transform:translateX(-50%)">{{t.label}}</span></sc-for>
+</div>
+<div style="width:150px;text-align:right">vs estimate</div>
+</div>
+<div style="position:relative;display:flex;flex-direction:column;gap:3px">
+<div aria-hidden="true" style="position:absolute;left:192px;top:-4px;bottom:-4px;width:880px;pointer-events:none">
+<div style="position:absolute;left:294px;top:0;bottom:0;border-left:1px dashed #4b5466"></div>
+<div style="position:absolute;left:610px;top:0;bottom:0;border-left:1px dashed #4b5466"></div>
+<div style="position:absolute;left:164px;top:0;bottom:0;width:2px;background:#5fd4c4"></div>
+</div>
+<sc-for list="{{jobs}}" as="j" hint-placeholder-count="14">
+<div style="display:flex;gap:12px;align-items:center;height:22px">
+<div class="mono" style="width:180px;flex-shrink:0;font-size:12px;color:{{j.labelColor}};display:flex;gap:6px"><span aria-hidden="true" style="width:12px">{{j.glyph}}</span>{{j.id}}</div>
+<div style="position:relative;width:880px;height:14px">
+<div style="position:absolute;left:{{j.estL}}px;width:{{j.estW}}px;top:0;bottom:0;border:1px {{j.estStyle}} #6b7486;border-radius:3px;box-sizing:border-box"></div>
+<div style="position:absolute;left:{{j.actL}}px;width:{{j.actW}}px;top:3px;bottom:3px;background:{{j.actColor}};border-radius:2px"></div>
+<sc-for list="{{j.setups}}" as="s" hint-placeholder-count="0"><div class="hatch" style="position:absolute;left:{{s.l}}px;width:{{s.w}}px;top:3px;bottom:3px;border-radius:2px;opacity:.9"></div></sc-for>
+</div>
+<div class="mono" style="width:150px;text-align:right;font-size:12px;color:#8d96a6">{{j.drift}}</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:12px;font-size:12px;color:#8d96a6;margin-top:4px">
+<div style="width:180px;flex-shrink:0"></div>
+<div style="position:relative;width:880px;height:18px">
+<span style="position:absolute;left:164px;color:#5fd4c4;transform:translateX(-50%)">now 15:49</span>
+<span style="position:absolute;left:294px;transform:translateX(-50%)">pause · resume part 2</span>
+<span style="position:absolute;left:610px;transform:translateX(-50%)">pause · resume part 3</span>
+</div>
+</div>
+<div style="font-size:12px;color:#8d96a6">Work time from the start; the pauses between parts are not drawn. Bars to the right of “now” are shifted by the drift so far.</div>
+</section>
+
+<section aria-label="Scenarios" style="background:#151922;border:1px solid #262c38;border-radius:12px;overflow:hidden">
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid #262c38">
+<span style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6;margin-right:6px">SCENARIOS</span>
+<label style="position:relative;display:flex;align-items:center"><span style="position:absolute;left:-9999px">Search by id</span><input placeholder="Search ids" style="width:240px;background:#0f1115;color:#e6e8ec;border:1px solid #262c38;border-radius:6px;padding:6px 30px 6px 10px;font:inherit;font-size:13px"><kbd class="mono" style="position:absolute;right:8px;color:#8d96a6;font-size:11px;border:1px solid #3a4252;border-radius:4px;padding:0 5px">/</kbd></label>
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="10"><button style="background:{{f.bg}};color:{{f.color}};border:1px solid {{f.border}};border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer">{{f.label}}</button></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:110px minmax(0,1fr) 100px 220px 130px;gap:12px;padding:8px 20px;font-size:11px;font-weight:600;letter-spacing:.06em;color:#8d96a6;border-bottom:1px solid #262c38">
+<span>RESULT</span><span>SCENARIO</span><span>TAG</span><span>WHY IT'S IN</span><span style="text-align:right">TIME / EST</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="16">
+<sc-if value="{{r.isJob}}" hint-placeholder-val="{{false}}">
+<div style="display:grid;grid-template-columns:110px minmax(0,1fr) 100px 220px 130px;gap:12px;padding:8px 20px;background:#1a1f2a;border-bottom:1px solid #262c38;align-items:center">
+<span style="color:{{r.color}};font-size:13px"><span aria-hidden="true">{{r.glyph}}</span> {{r.result}}</span>
+<span class="mono" style="font-size:13px;font-weight:500">{{r.id}} <span style="color:#8d96a6;font-weight:400;font-family:Inter,sans-serif">{{r.sub}}</span></span>
+<span style="font-size:12px;color:#8d96a6">{{r.tag}}</span><span style="font-size:12px;color:#8d96a6">{{r.why}}</span>
+<span class="mono" style="font-size:12px;text-align:right;color:#8d96a6">{{r.time}}</span>
+</div>
+</sc-if>
+<sc-if value="{{r.isGroup}}" hint-placeholder-val="{{false}}">
+<div style="display:grid;grid-template-columns:110px minmax(0,1fr) 100px 220px 130px;gap:12px;padding:6px 20px 6px 20px;border-bottom:1px solid #20252f;align-items:center;font-size:12px;color:#8d96a6">
+<span style="display:inline-flex;align-items:center;gap:6px"><span aria-hidden="true" class="{{r.hatch}}" style="width:14px;height:8px;border:1px solid #4b5466;border-radius:2px"></span>{{r.result}}</span>
+<span style="padding-left:16px">{{r.id}}</span><span></span><span></span>
+<span class="mono" style="text-align:right">{{r.time}}</span>
+</div>
+</sc-if>
+<sc-if value="{{r.isScen}}" hint-placeholder-val="{{true}}">
+<div style="display:grid;grid-template-columns:110px minmax(0,1fr) 100px 220px 130px;gap:12px;padding:6px 20px;border-bottom:1px solid #20252f;align-items:center;background:{{r.bg}}">
+<span style="color:{{r.color}};font-size:13px"><span aria-hidden="true">{{r.glyph}}</span> {{r.result}}</span>
+<span class="mono" style="font-size:12.5px;padding-left:16px;color:#c9cfd8">{{r.id}}</span>
+<span><span style="font-size:11px;border:1px solid #3a4252;border-radius:999px;padding:1px 8px;color:#c9cfd8">{{r.tag}}</span></span>
+<span style="font-size:12px;color:#8d96a6">{{r.why}}</span>
+<span class="mono" style="font-size:12px;text-align:right;color:#8d96a6">{{r.time}}</span>
+</div>
+</sc-if>
+</sc-for>
+<div style="padding:10px 20px;font-size:12px;color:#8d96a6">179 rows · jobs fold open one at a time; the running job opens by itself.</div>
+</section>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:16px;align-items:start">
+<section aria-label="Messages from the agent" style="background:#151922;border:1px solid #262c38;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+<div style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6">FROM THE AGENT</div>
+<article style="display:flex;flex-direction:column;gap:4px;border-left:0;padding:12px 14px;border:1px solid #4a3d6b;border-radius:8px;background:#1b1828">
+<div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#c4b5ff;font-weight:600">◆ Finding · suspected app bug</span><span style="color:#8d96a6">15:29 · <a href="#">fn/receive-payment</a></span></div>
+<p style="margin:0">A fee token can't be created while all the HTR is private: “shielded balance equation does not hold”. Seen in the app; nothing filed.</p>
+<a href="#" style="font-size:12px">QA/e2e/ROADMAP.md ↗</a>
+</article>
+<article style="display:flex;flex-direction:column;gap:4px;padding:0 2px">
+<div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#8d96a6;font-weight:600">Note</span><span style="color:#8d96a6">15:07 · <a href="#">fn/receive</a></span></div>
+<p style="margin:0;color:#c9cfd8">Nothing to watch here. fn/receive-payment is next; its locked and broken-key groups spend about 4 min each on setup before the first result.</p>
+</article>
+</section>
+
+<section aria-label="Not covered" style="background:#151922;border:1px solid #262c38;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+<div style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6">NOT COVERED BY THIS RUN</div>
+<p style="margin:0">Nothing owed. All 179 scenarios are selected, on one commit.</p>
+<ul style="margin:0;padding-left:18px;color:#8d96a6;display:flex;flex-direction:column;gap:6px;font-size:13px">
+<li>Android only (emulator hnni); iOS is not part of this kit.</li>
+<li>33 of 179 are tagged <span style="color:#c9cfd8">owed</span> (ws/send, ws/create-token): they run here, in part 3.</li>
+<li>Estimates for 8 jobs are guesses; their first real times come from this run.</li>
+</ul>
+</section>
+
+<section aria-label="Log" style="background:#151922;border:1px solid #262c38;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6">LOG · NEWEST FIRST</span>
+<div style="display:flex;gap:6px"><select aria-label="Filter log by job" style="background:#0f1115;color:#e6e8ec;border:1px solid #262c38;border-radius:6px;padding:3px 6px;font:inherit;font-size:12px"><option>All jobs</option></select><select aria-label="Filter log by kind" style="background:#0f1115;color:#e6e8ec;border:1px solid #262c38;border-radius:6px;padding:3px 6px;font:inherit;font-size:12px"><option>All kinds</option></select></div>
+</div>
+<ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;font-size:12.5px">
+<sc-for list="{{log}}" as="e" hint-placeholder-count="8">
+<li style="display:grid;grid-template-columns:58px 14px minmax(0,1fr);gap:8px;padding:5px 0;border-bottom:1px solid #20252f">
+<span class="mono" style="color:#8d96a6;font-size:12px">{{e.t}}</span><span aria-hidden="true" style="color:{{e.c}}">{{e.g}}</span>
+<span style="color:#c9cfd8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span class="mono" style="color:#8d96a6">{{e.job}}</span> {{e.text}}</span>
+</li>
+</sc-for>
+</ol>
+</section>
+</div>
+
+<section aria-label="Summary for the PR" style="background:#151922;border:1px solid #262c38;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#8d96a6">SUMMARY FOR THE PR · SO FAR</span><button style="background:#0f1115;color:#e6e8ec;border:1px solid #262c38;border-radius:6px;padding:5px 10px;font:inherit;font-size:12px;cursor:pointer">Copy</button></div>
+<pre class="mono" style="margin:0;font-size:12px;color:#c9cfd8;white-space:pre-wrap;background:#0f1115;border:1px solid #20252f;border-radius:8px;padding:12px 14px">E2E full run · a1ce8fd1 (qa/e2e, clean) · app 0.41.0-rc.1-e2e · Android emulator
+In progress: 33 / 179 passed, 0 failed · part 1 of 3 · 50 min so far
+Finding: fee token can't be created while all HTR is private (fn/receive-payment)</pre>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const T = ['0:00','0:30','1:00','1:30','2:00','2:30','3:00','3:30','4:00','4:30'];
+    const ticks = T.map((label, i) => ({ label, x: Math.round(i * 97.8) }));
+    const D = '#3f7f62', R = '#5fd4c4';
+    const j = (id, estL, estW, o) => Object.assign({ id, estL, estW, estStyle: 'solid', actL: 0, actW: 0, actColor: D, setups: [], drift: '', glyph: '○', labelColor: '#8d96a6' }, o);
+    const done = { glyph: '✓', labelColor: '#e6e8ec' };
+    const g = { estStyle: 'dashed' };
+    const jobs = [
+      j('fn/receive', 0, 38.3, Object.assign({ actW: 29.1, drift: '8:55 / 11:45  −2:50', setups: [{l:0,w:6.2},{l:8.7,w:9.7},{l:19.2,w:9.1}] }, done)),
+      j('fn/receive-payment', 38.3, 67.7, Object.assign({ actL: 29.1, actW: 69.9, drift: '21:26 / 20:46  +0:40', setups: [{l:29.1,w:8.6},{l:54,w:12.1},{l:77.7,w:11.4}] }, done)),
+      j('fn/history', 106, 52, Object.assign({ actL: 98.9, actW: 53.3, drift: '16:22 / 15:57  +0:25', setups: [{l:99,w:8.6},{l:118.5,w:12.1},{l:135.4,w:11.5}] }, done)),
+      j('fn/send', 152.3, 141.7, { actL: 152.3, actW: 12.2, actColor: R, glyph: '▶', labelColor: '#5fd4c4', drift: '3:45 / 43:29', setups: [{l:152.3,w:9}] }),
+      j('fn/send-created', 294, 96.1, g), j('fn/create-token', 390.1, 99.4, g), j('fn/start-wallet', 489.5, 44, g),
+      j('ws/receive', 533.5, 10.4), j('ws/receive-payment', 544, 47.7, { drift: '7 of 13 guessed' }), j('ws/history', 591.7, 18.7),
+      j('ws/send', 610.4, 86.4, g), j('ws/send-created', 696.8, 66.8, g), j('ws/create-token', 763.6, 47.3, g), j('ws/start-wallet', 810.8, 44, g)
+    ];
+    jobs.forEach(x => { if (x.estStyle === 'dashed' && !x.drift) x.drift = 'guess'; });
+    const f = (label, on) => ({ label, bg: on ? '#1f2a3a' : 'transparent', color: on ? '#e6e8ec' : '#8d96a6', border: on ? '#3d5a80' : '#262c38' });
+    const filters = [f('All results', true), f('✕ failed 0'), f('▶ running 1'), f('✓ passed 33'), f('○ queued 145'), f('Tag: any'), f('fn + ws'), f('All wallets')];
+    const P = '#7ad69a', Q = '#8d96a6';
+    const s = (result, glyph, color, id, tag, why, time, bg) => ({ isScen: true, result, glyph, color, id, tag, why, time, bg: bg || 'transparent' });
+    const rows = [
+      { isJob: true, glyph: '✓', color: P, result: 'passed', id: 'fn/receive', sub: '3 passed', tag: 'new 3', why: 'never ran', time: '8:55 / 11:45' },
+      { isJob: true, glyph: '✓', color: P, result: 'passed', id: 'fn/receive-payment', sub: '15 passed', tag: 'new 15', why: 'never ran', time: '21:26 / 20:46' },
+      { isJob: true, glyph: '✓', color: P, result: 'passed', id: 'fn/history', sub: '14 passed', tag: 'new 14', why: 'never ran', time: '16:22 / 15:57' },
+      { isJob: true, glyph: '▶', color: R, result: 'running', id: 'fn/send', sub: '1 passed · 1 running · 23 queued', tag: 'new 25', why: 'never ran', time: '3:45 / 43:29' },
+      { isGroup: true, hatch: 'hatch', result: 'setup done', id: 'unlocked wallet · 15 scenarios', time: '2:46 / 2:30' },
+      s('passed', '✓', P, 'simple.deposit.hide-amount.normal.zero-htr.unlocked', 'new', 'never ran', '0:58 / 0:58'),
+      s('running', '▶', R, 'simple.deposit.hide-amount.max.zero-htr.unlocked', 'new', 'never ran', '0:02 / 0:57', '#13231f'),
+      s('queued', '○', Q, 'simple.fee.public.normal.zero-htr.unlocked', 'new', 'never ran', '— / 1:07'),
+      s('queued', '○', Q, 'shielded.deposit.hide-amount.max.zero-htr.unlocked', 'new', 'never ran', '— / 1:20'),
+      s('queued', '○', Q, 'shielded.deposit.private.normal.zero-htr.unlocked', 'new', 'never ran', '— / 1:21'),
+      { isGroup: true, hatch: '', result: 'setup next', id: 'locked wallet · 5 scenarios · first result ~4 min after setup starts', time: '— / 4:00' },
+      { isGroup: true, hatch: '', result: 'setup later', id: 'broken-key wallet · 5 scenarios', time: '— / 4:00' },
+      { isJob: true, glyph: '○', color: Q, result: 'queued', id: 'fn/send-created', sub: '19 queued · estimate is a guess', tag: 'new 19', why: 'never ran', time: '— / 29:30' },
+      { isJob: true, glyph: '○', color: Q, result: 'queued', id: 'ws/send', sub: '24 queued · estimate is a guess', tag: 'owed 21 · changed 3', why: 'shared parts of the kit; its flow', time: '— / 26:30' },
+      { isJob: true, glyph: '○', color: Q, result: 'queued', id: 'ws/create-token', sub: '12 queued · estimate is a guess', tag: 'owed 12', why: 'shared parts of the kit; feature wallet-load', time: '— / 14:30' }
+    ];
+    const L = (t, g, c, job, text) => ({ t, g, c, job, text });
+    const log = [
+      L('15:49:30', '✓', P, 'fn/send', 'reached err-privacy-needs-shielded'),
+      L('15:45:46', '◐', Q, 'fn/send', 'setting up the unlocked wallet for 15 scenarios'),
+      L('15:45:45', '▶', R, 'fn/send', 'started'),
+      L('15:45:45', '■', Q, 'fn/history', '14 passed, 0 failed, 0 skipped'),
+      L('15:45:24', '✓', P, 'fn/history', 'reached edge-private-unavailable; You sent E2EF to yourself 0.00'),
+      L('15:45:03', '✓', P, 'fn/history', 'reached edge-private-unavailable; Received E2ED 1.03'),
+      L('15:44:44', '✓', P, 'fn/history', 'reached edge-private-unavailable; Sent HTR -1.02'),
+      L('15:44:25', '✓', P, 'fn/history', 'reached edge-private-unavailable; Received HTR 1.01'),
+      L('15:40:34', '◐', Q, 'fn/history', 'setting up the broken-key wallet for 4 scenarios')
+    ];
+    return { ticks, jobs, filters, rows, log };
+  }
+}
+</script>
+</body>
+</html>
