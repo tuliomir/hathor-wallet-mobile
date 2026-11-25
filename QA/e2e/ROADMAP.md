@@ -1,13 +1,13 @@
 # e2e roadmap: from the send scenarios to the whole app
 
-Status on 2026-11-25. The kit runs the QA graph's send, create-token and start-wallet scenarios, in every private balance state, on the local privnet, with a seed wallet, on the fullnode and the wallet-service facades. It runs them on an Android emulator, records them, and shows them in a viewer for a person to check. Nothing is skipped. This file is where it stands, what holds it back, and the way to the whole app.
+Status on 2026-11-25, evening. The kit runs the QA graph's receive, receive-payment, history, send, create-token and start-wallet scenarios, in every private balance state, on the local privnet, with a seed wallet, on the fullnode and the wallet-service facades: 179 scenarios, all passing on `a1ce8fd1`, nothing skipped. It runs them on an Android emulator, records them, and shows them in a viewer for a person to check. Suites fit the moment: `dev` runs what a change reaches, `full` everything (README "Which command to run"). This file is where it stands, what holds it back, and the way to the whole app.
 
 ## Where it stands
 
 | | |
 |---|---|
-| Graph | 43 features, 13 setups, 5 actions modelled (send, create-token, start-wallet, receive, history): 324 scenarios. Create-token got its amounts and names as axes. Multichain isn't modelled. |
-| Automated | Three actions on two setups (`pn-fn-seed-multi`, `pn-ws-seed-multi`); the results are in "0.41.0-rc.1" below. Receive and history are modelled, not automated. |
+| Graph | 44 features, 13 setups, 6 actions modelled (send, create-token, start-wallet, receive, receive-payment, history): 430 scenarios. Multichain isn't modelled. |
+| Automated | Six actions on two setups (`pn-fn-seed-multi`, `pn-ws-seed-multi`): 179 scenarios, 14 jobs. The last full run is "Full run of 2026-11-25" below; `ledger.json` has what each scenario passed with. |
 | Held back | Nothing. |
 | Official QA (`QA/QA*.md`) | On 2026-11-04 about 33 of its 756 numbered steps ran automatically (4%). Not recounted since: token creation, and sends of the created tokens, were added. |
 | Funds | A send run gives its HTR and minted deposits back to genesis. Tokens created in the app keep their deposits (about 10 HTR each for the sends; up to the whole balance in the create run), and the create run isn't cleaned up. |
@@ -15,20 +15,23 @@ Status on 2026-11-25. The kit runs the QA graph's send, create-token and start-w
 
 ### Measured timings
 
+From the full run of 2026-11-25 (`a1ce8fd1`), 5 h 02 min in all.
+
 | | |
 |---|---|
-| Setup of one wallet (fresh install, onboarding, tokens) | 2 to 4 min, once per private balance state; created tokens add 1.7 min each |
-| A scenario, on average (2026-11-25) | 72 s for sends (89 s before the speed work), 69 s for token creations (86 s) |
+| Setup of one wallet (fresh install, onboarding, tokens) | 2.5 to 4 min, once per private balance state; each token the app creates adds 1.7 min |
+| A scenario, on average | 63 s over the whole suite. Sends 70 to 80 s; token creations 70 s; receive, payments and history 15 to 30 s, over adb (README "Receiving, payments and history"); a payment with the app closed and opened again about 65 s |
 | Recording | about 10 MB a minute of video |
-| Send suite, fullnode | 41 min (48 before) |
-| Create token suite, fullnode | 31 min (37 before) |
-| Sends of created tokens, fullnode | 44 min (55 before, three of them failing) |
-| Send suite, wallet service | 37 min (44 before) |
-| Start-wallet suite | about 10 min on the fullnode |
+| Fullnode, by job | receive 9 min, payments 21, history 16, send 44, sends of created tokens 45, create token 32, start-wallet 9 |
+| Wallet service, by job | receive 3 min, payments 14, history 7, send 38, sends of created tokens 35, create token 17, start-wallet 11 |
+| `dev` for a change to one screen | 18 scenarios and 36 min for the transaction details, or 1 scenario and 8 min with `--quick`, a cold build included |
 
 ## Findings
 
 What the kit found in the app, still to decide unless marked settled.
+
+- **A fee-based token can't be created while all the wallet's HTR is private.** Seen in the app on 0.41.0-rc.1, fullnode: after a fully private 15.00 HTR payment, Create token for a fee token ends in "full validation failed: shielded balance equation does not hold" (screenshot: `evidence/fee-token-private-htr.png`, git-ignored). Reproduced in Node with wallet-lib 4.3.0 and 4.4.0, with amount-shielded and fully shielded HTR; a deposit token builds, and so does a fee token when the wallet also has public HTR. Not modelled in the graph yet: `funding` has no private-only value. The kit's payer and treasury are separate wallets because of it (`treasuryMinter` in `run.js`). Worth an issue in wallet-lib, and a message in the app instead of the raw error.
+- **On the wallet service, a public payment of an unregistered token to the private address is offered for import only at the next start.** Seen on 0.41.0-rc.1: no banner, while a public payment made after it shows; after a restart the banner offers the token. wallet-lib's wallet-service `getTxBalance` looks only at the legacy addresses, and the app asks for the token list only when a shielded output pays it (`paysShieldedToWallet`, `src/sagas/wallet.js`). The graph expects it (`c-pay-ws-late-offer`). Private payments and payments to legacy addresses are offered at once.
 
 - **With a broken key, the app hides public funds too.** Reproduced on 0.41.0-rc.1, fullnode, on 2026-11-25. A token created in the app is minted to one of the wallet's shielded spend addresses (`m/44'/280'/2'`), with its amount public. When the scan key in the app's record isn't the wallet's, wallet-lib doesn't use the record's shielded keys (`integrity: key-mismatch`), spend addresses included, so the whole token disappears: the Send screen says "0.00 E2EF available", and "Insufficient funds", while the fullnode has the 1000.00 unspent. Nothing on that screen says why; Receive says that private receiving is unavailable. A locked balance doesn't do this: there the created tokens can be sent. wallet-lib documents the repair, deriving the keys again from the words; not tried here. The tests expect what the app does (`lib/createdTokens.js`; the graph doesn't say where a token came from). Worth a question to the team: is a token missing from the balance, with no warning, what is wanted here? Not checked: whether the public change of a send can land on those addresses too.
 - **Settled: the zero-HTR message of a private send.** The message depends on the amount. wallet-lib gives the privacy-fee error only when it would add a shielded change output, so a whole-balance private send from a wallet with no HTR gets "Insufficient HTR to cover this transaction and its fees.", and a partial one "Insufficient HTR to cover the privacy fees of this transaction.". Read in the code and seen in the runs; the graph says so (`c-send-zero-htr-private`, `c-send-zero-htr-private-max`).
@@ -62,14 +65,18 @@ Open questions:
 - **`tools/` has wallet-lib 4.3.0; the app has 4.4.0.** Untested whether it matters to funding and minting.
 - **The graph lacks multichain**: 4 flags and 8 routes are in the code only. Out of scope of the regression run; tested by hand.
 
-### Next session: receive and history
+## Full run of 2026-11-25
 
-Both facades, as above; then register and unregister a token. What is there and what isn't:
+`a1ce8fd1`, `qa/e2e` (0.41.0-rc.1 with the kit), on a clean tree: 179 of 179 passed, nothing skipped, no retries. Fourteen results files in `QA/graph/runs/`, of 17:59 to 22:50 UTC, and `ledger.json`. A first start, at 16:31, was set aside after 57 scenarios (50 passed, 7 failed): the funding helper refused a transaction made in the same second as its parent, which broke one group's setup. `lib/payAgain.js` pays again in that case.
 
-1. **Model first.** Both actions are in the graph, but not listed for the privnet setups. As modelled they yield little: receive varies only the private balance (one runnable scenario, about the address), and history adds the token (three). No action covers a payment arriving: public or private (amount, full), in HTR or a token, a token not registered yet, with the app open or closed. The wallet service and the fullnode learn of payments by different paths, so that is where the facades can differ.
-2. **Then the flows.** A builder per action beside `lib/createTokenFlow.js`, chosen where `run.js` builds a scenario's flow and lists the actions it can run. Each state gets its wallet from `prepareGroup`, locked and broken-key included. `ok-balance` and `ok-new-address` have a prose message, not a text on screen, so they need a check of their own. `Receive`, `MainScreen` and `Dashboard` have no `testID`s.
-3. **What to reuse.** `fund()` and `walletTool('send-private', ...)` pay the app; `htrShown()` reads the balance; the older kit's `run_phase2.sh` (README "Layout" of `mobile-e2e-flows`) has hand-written steps for receiving on all three privacy levels.
-4. **Known difference.** The fees row of a fee-token send shows on the fullnode only (`c-hist-fee-row`).
+What the new checks were seen failing on, each by breaking what it guards: a payment's private and public parts swapped; the row's description; an amount one unit short; a fee one unit more; unblinding values expected of a public payment; a payment that shows where none must; the locked count off by one; the next address, the QR code and the clipboard each wrong; the wallet service's queue stopped. Not broken on purpose: the share sheet's text, the import banner, the order of the history, the date row. A commit of the work (`48a472e2`) says that each check was seen failing; that is the list.
+
+### Next session
+
+1. **The smoke rule** (`lib/smoke.js`) is a placeholder, for the owner to write.
+2. **A dashboard of the running suite**, from the design prompt in `design/` (branch `docs/e2e-dashboard-prompt` on the fork). `suite.js` would write a `progress.json` it reads.
+3. **Registering and unregistering tokens.**
+4. Model a private-only `funding` for create-token, to keep the fee-token finding in the regression.
 
 ## Future possibilities
 
@@ -99,9 +106,9 @@ Things that would help, and that the kit can't do without a change to the app. N
 
 - **Selectors.** Screens no flow goes through yet have no `testID`s. The success modals and the import banner are still found by a point or by text (README "Selectors").
 - **Two setups.** The privnet with a seed wallet, on either facade. The public testnets can't have their flags set (by rule) or their funds controlled; passkey setups need a ceremony the emulator can't do yet.
-- **Speed.** Each Maestro tap costs 1 to 3.5 s, mostly waiting for the screen to settle; a shielded address takes 15 s to type; every private balance state onboards a wallet from scratch.
+- **Speed.** Each Maestro tap costs 1 to 3.5 s, mostly waiting for the screen to settle; a shielded address takes 15 s to type; every private balance state onboards a wallet from scratch. Screens driven over adb avoid the first; `--reuse` avoids the last while developing, not in a full run.
 - **The origin of a token isn't in the graph.** Sends of created tokens are a mode of the runner, with the one expectation that differs kept in `lib/createdTokens.js`. An axis would show it on the graph, at the cost of more scenarios.
-- **Graph breadth.** The graph models 4 actions; the official QA covers about 30 to 40. A scenario can only be automated once its action is in the graph.
+- **Graph breadth.** The graph models 6 actions; the official QA covers about 30 to 40. A scenario can only be automated once its action is in the graph.
 - **Clearing the address field.** The Send tab keeps the last address, and Maestro can't clear a multi-line field reliably, so the runner does it with adb (Ctrl+A, Delete).
 - **Flakes.** Maestro's driver sometimes fails to start (retried once) or dies mid-flow (fails the scenario).
 - **One machine.** Everything runs on one host, one emulator at a time.
@@ -119,7 +126,7 @@ Things that would help, and that the kit can't do without a change to the app. N
 
 ### Phase 2: the whole app on the privnet with the fullnode
 
-Creating tokens is done. Model the remaining actions in the graph, then automate them: registering and unregistering tokens; receiving, private receives, unlocking and exporting the privacy keys; history; importing and resetting a wallet; settings, address mode, custom network; nano contracts (the privnet has them on). With small helpers: Reown (a WalletConnect client scripted in Node), biometry (`adb emu finger touch`), QR scanning (the emulator's virtual camera scene). Order to decide: by QA pain, by risk, or by reuse (create-token first, since other actions need tokens).
+Creating tokens, receiving, payments and history are done. Model the remaining actions in the graph, then automate them: registering and unregistering tokens; unlocking and exporting the privacy keys; importing and resetting a wallet; settings, address mode, custom network; nano contracts (the privnet has them on). With small helpers: Reown (a WalletConnect client scripted in Node), biometry (`adb emu finger touch`), QR scanning (the emulator's virtual camera scene). Order to decide: by QA pain, by risk, or by reuse (create-token first, since other actions need tokens).
 
 ### Phase 3: the wallet-service facade locally
 
