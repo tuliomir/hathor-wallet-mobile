@@ -11,7 +11,15 @@
 //
 //   wallet.js new-seed                       a fresh 24-word seed
 //   wallet.js address <seed-file> [index]    the public (W...) address the app shows at index
-//   wallet.js shielded-address <seed-file>   a shielded (K...) address of that wallet
+//   wallet.js shielded-address <seed-file>   a shielded (K...) address of that wallet, the first
+//                                            unused
+//   wallet.js shielded-addresses <seed-file> <count>
+//                                            its first shielded addresses, in order
+//   wallet.js balances <seed-file>           what that wallet can spend, in JSON: units by uid,
+//                                            private and public
+//   wallet.js send <seed-file> <address> <uid> <units> <public|amount|full>
+//                                            pays an address from that wallet, topped up with HTR
+//                                            when it lacks it; prints the tx's hash
 //   wallet.js send-private <address> <HTR> <amount|full>
 //                                            pays a shielded address with a private output
 //                                            (TEMPORARY, see sendPrivate below)
@@ -109,6 +117,51 @@ const shieldedAddress = (seed) => withShieldedWallet(
   async (wallet) => (await wallet.getCurrentAddress({}, { legacy: false })).address,
 );
 
+const shieldedAddresses = (seed, count) => withShieldedWallet(seed, async (wallet) => {
+  const indices = [...Array(Number(count)).keys()];
+  const all = await Promise.all(indices.map((i) => wallet.getAddressAtIndex(i, { legacy: false })));
+  return all.join(',');
+});
+
+/** What a wallet can spend of each token, from its outputs: { uid: { private, public } }. */
+const balances = (seed) => withShieldedWallet(seed, async (wallet) => {
+  const found = {};
+  for (const uid of await wallet.getTokens()) {
+    found[uid] = { private: 0n, public: 0n };
+    // eslint-disable-next-line no-await-in-loop
+    for await (const utxo of wallet.storage.selectUtxos({ token: uid, authorities: 0n })) {
+      found[uid][utxo.shielded ? 'private' : 'public'] += BigInt(utxo.value);
+    }
+  }
+  return JSON.stringify(found, (key, value) => (typeof value === 'bigint' ? `${value}n` : value));
+});
+
+/** Pays an address from a wallet, with one output: public, amount-shielded or fully shielded. */
+async function send(seedFile, address, uid, units, privacy) {
+  // wallet-lib's own dependency, installed with it.
+  // eslint-disable-next-line global-require, import/no-extraneous-dependencies
+  const { ShieldedOutputMode } = require('@hathor/ct-crypto-provider');
+  const modes = {
+    public: null,
+    amount: ShieldedOutputMode.AMOUNT_SHIELDED,
+    full: ShieldedOutputMode.FULLY_SHIELDED,
+  };
+  if (modes[privacy] === undefined || !uid || !/^\d+$/.test(units || '')) {
+    throw new Error('usage: send <seed-file> <address> <uid> <units> <public|amount|full>');
+  }
+  const seed = readSeed(seedFile);
+  const output = { address, value: BigInt(units), token: uid };
+  if (modes[privacy] !== null) output.shielded = modes[privacy];
+  const pay = async (wallet) => (
+    await wallet.sendManyOutputsTransaction([output], { pinCode: PIN })).hash;
+  // 1 HTR for the fees, which the payer keeps what is left of.
+  const needed = (uid === '00' ? BigInt(units) : 0n) + 100n;
+  const missing = needed - await withShieldedWallet(seed, (wallet) => unlocked(wallet, '00'));
+  return missing > 0n
+    ? withFundedWallet(Number(missing), pay, seed)
+    : withShieldedWallet(seed, pay);
+}
+
 /**
  * TEMPORARY: pays a shielded address with a private output, from a throwaway wallet this
  * command funds through the integration-test helper.
@@ -184,7 +237,7 @@ async function sendAll(wallet, address, uid) {
  * the multisig destination received (the helper keeps its keys), a few HTR a run.
  *
  * The run dir holds tokens.json ([{ uid, kind, symbol }]), treasury.seed and the seeds of the
- * run's other wallets (app.seed, peer.seed), as run.js writes them.
+ * run's other wallets (app.seed, payer.seed, peer.seed), as run.js writes them.
  *
  * Refuses a node off this machine: it spends all those seeds hold, to an address whose seed is
  * public (privnet.yml).
@@ -213,7 +266,7 @@ async function cleanup(runDir) {
     }
   };
 
-  const holders = ['app.seed', 'peer.seed'].filter((file) => fs.existsSync(path.join(runDir, file)));
+  const holders = ['app.seed', 'payer.seed', 'peer.seed'].filter((file) => fs.existsSync(path.join(runDir, file)));
   for (const file of holders) {
     // eslint-disable-next-line no-await-in-loop
     await attempt(`${file} start`, () => withShieldedWallet(readSeed(path.join(runDir, file)), async (wallet) => {
@@ -254,6 +307,15 @@ async function main([command, ...args]) {
   if (command === 'shielded-address') {
     return shieldedAddress(readSeed(args[0]));
   }
+  if (command === 'shielded-addresses') {
+    return shieldedAddresses(readSeed(args[0]), args[1]);
+  }
+  if (command === 'balances') {
+    return balances(readSeed(args[0]));
+  }
+  if (command === 'send') {
+    return send(...args);
+  }
   if (command === 'send-private') {
     return sendPrivate(...args);
   }
@@ -264,7 +326,8 @@ async function main([command, ...args]) {
     return cleanup(args[0]);
   }
   throw new Error('usage: wallet.js new-seed | address <seed-file> [index] | shielded-address <seed-file>'
-    + ' | send-private <address> <HTR> <amount|full>'
+    + ' | shielded-addresses <seed-file> <count>'
+    + ' | balances <seed-file> | send <seed-file> <address> <uid> <units> <public|amount|full> | send-private <address> <HTR> <amount|full>'
     + ' | mint <address> <deposit|fee> <name> <symbol> <units> <treasury-seed-file> | cleanup <run-dir>');
 }
 
