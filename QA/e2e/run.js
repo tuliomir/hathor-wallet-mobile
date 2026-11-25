@@ -57,6 +57,7 @@ const { workIndex, checkoutIds, appId } = require('./lib/fingerprint');
 const { reachOf, currentOf } = require('./lib/select');
 const { staleApp } = require('./lib/app');
 const { screenOf } = require('./lib/screen');
+const { payAgain } = require('./lib/payAgain');
 const { runReceive } = require('./lib/receiveScenarios');
 const { runPayment, runHistory } = require('./lib/historyScenarios');
 const { tokenPlan } = require('./lib/tokenPlan');
@@ -202,9 +203,9 @@ async function receivedBy(address, uid = '00') {
 async function fund(address, htr) {
   const before = await receivedBy(address);
   const cents = Math.round(Number(htr) * 100);
-  await getJson(`${FUNDING_URL}/fund`, {
+  await payAgain(() => getJson(`${FUNDING_URL}/fund`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ address, amount: cents }),
-  });
+  }));
   for (let i = 0; i < 30; i += 1) {
     // eslint-disable-next-line no-await-in-loop
     if (await receivedBy(address) > before) return;

@@ -32,6 +32,7 @@ const fs = require('fs');
 const path = require('path');
 const { walletUtils, addressUtils, HathorWallet, Connection, config, TokenVersion } = require('@hathor/wallet-lib');
 const { isLocalNode } = require('../lib/localNode');
+const { payAgain } = require('../lib/payAgain');
 
 const NODE_URL = process.env.NODE_URL || 'http://localhost:18083/v1a/';
 const TX_MINING_URL = process.env.TX_MINING_URL || 'http://localhost:18035/';
@@ -91,14 +92,16 @@ async function unlocked(wallet, uid) {
 async function withFundedWallet(cents, use, seed = walletUtils.generateWalletWords()) {
   return withShieldedWallet(seed, async (wallet) => {
     const before = await unlocked(wallet, '00');
-    const response = await fetch(`${FUNDING_URL}/fund`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ address: publicAddress(seed, 0), amount: cents }),
+    await payAgain(async () => {
+      const response = await fetch(`${FUNDING_URL}/fund`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: publicAddress(seed, 0), amount: cents }),
+      });
+      if (!response.ok) {
+        throw new Error(`funding the wallet failed: ${response.status} ${await response.text()}`);
+      }
     });
-    if (!response.ok) {
-      throw new Error(`funding the wallet failed: ${response.status} ${await response.text()}`);
-    }
     for (let i = 0; i < 60; i += 1) {
       // eslint-disable-next-line no-await-in-loop
       if (await unlocked(wallet, '00') >= before + BigInt(cents)) break;
@@ -152,8 +155,8 @@ async function send(seedFile, address, uid, units, privacy) {
   const seed = readSeed(seedFile);
   const output = { address, value: BigInt(units), token: uid };
   if (modes[privacy] !== null) output.shielded = modes[privacy];
-  const pay = async (wallet) => (
-    await wallet.sendManyOutputsTransaction([output], { pinCode: PIN })).hash;
+  const pay = (wallet) => payAgain(async () => (
+    await wallet.sendManyOutputsTransaction([output], { pinCode: PIN })).hash);
   // 1 HTR for the fees, which the payer keeps what is left of.
   const needed = (uid === '00' ? BigInt(units) : 0n) + 100n;
   const missing = needed - await withShieldedWallet(seed, (wallet) => unlocked(wallet, '00'));

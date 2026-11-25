@@ -24,6 +24,7 @@
 //   --all              dev: everything a change reaches directly, on both facades
 //   --since <ref>      dev: compare with a git ref instead of with what last passed here
 //   --no-build         test the app that is installed, whatever it was built from
+//   --retry            full, with --resume: run the jobs that had failures again, and say so
 //   --minutes <n>      full: start no job expected to end later than that; go on with --resume
 //
 // What each scenario last passed with is in ledger.json (committed, of the last full run) and
@@ -61,7 +62,7 @@ function parseArgs(argv) {
   const args = { mode };
   const valued = { '--only': 'only', '--since': 'since', '--minutes': 'minutes' };
   const flags = {
-    '--dry-run': 'dryRun', '--fresh': 'fresh', '--no-build': 'noBuild', '--resume': 'resume', '--quick': 'quick', '--all': 'all',
+    '--dry-run': 'dryRun', '--fresh': 'fresh', '--no-build': 'noBuild', '--resume': 'resume', '--retry': 'retry', '--quick': 'quick', '--all': 'all',
   };
   for (let i = 0; i < rest.length; i += 1) {
     if (valued[rest[i]]) args[valued[rest[i]]] = rest[i += 1];
@@ -204,8 +205,9 @@ async function runRows(rows, args, appSources) {
 
 function printSummary(summary) {
   console.log('');
-  summary.forEach(({ job, counts, planned }) => {
-    console.log(`${job.id.padEnd(20)} ${counts ? `passed ${counts.passed}, failed ${counts.failed}, skipped ${counts.skipped}` : `did not finish (${planned} planned)`}`);
+  summary.forEach(({ job, counts, planned, tries = 1, }) => {
+    const again = tries > 1 ? ` (try ${tries})` : '';
+    console.log(`${job.id.padEnd(20)} ${counts ? `passed ${counts.passed}, failed ${counts.failed}, skipped ${counts.skipped}` : `did not finish (${planned} planned)`}${again}`);
   });
   const ok = summary.every(({ counts, planned }) => counts && counts.passed === planned);
   console.log(ok ? 'all passed' : 'NOT all passed; failures: the job\'s viewer, or failure.png in its evidence. On a reused wallet, try --fresh.');
@@ -269,7 +271,12 @@ async function full(args) {
   save();
   const end = args.minutes ? Date.now() + Number(args.minutes) * 60000 : Infinity;
   await bringUp(rows, {}, appSources);
-  for (const { job, rows: own } of byJob(rows).filter((group) => !state.done[group.job.id])) {
+  const failedIn = (done) => done.counts.passed < done.planned;
+  const todo = byJob(rows).filter(({ job }) => {
+    const done = state.done[job.id];
+    return !done || (args.retry && failedIn(done));
+  });
+  for (const { job, rows: own } of todo) {
     if (Date.now() + estimate(own) * 1000 > end) {
       log(`stopping before ${job.id}, about ${minutes(estimate(own))}: go on with suite.js full --resume`);
       return;
@@ -278,8 +285,16 @@ async function full(args) {
     // eslint-disable-next-line no-await-in-loop
     const counts = await runJob(job, null, ['--results', RUNS]);
     if (!counts) throw new Error(`${job.id} did not finish; fix what stopped it, then suite.js full --resume`);
-    state.done[job.id] = { counts, planned: own.length };
+    const before = state.done[job.id];
+    state.done[job.id] = {
+      counts, planned: own.length, tries: before ? before.tries + 1 : 1,
+    };
     save();
+  }
+  if (Object.values(state.done).some(failedIn) && !args.retry) {
+    printSummary(byJob(rows).map(({ job }) => ({ job, ...state.done[job.id] })));
+    log('every job ran, some with failures: --resume --retry runs those again');
+    return;
   }
   ledger.commitBaseline(rows.map(({ key }) => key), state.startedAt);
   fs.rmSync(FULL);
