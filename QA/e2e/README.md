@@ -13,11 +13,11 @@ The host setup (KVM, JDK 17, NDK, Maestro, the AVD) and the Android and Maestro 
 | `bin/flags.js` | Lists and sets the flags: `flags.js set fee-based-tokens.rollout=off --wait`. |
 | `bin/fund.js` | Sends HTR from the genesis wallet to a public address: `fund.js W... 10.50`. Uses the helper's `POST /fund`; shielded addresses are refused. |
 | `tools/` | A small Node package of its own (wallet-lib 4.3.0, ct-crypto-node 0.5.0; `npm install` there once). `wallet.js` derives the app wallet's addresses from its seed, gives a peer wallet's shielded address, mints custom tokens (`mint <address> <deposit\|fee> <name> <symbol> <units> <treasury-seed-file>`), gives a run's funds back to genesis (`cleanup <evidence dir>`), and sends private outputs (temporary, see below). |
-| `run.js` | The runner: `node QA/e2e/run.js --setup <setup> [--action send\|create-token] [--unlocked] [--created-tokens] [--scenarios <id>,...] [--dry-run] [--no-cleanup] [--no-record]`. Runs that setup's scenarios of one action and writes a results file to `QA/graph/runs/`; evidence goes to `evidence/` (git-ignored). |
+| `run.js` | The runner: `node QA/e2e/run.js --setup <setup> [--action send\|create-token\|start-wallet] [--unlocked] [--created-tokens] [--scenarios <id>,...] [--affected <pick>,...] [--since <git ref>] [--dry-run] [--no-cleanup] [--no-record]`. Runs that setup's scenarios of one action and writes a results file to `QA/graph/runs/`; evidence goes to `evidence/` (git-ignored). |
 | `bin/app-on-privnet.sh` | Points the app at the privnet before it starts, writing its storage as root. `--fresh` wipes it first. Refuses anything but an emulator: store builds share the app id, so a wipe on a phone would erase its wallet. |
-| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow; `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
+| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow, and `flowSteps.js` has the steps they share; `walletStart.js` writes the flows around starting the wallet; `pinServer.js` taps the PIN for a running flow; `affected.js` finds the scenarios a change reaches; `tokenPlan.js` says which token each send gets; `createdTokens.js` has what differs for tokens created in the app; `unrunnable.js` says why a scenario can't run (none today); `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
 | `viewer/` | `viewer.html`, the run viewer; `bin/serve-viewer.js` serves the runs' viewers. |
-| `flows/` | Maestro flows. `onboard.yaml`: new wallet on the privnet, ending on the dashboard. `import_tokens.yaml`: registers the minted tokens through the dashboard's "New tokens" banner. |
+| `flows/` | Maestro flows. `onboard.yaml`: new wallet on the privnet, ending on the dashboard. `to_dashboard.yaml`: back to the dashboard from wherever a scenario ended. `enter_pin.yaml`: the PIN, by taps. |
 
 ## How the flags work
 
@@ -29,7 +29,7 @@ The app fetches flags when it connects to a network and then every 15 s. Set fla
 
 ## The wallet service
 
-`docker compose --profile ws up -d` in `privnet/` adds the wallet service, from the public `:dev` images (`docker compose --profile ws pull` first: they move). A setup with `facade: wallet-service` (`pn-ws-seed-multi`) then runs on it. The runner checks the API before it starts, and after onboarding checks in Settings that the app uses it: a failed start falls back to the fullnode without a word, and the app then ignores the wallet service for a day (`featureFlags:ignoreWalletServiceFlag` in its storage).
+`docker compose --profile ws up -d` in `privnet/` adds the wallet service, from the public `:dev` images (`docker compose --profile ws pull` first: they move). A setup with `facade: wallet-service` (`pn-ws-seed-multi`) then runs on it. The runner checks the API before it starts, and after onboarding checks at the bottom of Settings that the app uses it: a failed start falls back to the fullnode without a word, and the app then ignores the wallet service for a day (`featureFlags:ignoreWalletServiceFlag` in its storage).
 
 What the stack needs beyond wallet-lib's integration-test compose, which it comes from:
 
@@ -41,13 +41,13 @@ What the stack needs beyond wallet-lib's integration-test compose, which it come
 
 ## Create token, and sends of created tokens
 
-`--action create-token --unlocked` runs the creation scenarios: name, symbol, amount, deposit and fee, up to the details screen. A creation that works is checked on the fullnode by the uid in the configuration string. `--created-tokens` runs sends of a deposit and a fee token the run makes in the app. It pays the wallet exactly what each costs (10.00 and 0.01 HTR), so the wallet is left with no HTR, as the zero-HTR scenarios need; a `max` send gets a token of its own. Deposits of created tokens stay locked: the app's wallet keeps their authorities, and the cleanup doesn't melt them. `--unlocked` picks scenarios as if an unlocked private balance were the only one; `--created-tokens` implies it.
+`--action create-token` runs the creation scenarios: name, symbol, amount, deposit and fee, up to the details screen. A creation that works is checked on the fullnode by the uid in the configuration string. `--created-tokens` runs sends of a deposit and a fee token the run makes in the app. It pays the wallet exactly what each costs (10.00 and 0.01 HTR), so the wallet is left with no HTR, as the zero-HTR scenarios need; a `max` send gets a token of its own. Deposits of created tokens stay locked: the app's wallet keeps their authorities, and the cleanup doesn't melt them. `--unlocked` picks scenarios as if an unlocked private balance were the only one: it lists nothing of what it leaves out, so it's no baseline.
 
 ## Custom tokens and the run order
 
 After onboarding, the runner mints three tokens straight to the app wallet, from a treasury wallet that keeps the authorities: `E2E Deposit` (E2ED, 1000 tokens), `E2E Large` (E2EL, a deposit token of exactly 2^40 units, used only for the over-limit amounts) and `E2E Fee` (E2EF, 1000 tokens, fee-based). A separate token keeps the 2^40 units out of the other deposit scenarios: a balance above 2^40 makes a private send of the whole balance fail the 2^40 limit before it reaches the fee check. The app then imports them from the dashboard banner. E2EL's 1% deposit locks about 110M HTR of the privnet's 1B genesis, which the cleanup below frees.
 
-All of a setup's scenarios share one wallet, so the order matters (`lib/runOrder.js`). The wallet starts with the tokens and no HTR, so the zero-HTR scenarios run first. The other scenarios each get 20 HTR first; failures run before successful sends, because failures spend nothing. The private over-limit check needs all 2^40 E2EL, so it runs before the public send that moves them.
+The scenarios of one private balance state share one wallet, so the order matters (`lib/runOrder.js`). The wallet starts with the tokens and no HTR, so the zero-HTR scenarios run first. The other scenarios each get 20 HTR first; failures run before successful sends, because failures spend nothing. The private over-limit check needs all 2^40 E2EL, so it runs before the public send that moves them.
 
 ## Cleanup: the run's funds go back to genesis
 
@@ -79,9 +79,27 @@ tailscale serve --bg 18090             # https://<this machine>.<tailnet>.ts.net
 
 The index there lists the runs. An evidence dir also holds the run's seeds and Maestro's logs, which `serve-viewer.js` doesn't serve, so copy only the viewer and the recordings when sharing a run. Runs from before onboarding stopped being recorded still show the seed: the server withholds their `onboard/screen.mp4`, but their `viewer.html` lists five of its words. `tailscale serve --https=443 off` stops it. Timing: the recording's first frame is taken from screenrecord's "Configuring recorder" line on the host clock, and Maestro times its commands on the host clock too; the steps match the screen to about 0.2 s. `--no-record` skips the recordings and the viewer.
 
-## Scenarios held back
+## Private balance states
 
-The runner lists these in each run as skipped, with the reason (`unrunnableReason` in `lib/sendFlow.js`), and they stay in the graph for manual QA: those that need a locked or broken-key private balance, and one on which the graph and the app disagree. `ROADMAP.md` has the finding and the next steps.
+Each state (`unlocked`, `locked`, `broken-key`) gets a fresh wallet of its own, in that order. For the last two the runner pays the wallet a private output, stops the app, and replaces the encrypted scan key in the app's record (`tools/privateBalance.js`; `asyncstorage:access` in its storage, written as root). Then it starts the app, enters the PIN and checks the state on Receive.
+
+| State | What the key becomes | What the app shows |
+|---|---|---|
+| `locked` | the wallet's own key, under another PIN | "Private receiving is locked"; the send screen counts the locked outputs and offers the unlock |
+| `broken-key` | another wallet's key, under the PIN | "Private receiving is unavailable"; no privacy selector; nothing the wallet holds on its shielded spend addresses, public amounts included |
+
+On the wallet service neither state exists: with such a record the app starts again on the fullnode. `--action start-wallet` checks that, on both facades.
+
+On its lock screen the app never goes idle, so Maestro takes 30 to 50 s over each key there and `uiautomator` never answers. `unlock` in `run.js` reads the keys' places from one `maestro hierarchy`, which doesn't wait for idle, and taps them with adb.
+
+A scenario the kit can't run goes in `unrunnableReason` (`lib/unrunnable.js`) with its reason, and every run lists it as skipped. There are none today; keep it that way, with a way back in `ROADMAP.md` for each one added.
+
+## Running less, and faster
+
+- **While developing, run only what a change reaches.** `--affected` takes features, flags or axis values of the graph (`--affected shielded-send,token:fee`), and `--since origin/release-candidate` picks the features whose `files` changed since that ref, uncommitted ones included. Both use the graph's impact tool and combine with every other option; `--dry-run` shows the picks without running. The files no feature lists (`src/App.js`, `package.json`) are named in the log: what they reach isn't in the run. The graph only knows what is modelled, so the full suite still comes at the end. The results file names the picks.
+- **The PIN is tapped with adb.** Maestro takes about 2.4 s a key. A flow taps the first key, which waits for the screen to settle, and then calls the runner over HTTP from its script, which Maestro runs on this machine (`lib/pinServer.js`). The runner learns where the keys are from the log of the first flow of the run that enters the PIN, which taps them all.
+- **The way back to the dashboard is in the scenario's own flow**, after its last check, which saves a Maestro start (8 to 9 s). The flow logs `E2E_REACHED <outcome>` right after that check: that mark, not the flow's exit code, says whether the scenario passed. It was seen failing, on a wrong message, and so was a PIN the server could not tap. A flow that fails before it is followed by `to_dashboard.yaml` on its own.
+- **A `while: notVisible` loop ends 7 s late**: Maestro gives an element that shows that long to go away. `to_dashboard.yaml` looks with a 500 ms wait of its own instead. It looks before the first back too: a back on the dashboard leaves the app.
 
 ## Between scenarios
 

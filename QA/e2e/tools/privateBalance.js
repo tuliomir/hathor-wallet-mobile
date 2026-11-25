@@ -7,7 +7,7 @@
  */
 
 // Makes the app's wallet record start with its private balance locked or with a broken key, by
-// replacing the encrypted scan key (ROADMAP "The path to no skipped scenarios").
+// replacing the encrypted scan key (README "Private balance states").
 //
 //   privateBalance.js <locked|broken-key> <seed-file> <record-file>   prints the new record
 //
