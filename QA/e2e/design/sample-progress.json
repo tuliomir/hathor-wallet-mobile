@@ -1,0 +1,3344 @@
+{
+ "schema": 1,
+ "note": "A snapshot of a real run. Invented for the design, to show states the real run does not have: the messages, the tags of the queued jobs, and current.step / wallet details.",
+ "run": {
+  "id": "full-20261125-1759",
+  "mode": "full",
+  "name": "Final validation of receive, payments and history",
+  "commit": "a1ce8fd1",
+  "branch": "qa/e2e",
+  "tree": "clean",
+  "app": "0.41.0-rc.1-e2e, built from these sources",
+  "startedAt": "2026-11-25T17:59:02Z",
+  "now": "2026-11-25T18:49:30Z",
+  "state": "running",
+  "part": {
+   "n": 1,
+   "startedAt": "2026-11-25T17:59:02Z",
+   "endsBy": "2026-11-25T19:53:02Z"
+  },
+  "device": "Android emulator (hnni)",
+  "selection": {
+   "options": "full --minutes 114",
+   "picked": 179,
+   "of": 179
+  }
+ },
+ "current": {
+  "job": "fn/send",
+  "scenario": "send:pn-fn-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked",
+  "phase": "scenario",
+  "wallet": "unlocked",
+  "step": {
+   "n": 2,
+   "of": 4,
+   "name": "amount",
+   "text": "pick E2ED, type the max amount, pick Hide amount"
+  },
+  "startedAt": "2026-11-25T18:49:30Z",
+  "lastEventAt": "2026-11-25T18:49:30Z",
+  "video": null
+ },
+ "tags": {
+  "new": "Never ran here",
+  "changed": "Its own test, or its feature, changed",
+  "failed": "Failed the last time it ran",
+  "owed": "Something shared changed that may reach it",
+  "fresh": "Last passed with exactly what is here",
+  "stale app": "Its last result was on an app not built from these sources",
+  "skipped": "The kit can't run it yet"
+ },
+ "messages": [
+  {
+   "at": "2026-11-25T17:58:40Z",
+   "from": "agent",
+   "kind": "why",
+   "text": "Full run to end the work on receive, payments and history: the last check of a change to the suite. Every scenario must pass on one commit before the baseline ledger is written."
+  },
+  {
+   "at": "2026-11-25T17:58:55Z",
+   "from": "agent",
+   "kind": "correction",
+   "text": "This is the second start. The first (16:31, 50 passed, 7 failed) was thrown away: the fund helper made two transactions in one second and broke one group's setup. Fixed in a1ce8fd1."
+  },
+  {
+   "at": "2026-11-25T18:07:57Z",
+   "from": "agent",
+   "kind": "note",
+   "job": "fn/receive",
+   "text": "Nothing to watch here. fn/receive-payment is next; its locked and broken-key groups spend about 4 min each on setup before the first result."
+  },
+  {
+   "at": "2026-11-25T18:29:23Z",
+   "from": "agent",
+   "kind": "finding",
+   "job": "fn/receive-payment",
+   "text": "A fee token can't be created while all the HTR is private: \"shielded balance equation does not hold\". Seen in the app; nothing filed.",
+   "link": "QA/e2e/ROADMAP.md"
+  }
+ ],
+ "jobs": [
+  {
+   "id": "fn/receive",
+   "facade": "fullnode",
+   "action": "receive",
+   "status": "done",
+   "started": "2026-11-25T17:59:02Z",
+   "finished": "2026-11-25T18:07:57Z",
+   "tries": 1,
+   "estimateSeconds": 705,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150,
+     "setupStarted": "2026-11-25T17:59:02Z",
+     "setupFinished": "2026-11-25T18:00:56Z"
+    },
+    {
+     "wallet": "locked",
+     "setupEstimateSeconds": 240,
+     "setupStarted": "2026-11-25T18:01:42Z",
+     "setupFinished": "2026-11-25T18:04:40Z"
+    },
+    {
+     "wallet": "broken-key",
+     "setupEstimateSeconds": 240,
+     "setupStarted": "2026-11-25T18:04:55Z",
+     "setupFinished": "2026-11-25T18:07:42Z"
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "receive:pn-fn-seed-multi:locked",
+     "title": "locked",
+     "wallet": "locked",
+     "expects": "edge-private-locked",
+     "expectsText": "Private receiving is locked",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:04:40Z",
+     "finished": "2026-11-25T18:04:55Z",
+     "note": "reached: edge-private-locked; Receive says \"Private receiving is locked\" and shows no address",
+     "estimateSeconds": 14,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive:pn-fn-seed-multi:broken-key",
+     "title": "broken-key",
+     "wallet": "broken-key",
+     "expects": "edge-private-unavailable",
+     "expectsText": "Private receiving is unavailable",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:07:42Z",
+     "finished": "2026-11-25T18:07:57Z",
+     "note": "reached: edge-private-unavailable; Receive says \"Private receiving is unavailable\" and shows no address",
+     "estimateSeconds": 15,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive:pn-fn-seed-multi:unlocked",
+     "title": "unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-shared",
+     "expectsText": "Here is my address: ${lastSharedAddress}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:00:56Z",
+     "finished": "2026-11-25T18:01:42Z",
+     "note": "reached: ok-shared; the text, QR code, share sheet and clipboard agree with the derived addresses, before and after New address",
+     "estimateSeconds": 46,
+     "estimateFrom": "last run"
+    }
+   ]
+  },
+  {
+   "id": "fn/receive-payment",
+   "facade": "fullnode",
+   "action": "receive-payment",
+   "status": "done",
+   "started": "2026-11-25T18:07:57Z",
+   "finished": "2026-11-25T18:29:23Z",
+   "tries": 1,
+   "estimateSeconds": 1246,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150,
+     "setupStarted": "2026-11-25T18:07:57Z",
+     "setupFinished": "2026-11-25T18:10:35Z"
+    },
+    {
+     "wallet": "locked",
+     "setupEstimateSeconds": 240,
+     "setupStarted": "2026-11-25T18:15:36Z",
+     "setupFinished": "2026-11-25T18:19:18Z"
+    },
+    {
+     "wallet": "broken-key",
+     "setupEstimateSeconds": 240,
+     "setupStarted": "2026-11-25T18:22:52Z",
+     "setupFinished": "2026-11-25T18:26:21Z"
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "receive-payment:pn-fn-seed-multi:htr.shown-public.registered.open.broken-key",
+     "title": "htr.shown-public.registered.open.broken-key",
+     "wallet": "broken-key",
+     "expects": "edge-not-shown",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:26:21Z",
+     "finished": "2026-11-25T18:26:46Z",
+     "note": "reached: edge-not-shown; the payment does not show, while a later public payment does",
+     "estimateSeconds": 25,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:htr.hide-amount.registered.open.locked",
+     "title": "htr.hide-amount.registered.open.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-count",
+     "expectsText": "${count} private output is locked",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:19:18Z",
+     "finished": "2026-11-25T18:19:43Z",
+     "note": "reached: edge-locked-count; the payment does not show, while a later public payment does; 2 private outputs are locked",
+     "estimateSeconds": 25,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:htr.private.registered.open.locked",
+     "title": "htr.private.registered.open.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-count",
+     "expectsText": "${count} private output is locked",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:19:43Z",
+     "finished": "2026-11-25T18:20:08Z",
+     "note": "reached: edge-locked-count; the payment does not show, while a later public payment does; 3 private outputs are locked",
+     "estimateSeconds": 25,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:deposit.hide-amount.registered.closed.broken-key",
+     "title": "deposit.hide-amount.registered.closed.broken-key",
+     "wallet": "broken-key",
+     "expects": "edge-not-shown",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:26:46Z",
+     "finished": "2026-11-25T18:27:41Z",
+     "note": "reached: edge-not-shown; the payment does not show, while a later public payment does",
+     "estimateSeconds": 55,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:fee.private.unregistered.open.broken-key",
+     "title": "fee.private.unregistered.open.broken-key",
+     "wallet": "broken-key",
+     "expects": "edge-not-shown",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:27:41Z",
+     "finished": "2026-11-25T18:28:11Z",
+     "note": "reached: edge-not-shown; the payment does not show, while a later public payment does",
+     "estimateSeconds": 30,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:htr.legacy-public.registered.closed.unlocked",
+     "title": "htr.legacy-public.registered.closed.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:10:35Z",
+     "finished": "2026-11-25T18:11:37Z",
+     "note": "reached: ok-received; received 1.01 HTR",
+     "estimateSeconds": 62,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.unlocked",
+     "title": "deposit.legacy-public.unregistered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-import-banner",
+     "expectsText": "We found tokens linked to your address that are not yet in your wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:11:37Z",
+     "finished": "2026-11-25T18:12:21Z",
+     "note": "reached: ok-import-banner; received 1.02 EN02",
+     "estimateSeconds": 44,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.locked",
+     "title": "deposit.legacy-public.unregistered.open.locked",
+     "wallet": "locked",
+     "expects": "ok-import-banner",
+     "expectsText": "We found tokens linked to your address that are not yet in your wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:20:08Z",
+     "finished": "2026-11-25T18:20:55Z",
+     "note": "reached: ok-import-banner; received 1.03 EN03",
+     "estimateSeconds": 46,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.broken-key",
+     "title": "deposit.legacy-public.unregistered.open.broken-key",
+     "wallet": "broken-key",
+     "expects": "ok-import-banner",
+     "expectsText": "We found tokens linked to your address that are not yet in your wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:28:11Z",
+     "finished": "2026-11-25T18:28:56Z",
+     "note": "reached: ok-import-banner; received 1.04 EN04",
+     "estimateSeconds": 45,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:deposit.shown-public.registered.open.unlocked",
+     "title": "deposit.shown-public.registered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:12:21Z",
+     "finished": "2026-11-25T18:12:39Z",
+     "note": "reached: ok-received; received 1.03 E2ED",
+     "estimateSeconds": 18,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:deposit.private.registered.open.unlocked",
+     "title": "deposit.private.registered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:12:39Z",
+     "finished": "2026-11-25T18:12:57Z",
+     "note": "reached: ok-received; received 1.04 E2ED",
+     "estimateSeconds": 18,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:fee.legacy-public.registered.open.unlocked",
+     "title": "fee.legacy-public.registered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:12:57Z",
+     "finished": "2026-11-25T18:13:15Z",
+     "note": "reached: ok-received; received 1.05 E2EF",
+     "estimateSeconds": 18,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:fee.shown-public.unregistered.closed.locked",
+     "title": "fee.shown-public.unregistered.closed.locked",
+     "wallet": "locked",
+     "expects": "ok-import-banner",
+     "expectsText": "We found tokens linked to your address that are not yet in your wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:20:55Z",
+     "finished": "2026-11-25T18:22:25Z",
+     "note": "reached: ok-import-banner; received 1.04 EN04",
+     "estimateSeconds": 91,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:fee.hide-amount.unregistered.open.unlocked",
+     "title": "fee.hide-amount.unregistered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-import-banner",
+     "expectsText": "We found tokens linked to your address that are not yet in your wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:13:15Z",
+     "finished": "2026-11-25T18:14:02Z",
+     "note": "reached: ok-import-banner; received 1.06 EN06",
+     "estimateSeconds": 47,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-fn-seed-multi:fee.private.registered.closed.unlocked",
+     "title": "fee.private.registered.closed.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:14:02Z",
+     "finished": "2026-11-25T18:15:09Z",
+     "note": "reached: ok-received; received 1.07 E2EF",
+     "estimateSeconds": 67,
+     "estimateFrom": "last run"
+    }
+   ]
+  },
+  {
+   "id": "fn/history",
+   "facade": "fullnode",
+   "action": "history",
+   "status": "done",
+   "started": "2026-11-25T18:29:23Z",
+   "finished": "2026-11-25T18:45:45Z",
+   "tries": 1,
+   "estimateSeconds": 957,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150,
+     "setupStarted": "2026-11-25T18:29:24Z",
+     "setupFinished": "2026-11-25T18:32:03Z"
+    },
+    {
+     "wallet": "locked",
+     "setupEstimateSeconds": 240,
+     "setupStarted": "2026-11-25T18:35:24Z",
+     "setupFinished": "2026-11-25T18:39:06Z"
+    },
+    {
+     "wallet": "broken-key",
+     "setupEstimateSeconds": 240,
+     "setupStarted": "2026-11-25T18:40:34Z",
+     "setupFinished": "2026-11-25T18:44:05Z"
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "history:pn-fn-seed-multi:htr.received.public.locked",
+     "title": "htr.received.public.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-count",
+     "expectsText": "${count} private output is locked",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:39:06Z",
+     "finished": "2026-11-25T18:39:29Z",
+     "note": "reached: edge-locked-count; Received HTR 1.01; no fees shown",
+     "estimateSeconds": 23,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:htr.received.public.broken-key",
+     "title": "htr.received.public.broken-key",
+     "wallet": "broken-key",
+     "expects": "edge-private-unavailable",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:44:05Z",
+     "finished": "2026-11-25T18:44:25Z",
+     "note": "reached: edge-private-unavailable; Received HTR 1.01; no fees shown",
+     "estimateSeconds": 21,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:htr.sent.public.broken-key",
+     "title": "htr.sent.public.broken-key",
+     "wallet": "broken-key",
+     "expects": "edge-private-unavailable",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:44:25Z",
+     "finished": "2026-11-25T18:44:44Z",
+     "note": "reached: edge-private-unavailable; Sent HTR -1.02; no fees shown",
+     "estimateSeconds": 19,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:deposit.received.public.broken-key",
+     "title": "deposit.received.public.broken-key",
+     "wallet": "broken-key",
+     "expects": "edge-private-unavailable",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:44:44Z",
+     "finished": "2026-11-25T18:45:03Z",
+     "note": "reached: edge-private-unavailable; Received E2ED 1.03; no fees shown",
+     "estimateSeconds": 19,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:deposit.self.public.locked",
+     "title": "deposit.self.public.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-count",
+     "expectsText": "${count} private output is locked",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:39:29Z",
+     "finished": "2026-11-25T18:39:50Z",
+     "note": "reached: edge-locked-count; You sent E2ED to yourself 0.00; no fees shown",
+     "estimateSeconds": 21,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:fee.sent.public.locked",
+     "title": "fee.sent.public.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-count",
+     "expectsText": "${count} private output is locked",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:39:50Z",
+     "finished": "2026-11-25T18:40:14Z",
+     "note": "reached: edge-locked-count; Sent E2EF -1.03; fees 0.02 HTR",
+     "estimateSeconds": 24,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:fee.self.public.broken-key",
+     "title": "fee.self.public.broken-key",
+     "wallet": "broken-key",
+     "expects": "edge-private-unavailable",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:45:03Z",
+     "finished": "2026-11-25T18:45:24Z",
+     "note": "reached: edge-private-unavailable; You sent E2EF to yourself 0.00; fees 0.02 HTR",
+     "estimateSeconds": 21,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:htr.received.hide-amount.unlocked",
+     "title": "htr.received.hide-amount.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:32:03Z",
+     "finished": "2026-11-25T18:32:30Z",
+     "note": "reached: ok-balance; Received HTR 1.01; fees 0.02 HTR",
+     "estimateSeconds": 27,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:htr.self.private.unlocked",
+     "title": "htr.self.private.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:32:30Z",
+     "finished": "2026-11-25T18:32:55Z",
+     "note": "reached: ok-balance; Sent HTR -0.04; fees 0.04 HTR",
+     "estimateSeconds": 25,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:deposit.received.private.unlocked",
+     "title": "deposit.received.private.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:32:55Z",
+     "finished": "2026-11-25T18:33:22Z",
+     "note": "reached: ok-balance; Received E2ED 1.03; fees 0.05 HTR",
+     "estimateSeconds": 27,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:deposit.sent.hide-amount.unlocked",
+     "title": "deposit.sent.hide-amount.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:33:22Z",
+     "finished": "2026-11-25T18:33:47Z",
+     "note": "reached: ok-balance; Sent E2ED -1.04; fees 0.04 HTR",
+     "estimateSeconds": 25,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:fee.received.public.unlocked",
+     "title": "fee.received.public.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:33:47Z",
+     "finished": "2026-11-25T18:34:12Z",
+     "note": "reached: ok-balance; Received E2EF 1.05; fees 0.02 HTR",
+     "estimateSeconds": 25,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:fee.sent.private.unlocked",
+     "title": "fee.sent.private.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:34:12Z",
+     "finished": "2026-11-25T18:34:37Z",
+     "note": "reached: ok-balance; Sent E2EF -1.06; fees 0.07 HTR",
+     "estimateSeconds": 25,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-fn-seed-multi:fee.self.hide-amount.unlocked",
+     "title": "fee.self.hide-amount.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:34:37Z",
+     "finished": "2026-11-25T18:35:03Z",
+     "note": "reached: ok-balance; You sent E2EF to yourself 0.00; fees 0.04 HTR",
+     "estimateSeconds": 25,
+     "estimateFrom": "last run"
+    }
+   ]
+  },
+  {
+   "id": "fn/send",
+   "facade": "fullnode",
+   "action": "send",
+   "status": "running",
+   "started": "2026-11-25T18:45:45Z",
+   "tries": 1,
+   "estimateSeconds": 2609,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150,
+     "setupStarted": "2026-11-25T18:45:46Z",
+     "setupFinished": "2026-11-25T18:48:32Z"
+    },
+    {
+     "wallet": "locked",
+     "setupEstimateSeconds": 240
+    },
+    {
+     "wallet": "broken-key",
+     "setupEstimateSeconds": 240
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked",
+     "title": "simple.deposit.hide-amount.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "passed",
+     "started": "2026-11-25T18:48:32Z",
+     "finished": "2026-11-25T18:49:30Z",
+     "note": "reached: err-privacy-needs-shielded",
+     "estimateSeconds": 58,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked",
+     "title": "simple.deposit.hide-amount.max.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "running",
+     "started": "2026-11-25T18:49:30Z",
+     "estimateSeconds": 57,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.fee.public.normal.zero-htr.unlocked",
+     "title": "simple.fee.public.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-htr-and-fees",
+     "expectsText": "Insufficient HTR to cover this transaction and its fees.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 67,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:multisig.deposit.public.private-over-limit.zero-htr.locked",
+     "title": "multisig.deposit.public.private-over-limit.zero-htr.locked",
+     "wallet": "locked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 91,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:multisig.fee.public.decimals.zero-htr.broken-key",
+     "title": "multisig.fee.public.decimals.zero-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "err-htr-and-fees",
+     "expectsText": "Insufficient HTR to cover this transaction and its fees.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 58,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.public.max.zero-htr.broken-key",
+     "title": "shielded.deposit.public.max.zero-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 80,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.hide-amount.max.zero-htr.unlocked",
+     "title": "shielded.deposit.hide-amount.max.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-htr-and-fees",
+     "expectsText": "Insufficient HTR to cover this transaction and its fees.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 80,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.private.normal.zero-htr.unlocked",
+     "title": "shielded.deposit.private.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-fee",
+     "expectsText": "Insufficient HTR to cover the privacy fees of this transaction.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 81,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.htr.public.over-balance.enough-htr.unlocked",
+     "title": "simple.htr.public.over-balance.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-insufficient-funds",
+     "expectsText": "Insufficient funds",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 62,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.htr.public.empty.enough-htr.unlocked",
+     "title": "simple.htr.public.empty.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-invalid-amount",
+     "expectsText": "Next stays disabled",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 56,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.htr.hide-amount.normal.enough-htr.unlocked",
+     "title": "simple.htr.hide-amount.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 61,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.htr.hide-amount.max.enough-htr.unlocked",
+     "title": "simple.htr.hide-amount.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 62,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.htr.hide-amount.normal.enough-htr.locked",
+     "title": "shielded.htr.hide-amount.normal.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-unlock",
+     "expectsText": "Your private balance is locked. Unlock it to send privately.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 82,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.hide-amount.private-over-limit.enough-htr.unlocked",
+     "title": "shielded.deposit.hide-amount.private-over-limit.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-private-over-limit",
+     "expectsText": "A private send can be at most ${max} ${symbol}.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 74,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.fee.hide-amount.decimals.enough-htr.locked",
+     "title": "shielded.fee.hide-amount.decimals.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-unlock",
+     "expectsText": "Your private balance is locked. Unlock it to send privately.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 85,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.fee.private.max.enough-htr.locked",
+     "title": "shielded.fee.private.max.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-unlock",
+     "expectsText": "Your private balance is locked. Unlock it to send privately.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 80,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.htr.public.normal.enough-htr.broken-key",
+     "title": "simple.htr.public.normal.enough-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 76,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.htr.public.max.enough-htr.locked",
+     "title": "simple.htr.public.max.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 82,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.htr.public.decimals.enough-htr.broken-key",
+     "title": "simple.htr.public.decimals.enough-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 77,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.public.private-over-limit.enough-htr.unlocked",
+     "title": "simple.deposit.public.private-over-limit.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 104,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:multisig.htr.public.normal.enough-htr.unlocked",
+     "title": "multisig.htr.public.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 83,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:multisig.htr.public.max.enough-htr.unlocked",
+     "title": "multisig.htr.public.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 105,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.htr.private.normal.enough-htr.unlocked",
+     "title": "shielded.htr.private.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 120,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.private.decimals.enough-htr.unlocked",
+     "title": "shielded.deposit.private.decimals.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 114,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.fee.public.private-over-limit.enough-htr.broken-key",
+     "title": "shielded.fee.public.private-over-limit.enough-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 84,
+     "estimateFrom": "last run"
+    }
+   ]
+  },
+  {
+   "id": "fn/send-created",
+   "facade": "fullnode",
+   "action": "send",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 1770,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    },
+    {
+     "wallet": "locked",
+     "setupEstimateSeconds": 240
+    },
+    {
+     "wallet": "broken-key",
+     "setupEstimateSeconds": 240
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked",
+     "title": "simple.deposit.hide-amount.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked",
+     "title": "simple.deposit.hide-amount.max.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.fee.public.normal.zero-htr.unlocked",
+     "title": "simple.fee.public.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-htr-and-fees",
+     "expectsText": "Insufficient HTR to cover this transaction and its fees.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:multisig.deposit.public.max.zero-htr.broken-key",
+     "title": "multisig.deposit.public.max.zero-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "err-invalid-amount",
+     "expectsText": "Next stays disabled",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.fee.hide-amount.decimals.zero-htr.unlocked",
+     "title": "shielded.fee.hide-amount.decimals.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-fee",
+     "expectsText": "Insufficient HTR to cover the privacy fees of this transaction.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.fee.private.max.zero-htr.locked",
+     "title": "shielded.fee.private.max.zero-htr.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-unlock",
+     "expectsText": "Your private balance is locked. Unlock it to send privately.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.public.over-balance.enough-htr.unlocked",
+     "title": "simple.deposit.public.over-balance.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-insufficient-funds",
+     "expectsText": "Insufficient funds",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.public.empty.enough-htr.unlocked",
+     "title": "simple.deposit.public.empty.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-invalid-amount",
+     "expectsText": "Next stays disabled",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.public.decimals.enough-htr.broken-key",
+     "title": "simple.deposit.public.decimals.enough-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "err-insufficient-funds",
+     "expectsText": "Insufficient funds",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.hide-amount.normal.enough-htr.unlocked",
+     "title": "simple.deposit.hide-amount.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.hide-amount.normal.enough-htr.locked",
+     "title": "shielded.deposit.hide-amount.normal.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "edge-locked-unlock",
+     "expectsText": "Your private balance is locked. Unlock it to send privately.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.fee.public.normal.enough-htr.broken-key",
+     "title": "shielded.fee.public.normal.enough-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "err-insufficient-funds",
+     "expectsText": "Insufficient funds",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:simple.deposit.public.max.enough-htr.locked",
+     "title": "simple.deposit.public.max.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:multisig.deposit.public.normal.enough-htr.unlocked",
+     "title": "multisig.deposit.public.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:multisig.fee.public.decimals.enough-htr.locked",
+     "title": "multisig.fee.public.decimals.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.hide-amount.max.enough-htr.unlocked",
+     "title": "shielded.deposit.hide-amount.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.private.normal.enough-htr.unlocked",
+     "title": "shielded.deposit.private.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.private.max.enough-htr.unlocked",
+     "title": "shielded.deposit.private.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-fn-seed-multi:shielded.deposit.private.decimals.enough-htr.unlocked",
+     "title": "shielded.deposit.private.decimals.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    }
+   ]
+  },
+  {
+   "id": "fn/create-token",
+   "facade": "fullnode",
+   "action": "create-token",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 1830,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    },
+    {
+     "wallet": "locked",
+     "setupEstimateSeconds": 240
+    },
+    {
+     "wallet": "broken-key",
+     "setupEstimateSeconds": 240
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.normal.zero-htr.unlocked",
+     "title": "deposit.valid.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-not-enough-htr",
+     "expectsText": "Next stays disabled and the deposit or fee shows in red",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.cents.zero-htr.unlocked",
+     "title": "deposit.valid.cents.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-late-deposit-fn",
+     "expectsText": "Not enough HTR tokens for deposit or fee: ${required} required, ${available} available",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.cents.zero-htr.locked",
+     "title": "deposit.valid.cents.zero-htr.locked",
+     "wallet": "locked",
+     "expects": "err-locked",
+     "expectsText": "Your private balance is locked. Unlock it and try again.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.cents.zero-htr.broken-key",
+     "title": "deposit.valid.cents.zero-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "err-private-unavailable",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:fee.valid.normal.zero-htr.unlocked",
+     "title": "fee.valid.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-not-enough-htr",
+     "expectsText": "Next stays disabled and the deposit or fee shows in red",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.normal.enough-htr.locked",
+     "title": "deposit.valid.normal.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "err-locked",
+     "expectsText": "Your private balance is locked. Unlock it and try again.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.normal.enough-htr.broken-key",
+     "title": "deposit.valid.normal.enough-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "err-private-unavailable",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.exact.enough-htr.locked",
+     "title": "deposit.valid.exact.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "err-locked",
+     "expectsText": "Your private balance is locked. Unlock it and try again.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.exact.enough-htr.broken-key",
+     "title": "deposit.valid.exact.enough-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "err-private-unavailable",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.over-balance.enough-htr.unlocked",
+     "title": "deposit.valid.over-balance.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-not-enough-htr",
+     "expectsText": "Next stays disabled and the deposit or fee shows in red",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.over-by-rounding.enough-htr.unlocked",
+     "title": "deposit.valid.over-by-rounding.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-late-deposit-fn",
+     "expectsText": "Not enough HTR tokens for deposit or fee: ${required} required, ${available} available",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.over-by-rounding.enough-htr.locked",
+     "title": "deposit.valid.over-by-rounding.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "err-locked",
+     "expectsText": "Your private balance is locked. Unlock it and try again.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.over-by-rounding.enough-htr.broken-key",
+     "title": "deposit.valid.over-by-rounding.enough-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "err-private-unavailable",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.empty.enough-htr.unlocked",
+     "title": "deposit.valid.empty.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-empty-amount",
+     "expectsText": "Next stays disabled",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.empty-name.normal.enough-htr.unlocked",
+     "title": "deposit.empty-name.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-empty-name",
+     "expectsText": "Next stays disabled",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.short-symbol.normal.enough-htr.unlocked",
+     "title": "deposit.short-symbol.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-short-symbol",
+     "expectsText": "Next stays disabled",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:fee.valid.normal.enough-htr.broken-key",
+     "title": "fee.valid.normal.enough-htr.broken-key",
+     "wallet": "broken-key",
+     "expects": "err-private-unavailable",
+     "expectsText": "Private transfers are not available for this wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:fee.valid.cents.enough-htr.locked",
+     "title": "fee.valid.cents.enough-htr.locked",
+     "wallet": "locked",
+     "expects": "err-locked",
+     "expectsText": "Your private balance is locked. Unlock it and try again.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:deposit.valid.exact.enough-htr.unlocked",
+     "title": "deposit.valid.exact.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-created",
+     "expectsText": "**${name}** created successfully",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-fn-seed-multi:fee.valid.normal.enough-htr.unlocked",
+     "title": "fee.valid.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-created",
+     "expectsText": "**${name}** created successfully",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    }
+   ]
+  },
+  {
+   "id": "fn/start-wallet",
+   "facade": "fullnode",
+   "action": "start-wallet",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 810,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    },
+    {
+     "wallet": "locked",
+     "setupEstimateSeconds": 240
+    },
+    {
+     "wallet": "broken-key",
+     "setupEstimateSeconds": 240
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "start-wallet:pn-fn-seed-multi:unlocked",
+     "title": "unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-started",
+     "expectsText": "The server shown is the setup's facade's",
+     "tag": "fresh",
+     "why": [],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "start-wallet:pn-fn-seed-multi:locked",
+     "title": "locked",
+     "wallet": "locked",
+     "expects": "ok-started",
+     "expectsText": "The server shown is the setup's facade's",
+     "tag": "fresh",
+     "why": [],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "start-wallet:pn-fn-seed-multi:broken-key",
+     "title": "broken-key",
+     "wallet": "broken-key",
+     "expects": "ok-started",
+     "expectsText": "The server shown is the setup's facade's",
+     "tag": "fresh",
+     "why": [],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    }
+   ]
+  },
+  {
+   "id": "ws/receive",
+   "facade": "wallet service",
+   "action": "receive",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 192,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "receive:pn-ws-seed-multi:unlocked",
+     "title": "unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-shared",
+     "expectsText": "Here is my address: ${lastSharedAddress}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 42,
+     "estimateFrom": "last run"
+    }
+   ]
+  },
+  {
+   "id": "ws/receive-payment",
+   "facade": "wallet service",
+   "action": "receive-payment",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 879,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "receive-payment:pn-ws-seed-multi:deposit.shown-public.unregistered.open.unlocked",
+     "title": "deposit.shown-public.unregistered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "edge-late-offer",
+     "expectsText": "The token is not offered for import until the app starts again",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 121,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:htr.legacy-public.registered.open.unlocked",
+     "title": "htr.legacy-public.registered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 17,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:htr.shown-public.registered.open.unlocked",
+     "title": "htr.shown-public.registered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:htr.hide-amount.registered.closed.unlocked",
+     "title": "htr.hide-amount.registered.closed.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:htr.private.registered.open.unlocked",
+     "title": "htr.private.registered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 19,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:deposit.legacy-public.unregistered.open.unlocked",
+     "title": "deposit.legacy-public.unregistered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-import-banner",
+     "expectsText": "We found tokens linked to your address that are not yet in your wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 43,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:deposit.shown-public.unregistered.closed.unlocked",
+     "title": "deposit.shown-public.unregistered.closed.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-import-banner",
+     "expectsText": "We found tokens linked to your address that are not yet in your wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:deposit.hide-amount.unregistered.open.unlocked",
+     "title": "deposit.hide-amount.unregistered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-import-banner",
+     "expectsText": "We found tokens linked to your address that are not yet in your wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 52,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:deposit.private.registered.closed.unlocked",
+     "title": "deposit.private.registered.closed.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:fee.legacy-public.registered.closed.unlocked",
+     "title": "fee.legacy-public.registered.closed.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 57,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:fee.shown-public.registered.open.unlocked",
+     "title": "fee.shown-public.registered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:fee.hide-amount.registered.open.unlocked",
+     "title": "fee.hide-amount.registered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-received",
+     "expectsText": "Received ${symbol}",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "receive-payment:pn-ws-seed-multi:fee.private.unregistered.open.unlocked",
+     "title": "fee.private.unregistered.open.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-import-banner",
+     "expectsText": "We found tokens linked to your address that are not yet in your wallet.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    }
+   ]
+  },
+  {
+   "id": "ws/history",
+   "facade": "wallet service",
+   "action": "history",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 344,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "history:pn-ws-seed-multi:htr.received.public.unlocked",
+     "title": "htr.received.public.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 20,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-ws-seed-multi:htr.sent.private.unlocked",
+     "title": "htr.sent.private.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 22,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-ws-seed-multi:htr.self.hide-amount.unlocked",
+     "title": "htr.self.hide-amount.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 23,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-ws-seed-multi:deposit.received.private.unlocked",
+     "title": "deposit.received.private.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 22,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-ws-seed-multi:deposit.sent.hide-amount.unlocked",
+     "title": "deposit.sent.hide-amount.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 22,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-ws-seed-multi:deposit.self.public.unlocked",
+     "title": "deposit.self.public.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 20,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-ws-seed-multi:fee.received.hide-amount.unlocked",
+     "title": "fee.received.hide-amount.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 23,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-ws-seed-multi:fee.sent.public.unlocked",
+     "title": "fee.sent.public.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 20,
+     "estimateFrom": "last run"
+    },
+    {
+     "id": "history:pn-ws-seed-multi:fee.self.private.unlocked",
+     "title": "fee.self.private.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-balance",
+     "expectsText": "The token's available balance and its transactions are shown, and the balance matches the home list",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 22,
+     "estimateFrom": "last run"
+    }
+   ]
+  },
+  {
+   "id": "ws/send",
+   "facade": "wallet service",
+   "action": "send",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 1590,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked",
+     "title": "simple.deposit.hide-amount.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "changed",
+     "why": [
+      "its flow"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked",
+     "title": "simple.deposit.hide-amount.max.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.fee.public.normal.zero-htr.unlocked",
+     "title": "simple.fee.public.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-htr-and-fees",
+     "expectsText": "Insufficient HTR to cover this transaction and its fees.",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:multisig.deposit.public.private-over-limit.zero-htr.unlocked",
+     "title": "multisig.deposit.public.private-over-limit.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:multisig.fee.public.max.zero-htr.unlocked",
+     "title": "multisig.fee.public.max.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-htr-and-fees",
+     "expectsText": "Insufficient HTR to cover this transaction and its fees.",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.deposit.hide-amount.normal.zero-htr.unlocked",
+     "title": "shielded.deposit.hide-amount.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-fee",
+     "expectsText": "Insufficient HTR to cover the privacy fees of this transaction.",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.deposit.private.decimals.zero-htr.unlocked",
+     "title": "shielded.deposit.private.decimals.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-fee",
+     "expectsText": "Insufficient HTR to cover the privacy fees of this transaction.",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.htr.public.over-balance.enough-htr.unlocked",
+     "title": "simple.htr.public.over-balance.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-insufficient-funds",
+     "expectsText": "Insufficient funds",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.htr.public.empty.enough-htr.unlocked",
+     "title": "simple.htr.public.empty.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-invalid-amount",
+     "expectsText": "Next stays disabled",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.htr.hide-amount.normal.enough-htr.unlocked",
+     "title": "simple.htr.hide-amount.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "changed",
+     "why": [
+      "its flow"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.htr.hide-amount.max.enough-htr.unlocked",
+     "title": "simple.htr.hide-amount.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.deposit.hide-amount.private-over-limit.enough-htr.unlocked",
+     "title": "shielded.deposit.hide-amount.private-over-limit.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-private-over-limit",
+     "expectsText": "A private send can be at most ${max} ${symbol}.",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.htr.public.max.enough-htr.unlocked",
+     "title": "simple.htr.public.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.htr.public.decimals.enough-htr.unlocked",
+     "title": "simple.htr.public.decimals.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.public.private-over-limit.enough-htr.unlocked",
+     "title": "simple.deposit.public.private-over-limit.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:multisig.htr.public.normal.enough-htr.unlocked",
+     "title": "multisig.htr.public.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:multisig.htr.public.decimals.enough-htr.unlocked",
+     "title": "multisig.htr.public.decimals.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.htr.hide-amount.decimals.enough-htr.unlocked",
+     "title": "shielded.htr.hide-amount.decimals.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.htr.private.normal.enough-htr.unlocked",
+     "title": "shielded.htr.private.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "changed",
+     "why": [
+      "its flow"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.deposit.hide-amount.max.enough-htr.unlocked",
+     "title": "shielded.deposit.hide-amount.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.fee.public.decimals.enough-htr.unlocked",
+     "title": "shielded.fee.public.decimals.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.fee.public.private-over-limit.enough-htr.unlocked",
+     "title": "shielded.fee.public.private-over-limit.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.fee.hide-amount.normal.enough-htr.unlocked",
+     "title": "shielded.fee.hide-amount.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.fee.private.max.enough-htr.unlocked",
+     "title": "shielded.fee.private.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    }
+   ]
+  },
+  {
+   "id": "ws/send-created",
+   "facade": "wallet service",
+   "action": "send",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 1230,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked",
+     "title": "simple.deposit.hide-amount.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked",
+     "title": "simple.deposit.hide-amount.max.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.fee.public.normal.zero-htr.unlocked",
+     "title": "simple.fee.public.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-htr-and-fees",
+     "expectsText": "Insufficient HTR to cover this transaction and its fees.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:multisig.deposit.public.decimals.zero-htr.unlocked",
+     "title": "multisig.deposit.public.decimals.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.deposit.hide-amount.max.zero-htr.unlocked",
+     "title": "shielded.deposit.hide-amount.max.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-htr-and-fees",
+     "expectsText": "Insufficient HTR to cover this transaction and its fees.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.deposit.private.normal.zero-htr.unlocked",
+     "title": "shielded.deposit.private.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-fee",
+     "expectsText": "Insufficient HTR to cover the privacy fees of this transaction.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.public.over-balance.enough-htr.unlocked",
+     "title": "simple.deposit.public.over-balance.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-insufficient-funds",
+     "expectsText": "Insufficient funds",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.public.empty.enough-htr.unlocked",
+     "title": "simple.deposit.public.empty.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-invalid-amount",
+     "expectsText": "Next stays disabled",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.hide-amount.normal.enough-htr.unlocked",
+     "title": "simple.deposit.hide-amount.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-privacy-needs-shielded",
+     "expectsText": "The selected privacy mode requires a shielded address as the recipient. The address you entered is not shielded — change the address or switch to Public.",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.public.max.enough-htr.unlocked",
+     "title": "simple.deposit.public.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:simple.deposit.public.decimals.enough-htr.unlocked",
+     "title": "simple.deposit.public.decimals.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:multisig.deposit.public.normal.enough-htr.unlocked",
+     "title": "multisig.deposit.public.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:multisig.fee.public.max.enough-htr.unlocked",
+     "title": "multisig.fee.public.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.deposit.public.normal.enough-htr.unlocked",
+     "title": "shielded.deposit.public.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.deposit.hide-amount.decimals.enough-htr.unlocked",
+     "title": "shielded.deposit.hide-amount.decimals.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.deposit.private.max.enough-htr.unlocked",
+     "title": "shielded.deposit.private.max.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.fee.hide-amount.normal.enough-htr.unlocked",
+     "title": "shielded.fee.hide-amount.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "send:pn-ws-seed-multi:shielded.fee.private.decimals.enough-htr.unlocked",
+     "title": "shielded.fee.private.decimals.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-sent",
+     "expectsText": "Your transfer of **${amountAndToken}** has been confirmed",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    }
+   ]
+  },
+  {
+   "id": "ws/create-token",
+   "facade": "wallet service",
+   "action": "create-token",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 870,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "create-token:pn-ws-seed-multi:deposit.valid.normal.zero-htr.unlocked",
+     "title": "deposit.valid.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-not-enough-htr",
+     "expectsText": "Next stays disabled and the deposit or fee shows in red",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:deposit.valid.cents.zero-htr.unlocked",
+     "title": "deposit.valid.cents.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-late-deposit-ws",
+     "expectsText": "Don't have enough utxos to fill total amount.",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:fee.valid.normal.zero-htr.unlocked",
+     "title": "fee.valid.normal.zero-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-not-enough-htr",
+     "expectsText": "Next stays disabled and the deposit or fee shows in red",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:deposit.valid.over-balance.enough-htr.unlocked",
+     "title": "deposit.valid.over-balance.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-not-enough-htr",
+     "expectsText": "Next stays disabled and the deposit or fee shows in red",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:deposit.valid.over-by-rounding.enough-htr.unlocked",
+     "title": "deposit.valid.over-by-rounding.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-late-deposit-ws",
+     "expectsText": "Don't have enough utxos to fill total amount.",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:deposit.valid.empty.enough-htr.unlocked",
+     "title": "deposit.valid.empty.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-empty-amount",
+     "expectsText": "Next stays disabled",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:deposit.empty-name.normal.enough-htr.unlocked",
+     "title": "deposit.empty-name.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-empty-name",
+     "expectsText": "Next stays disabled",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:deposit.short-symbol.normal.enough-htr.unlocked",
+     "title": "deposit.short-symbol.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "err-short-symbol",
+     "expectsText": "Next stays disabled",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:deposit.valid.normal.enough-htr.unlocked",
+     "title": "deposit.valid.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-created",
+     "expectsText": "**${name}** created successfully",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:deposit.valid.exact.enough-htr.unlocked",
+     "title": "deposit.valid.exact.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-created",
+     "expectsText": "**${name}** created successfully",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:fee.valid.normal.enough-htr.unlocked",
+     "title": "fee.valid.normal.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-created",
+     "expectsText": "**${name}** created successfully",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "create-token:pn-ws-seed-multi:fee.valid.cents.enough-htr.unlocked",
+     "title": "fee.valid.cents.enough-htr.unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-created",
+     "expectsText": "**${name}** created successfully",
+     "tag": "owed",
+     "why": [
+      "shared parts of the kit",
+      "feature wallet-load"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    }
+   ]
+  },
+  {
+   "id": "ws/start-wallet",
+   "facade": "wallet service",
+   "action": "start-wallet",
+   "status": "queued",
+   "tries": 1,
+   "estimateSeconds": 810,
+   "groups": [
+    {
+     "wallet": "unlocked",
+     "setupEstimateSeconds": 150
+    },
+    {
+     "wallet": "locked",
+     "setupEstimateSeconds": 240
+    },
+    {
+     "wallet": "broken-key",
+     "setupEstimateSeconds": 240
+    }
+   ],
+   "scenarios": [
+    {
+     "id": "start-wallet:pn-ws-seed-multi:locked",
+     "title": "locked",
+     "wallet": "locked",
+     "expects": "edge-fallback",
+     "expectsText": "The server shown is the fullnode, though the setup's facade is the wallet service",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "start-wallet:pn-ws-seed-multi:broken-key",
+     "title": "broken-key",
+     "wallet": "broken-key",
+     "expects": "edge-fallback",
+     "expectsText": "The server shown is the fullnode, though the setup's facade is the wallet service",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    },
+    {
+     "id": "start-wallet:pn-ws-seed-multi:unlocked",
+     "title": "unlocked",
+     "wallet": "unlocked",
+     "expects": "ok-started",
+     "expectsText": "The server shown is the setup's facade's",
+     "tag": "new",
+     "why": [
+      "never ran"
+     ],
+     "status": "queued",
+     "estimateSeconds": 60,
+     "estimateFrom": "guess"
+    }
+   ]
+  }
+ ],
+ "events": [
+  {
+   "at": "2026-11-25T18:49:30Z",
+   "type": "scenario-passed",
+   "job": "fn/send",
+   "scenario": "send:pn-fn-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked",
+   "text": "reached: err-privacy-needs-shielded"
+  },
+  {
+   "at": "2026-11-25T18:45:46Z",
+   "type": "setup-started",
+   "job": "fn/send",
+   "text": "Setting up the unlocked wallet for 15 scenarios"
+  },
+  {
+   "at": "2026-11-25T18:45:45Z",
+   "type": "job-started",
+   "job": "fn/send",
+   "text": "fn/send started"
+  },
+  {
+   "at": "2026-11-25T18:45:45Z",
+   "type": "job-finished",
+   "job": "fn/history",
+   "text": "fn/history: 14 passed, 0 failed, 0 skipped"
+  },
+  {
+   "at": "2026-11-25T18:45:24Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:fee.self.public.broken-key",
+   "text": "reached: edge-private-unavailable; You sent E2EF to yourself 0.00; fees 0.02 HTR"
+  },
+  {
+   "at": "2026-11-25T18:45:03Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:deposit.received.public.broken-key",
+   "text": "reached: edge-private-unavailable; Received E2ED 1.03; no fees shown"
+  },
+  {
+   "at": "2026-11-25T18:44:44Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:htr.sent.public.broken-key",
+   "text": "reached: edge-private-unavailable; Sent HTR -1.02; no fees shown"
+  },
+  {
+   "at": "2026-11-25T18:44:25Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:htr.received.public.broken-key",
+   "text": "reached: edge-private-unavailable; Received HTR 1.01; no fees shown"
+  },
+  {
+   "at": "2026-11-25T18:40:34Z",
+   "type": "setup-started",
+   "job": "fn/history",
+   "text": "Setting up the broken-key wallet for 4 scenarios"
+  },
+  {
+   "at": "2026-11-25T18:40:14Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:fee.sent.public.locked",
+   "text": "reached: edge-locked-count; Sent E2EF -1.03; fees 0.02 HTR"
+  },
+  {
+   "at": "2026-11-25T18:39:50Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:deposit.self.public.locked",
+   "text": "reached: edge-locked-count; You sent E2ED to yourself 0.00; no fees shown"
+  },
+  {
+   "at": "2026-11-25T18:39:29Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:htr.received.public.locked",
+   "text": "reached: edge-locked-count; Received HTR 1.01; no fees shown"
+  },
+  {
+   "at": "2026-11-25T18:35:24Z",
+   "type": "setup-started",
+   "job": "fn/history",
+   "text": "Setting up the locked wallet for 3 scenarios"
+  },
+  {
+   "at": "2026-11-25T18:35:03Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:fee.self.hide-amount.unlocked",
+   "text": "reached: ok-balance; You sent E2EF to yourself 0.00; fees 0.04 HTR"
+  },
+  {
+   "at": "2026-11-25T18:34:37Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:fee.sent.private.unlocked",
+   "text": "reached: ok-balance; Sent E2EF -1.06; fees 0.07 HTR"
+  },
+  {
+   "at": "2026-11-25T18:34:12Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:fee.received.public.unlocked",
+   "text": "reached: ok-balance; Received E2EF 1.05; fees 0.02 HTR"
+  },
+  {
+   "at": "2026-11-25T18:33:47Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:deposit.sent.hide-amount.unlocked",
+   "text": "reached: ok-balance; Sent E2ED -1.04; fees 0.04 HTR"
+  },
+  {
+   "at": "2026-11-25T18:33:22Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:deposit.received.private.unlocked",
+   "text": "reached: ok-balance; Received E2ED 1.03; fees 0.05 HTR"
+  },
+  {
+   "at": "2026-11-25T18:32:55Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:htr.self.private.unlocked",
+   "text": "reached: ok-balance; Sent HTR -0.04; fees 0.04 HTR"
+  },
+  {
+   "at": "2026-11-25T18:32:30Z",
+   "type": "scenario-passed",
+   "job": "fn/history",
+   "scenario": "history:pn-fn-seed-multi:htr.received.hide-amount.unlocked",
+   "text": "reached: ok-balance; Received HTR 1.01; fees 0.02 HTR"
+  },
+  {
+   "at": "2026-11-25T18:29:24Z",
+   "type": "setup-started",
+   "job": "fn/history",
+   "text": "Setting up the unlocked wallet for 7 scenarios"
+  },
+  {
+   "at": "2026-11-25T18:29:23Z",
+   "type": "job-started",
+   "job": "fn/history",
+   "text": "fn/history started"
+  },
+  {
+   "at": "2026-11-25T18:29:23Z",
+   "type": "job-finished",
+   "job": "fn/receive-payment",
+   "text": "fn/receive-payment: 15 passed, 0 failed, 0 skipped"
+  },
+  {
+   "at": "2026-11-25T18:28:56Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.broken-key",
+   "text": "reached: ok-import-banner; received 1.04 EN04"
+  },
+  {
+   "at": "2026-11-25T18:28:11Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:fee.private.unregistered.open.broken-key",
+   "text": "reached: edge-not-shown; the payment does not show, while a later public payment does"
+  },
+  {
+   "at": "2026-11-25T18:27:41Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:deposit.hide-amount.registered.closed.broken-key",
+   "text": "reached: edge-not-shown; the payment does not show, while a later public payment does"
+  },
+  {
+   "at": "2026-11-25T18:26:46Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:htr.shown-public.registered.open.broken-key",
+   "text": "reached: edge-not-shown; the payment does not show, while a later public payment does"
+  },
+  {
+   "at": "2026-11-25T18:22:52Z",
+   "type": "setup-started",
+   "job": "fn/receive-payment",
+   "text": "Setting up the broken-key wallet for 4 scenarios"
+  },
+  {
+   "at": "2026-11-25T18:22:25Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:fee.shown-public.unregistered.closed.locked",
+   "text": "reached: ok-import-banner; received 1.04 EN04"
+  },
+  {
+   "at": "2026-11-25T18:20:55Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.locked",
+   "text": "reached: ok-import-banner; received 1.03 EN03"
+  },
+  {
+   "at": "2026-11-25T18:20:08Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:htr.private.registered.open.locked",
+   "text": "reached: edge-locked-count; the payment does not show, while a later public payment does; 3 private outputs are locked"
+  },
+  {
+   "at": "2026-11-25T18:19:43Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:htr.hide-amount.registered.open.locked",
+   "text": "reached: edge-locked-count; the payment does not show, while a later public payment does; 2 private outputs are locked"
+  },
+  {
+   "at": "2026-11-25T18:15:36Z",
+   "type": "setup-started",
+   "job": "fn/receive-payment",
+   "text": "Setting up the locked wallet for 4 scenarios"
+  },
+  {
+   "at": "2026-11-25T18:15:09Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:fee.private.registered.closed.unlocked",
+   "text": "reached: ok-received; received 1.07 E2EF"
+  },
+  {
+   "at": "2026-11-25T18:14:02Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:fee.hide-amount.unregistered.open.unlocked",
+   "text": "reached: ok-import-banner; received 1.06 EN06"
+  },
+  {
+   "at": "2026-11-25T18:13:15Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:fee.legacy-public.registered.open.unlocked",
+   "text": "reached: ok-received; received 1.05 E2EF"
+  },
+  {
+   "at": "2026-11-25T18:12:57Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:deposit.private.registered.open.unlocked",
+   "text": "reached: ok-received; received 1.04 E2ED"
+  },
+  {
+   "at": "2026-11-25T18:12:39Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:deposit.shown-public.registered.open.unlocked",
+   "text": "reached: ok-received; received 1.03 E2ED"
+  },
+  {
+   "at": "2026-11-25T18:12:21Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.unlocked",
+   "text": "reached: ok-import-banner; received 1.02 EN02"
+  },
+  {
+   "at": "2026-11-25T18:11:37Z",
+   "type": "scenario-passed",
+   "job": "fn/receive-payment",
+   "scenario": "receive-payment:pn-fn-seed-multi:htr.legacy-public.registered.closed.unlocked",
+   "text": "reached: ok-received; received 1.01 HTR"
+  },
+  {
+   "at": "2026-11-25T18:07:57Z",
+   "type": "setup-started",
+   "job": "fn/receive-payment",
+   "text": "Setting up the unlocked wallet for 7 scenarios"
+  },
+  {
+   "at": "2026-11-25T18:07:57Z",
+   "type": "job-started",
+   "job": "fn/receive-payment",
+   "text": "fn/receive-payment started"
+  },
+  {
+   "at": "2026-11-25T18:07:57Z",
+   "type": "job-finished",
+   "job": "fn/receive",
+   "text": "fn/receive: 3 passed, 0 failed, 0 skipped"
+  },
+  {
+   "at": "2026-11-25T18:07:57Z",
+   "type": "scenario-passed",
+   "job": "fn/receive",
+   "scenario": "receive:pn-fn-seed-multi:broken-key",
+   "text": "reached: edge-private-unavailable; Receive says \"Private receiving is unavailable\" and shows no address"
+  },
+  {
+   "at": "2026-11-25T18:04:55Z",
+   "type": "setup-started",
+   "job": "fn/receive",
+   "text": "Setting up the broken-key wallet for 1 scenarios"
+  },
+  {
+   "at": "2026-11-25T18:04:55Z",
+   "type": "scenario-passed",
+   "job": "fn/receive",
+   "scenario": "receive:pn-fn-seed-multi:locked",
+   "text": "reached: edge-private-locked; Receive says \"Private receiving is locked\" and shows no address"
+  },
+  {
+   "at": "2026-11-25T18:01:42Z",
+   "type": "setup-started",
+   "job": "fn/receive",
+   "text": "Setting up the locked wallet for 1 scenarios"
+  },
+  {
+   "at": "2026-11-25T18:01:42Z",
+   "type": "scenario-passed",
+   "job": "fn/receive",
+   "scenario": "receive:pn-fn-seed-multi:unlocked",
+   "text": "reached: ok-shared; the text, QR code, share sheet and clipboard agree with the derived addresses, before and after New address"
+  },
+  {
+   "at": "2026-11-25T17:59:02Z",
+   "type": "setup-started",
+   "job": "fn/receive",
+   "text": "Setting up the unlocked wallet for 1 scenarios"
+  },
+  {
+   "at": "2026-11-25T17:59:02Z",
+   "type": "job-started",
+   "job": "fn/receive",
+   "text": "fn/receive started"
+  }
+ ]
+}
