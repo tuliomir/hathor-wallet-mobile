@@ -4,6 +4,25 @@ Runs the app's money paths end to end on an Android emulator against a local sta
 
 The host setup (KVM, JDK 17, NDK, Maestro, the AVD) and the Android and Maestro gotchas are in the `mobile-e2e-flows` kit's README, which this one grows out of.
 
+## Which command to run
+
+`npm run e2e:status` says where every scenario stands, in a second. The commands below start the privnet and the emulator, and build and install the app of this checkout's sources, when they have to. `-- --dry-run` after any of them lists what would run, why, and about how long it takes. All the options are at the top of `suite.js`.
+
+| Moment | Command | What runs |
+|---|---|---|
+| Iterating on the app or on a scenario | `npm run e2e:dev -- --quick`, or `-- --only <job>` | A sample of each job your change reaches, or the changed scenarios of the jobs named |
+| Before opening a PR | `npm run e2e:dev` | Every scenario that is new, failed last, or whose own test changed; those of a changed feature, all on the fullnode and a sample on the wallet service; a sample of what else the change may reach |
+| A branch without this kit | `bin/try-branch.sh`, called from its checkout | `dev`, for what that branch changes, in a sibling worktree where it's merged with the kit |
+| Before a push | `npm run e2e:smoke` | A few scenarios of every job (`lib/smoke.js`) |
+| Release QA; ending a change to the suite | `npm run e2e:full -- --minutes 110`, then with `--resume` too until it's done | Everything, on a clean tree, with no filter. Its results and `ledger.json` are committed |
+| Done for now | `npm run e2e:down` | Gives back the funds of kept wallets; stops the emulator and the privnet |
+
+**How it knows.** Each result goes to a ledger with what it was a result of: the scenario's flow, its expectation and checks, the files of every feature that reaches it, the app's other files and the rest of the kit (`lib/fingerprint.js`, by content, so branches and merges don't matter). `ledger.json` is committed, from the last full run; `evidence/ledger.local.json` has this machine's runs; the newest entry counts. A scenario is then *fresh*, *changed*, *failed*, *new*, or *owed*: something shared changed that may reach it (`lib/select.js`). What a run leaves out stays owed, and is printed, until a full run. A result on an app that wasn't built from the checkout's sources counts as failed.
+
+**A wallet that's kept.** `dev` and `smoke` go on with the wallet the app holds when it fits (`run.js --reuse`), which spares 2 to 4 min of onboarding. What an unlocked wallet should show is then read again from its seed, not from the app. Scenarios that need a wallet with no HTR, a token of their own or another private balance state get a fresh one; the log says why. A failure on a reused wallet may come from an earlier scenario: `--fresh` tells.
+
+**A full run** remembers the jobs it finished (`evidence/full.json`), so it can be stopped and resumed; it refuses to go on when the code changed in between.
+
 ## Layout
 
 | Path | What it is |
@@ -12,10 +31,11 @@ The host setup (KVM, JDK 17, NDK, Maestro, the AVD) and the Android and Maestro 
 | `unleash/` | The fake Unleash: `server.js`, and `flags.json`, the flags it starts with (real testnet values, plus the shielded flags on, push and wallet service off). |
 | `bin/flags.js` | Lists and sets the flags: `flags.js set fee-based-tokens.rollout=off --wait`. |
 | `bin/fund.js` | Sends HTR from the genesis wallet to a public address: `fund.js W... 10.50`. Uses the helper's `POST /fund`; shielded addresses are refused. |
-| `tools/` | A small Node package of its own (wallet-lib 4.3.0, ct-crypto-node 0.5.0; `npm install` there once). `wallet.js` derives the app wallet's addresses from its seed, gives a peer wallet's shielded address, mints custom tokens (`mint <address> <deposit\|fee> <name> <symbol> <units> <treasury-seed-file>`), gives a run's funds back to genesis (`cleanup <evidence dir>`), and sends private outputs (temporary, see below). |
-| `run.js` | The runner: `node QA/e2e/run.js --setup <setup> [--action send\|create-token\|start-wallet] [--unlocked] [--created-tokens] [--scenarios <id>,...] [--affected <pick>,...] [--since <git ref>] [--dry-run] [--no-cleanup] [--no-record]`. Runs that setup's scenarios of one action and writes a results file to `QA/graph/runs/`; evidence goes to `evidence/` (git-ignored). |
+| `tools/` | A small Node package of its own (wallet-lib 4.3.0, ct-crypto-node 0.5.0; `npm install` there once). `wallet.js` derives the app wallet's addresses from its seed, gives a peer wallet's shielded address, mints custom tokens (`mint <address> <deposit\|fee> <name> <symbol> <units> <treasury-seed-file>`), pays any address of any token (`send`), reads what a seed holds (`balances`), gives a run's funds back to genesis (`cleanup <evidence dir>`), and sends private outputs (temporary, see below). |
+| `suite.js`, `ledger.json` | The suites ("Which command to run"), and what each scenario passed with in the last full run. |
+| `run.js` | The runner under them: the scenarios of one action on one setup, with a results file (`QA/graph/runs/`, or `--results <dir>`) and evidence in `evidence/` (git-ignored). Its options are at its top. |
 | `bin/app-on-privnet.sh` | Points the app at the privnet before it starts, writing its storage as root. `--fresh` wipes it first. Refuses anything but an emulator: store builds share the app id, so a wipe on a phone would erase its wallet. |
-| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow, and `flowSteps.js` has the steps they share; `walletStart.js` writes the flows around starting the wallet; `pinServer.js` taps the PIN for a running flow; `affected.js` finds the scenarios a change reaches; `tokenPlan.js` says which token each send gets; `createdTokens.js` has what differs for tokens created in the app; `unrunnable.js` says why a scenario can't run (none today); `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
+| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow, and `flowSteps.js` has the steps they share; `walletStart.js` writes the flows around starting the wallet; `pinServer.js` taps the PIN for a running flow; `affected.js` finds the scenarios a change reaches; `tokenPlan.js` says which token each send gets; `createdTokens.js` has what differs for tokens created in the app; `unrunnable.js` says why a scenario can't run (none today); `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `jobs.js`, `plan.js`, `fingerprint.js`, `ledger.js`, `select.js` and `smoke.js` pick what a suite runs, and `app.js` brings up what it runs on; `screen.js` drives the app over adb, and `receiveScenarios.js` and `historyScenarios.js` use it, with what the app should show in `book.js`; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
 | `viewer/` | `viewer.html`, the run viewer; `bin/serve-viewer.js` serves the runs' viewers. |
 | `flows/` | Maestro flows. `onboard.yaml`: new wallet on the privnet, ending on the dashboard. `to_dashboard.yaml`: back to the dashboard from wherever a scenario ended. `enter_pin.yaml`: the PIN, by taps. |
 
@@ -94,9 +114,17 @@ On its lock screen the app never goes idle, so Maestro takes 30 to 50 s over eac
 
 A scenario the kit can't run goes in `unrunnableReason` (`lib/unrunnable.js`) with its reason, and every run lists it as skipped. There are none today; keep it that way, with a way back in `ROADMAP.md` for each one added.
 
+## Receiving, payments and history
+
+`receive` reads the address as text, QR code (decoded from a screenshot, `tools/qr.js`), share sheet and clipboard (pasted into Send), and compares them with the addresses derived from the seed outside the app, before and after New address. `receive-payment` pays the app from the run's payer: public or private, a token it knows or not, with the app open or closed. `history` makes a received, sent or self transaction outside the app, the last two with the app wallet's own seed, and reads its row, its details and its fees.
+
+What the app should show comes from the payments themselves and from the fullnode's JSON (`lib/book.js`), never from the app. For a payment that must not show (a private one to a locked wallet, any to a private address with a broken key), the runner then makes a public one and waits for it: absence only counts once the app is seen to be up to date.
+
+These run over adb, with no Maestro but to import a token: a screen is read in one dump (2.2 s) that answers all its checks (`screen.shows`), so a scenario takes 15 to 30 s, or about 70 s when the app is closed and opened again. Ask for everything a screen should show in one `shows`; one call per element took twice as long.
+
 ## Running less, and faster
 
-- **While developing, run only what a change reaches.** `--affected` takes features, flags or axis values of the graph (`--affected shielded-send,token:fee`), and `--since origin/release-candidate` picks the features whose `files` changed since that ref, uncommitted ones included. Both use the graph's impact tool and combine with every other option; `--dry-run` shows the picks without running. The files no feature lists (`src/App.js`, `package.json`) are named in the log: what they reach isn't in the run. The graph only knows what is modelled, so the full suite still comes at the end. The results file names the picks.
+- **`run.js` by hand:** `--affected` takes features, flags or axis values of the graph (`--affected shielded-send,token:fee`), and `--since origin/release-candidate` picks the features whose `files` changed since that ref, uncommitted ones included. Both use the graph's impact tool and combine with every other option; `--dry-run` shows the picks without running. The files no feature lists are named in the log: what they reach isn't in the run. `suite.js` does more with the same graph.
 - **The PIN is tapped with adb.** Maestro takes about 2.4 s a key. A flow taps the first key, which waits for the screen to settle, and then calls the runner over HTTP from its script, which Maestro runs on this machine (`lib/pinServer.js`). The runner learns where the keys are from the log of the first flow of the run that enters the PIN, which taps them all.
 - **The way back to the dashboard is in the scenario's own flow**, after its last check, which saves a Maestro start (8 to 9 s). The flow logs `E2E_REACHED <outcome>` right after that check: that mark, not the flow's exit code, says whether the scenario passed. It was seen failing, on a wrong message, and so was a PIN the server could not tap. A flow that fails before it is followed by `to_dashboard.yaml` on its own.
 - **A `while: notVisible` loop ends 7 s late**: Maestro gives an element that shows that long to go away. `to_dashboard.yaml` looks with a 500 ms wait of its own instead. It looks before the first back too: a back on the dashboard leaves the app.
@@ -143,7 +171,9 @@ for l in da pt-br ru-ru; do mkdir -p src/locale/$l; npx ttag po2json locale/$l/t
 
 Run the first line alone and check that it worked before the rest: `rn-nodeify` and `patch-package` fail with unrelated-looking errors when `node_modules` is missing.
 
-## Run
+## Run by hand
+
+`suite.js` does all of this; these are its steps.
 
 ```bash
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 MAESTRO_CLI_NO_ANALYTICS=1 ANDROID_HOME=~/Android/Sdk
@@ -161,6 +191,11 @@ To drive one flow by hand: `bin/app-on-privnet.sh --fresh`, then `~/.maestro/mae
 A pipeline or a trailing `ls` hides Gradle's exit code; look for `BUILD SUCCESSFUL` and the APK's date.
 
 Always tear down afterwards, or the miner and the emulator keep the CPU busy: `adb emu kill` and `docker compose down` in `privnet/`. With a debug build, also stop Metro and close the React Native DevTools windows it opened (`close_devtools` in the `mobile-e2e-flows` kit).
+
+## Traps
+
+- **"System UI isn't responding"** on a fresh emulator covers the app and fails onboarding. `suite.js` waits 2 min after a boot and answers it with Wait; by hand, do the same.
+- **The app on the emulator is older than the checkout.** `run.js` warns, and its results don't count as passes. `suite.js` rebuilds.
 
 ## Comparing Jest with the app's own failures
 

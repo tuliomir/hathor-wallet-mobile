@@ -6,20 +6,25 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Runs the QA graph's send scenarios of one setup on the emulator, against the local privnet,
-// and writes one results file in QA/graph/runs/.
+// Runs the QA graph's scenarios of one action on one setup, on the emulator and the local privnet,
+// and writes one results file. The low-level command: suite.js (README "Which command to run")
+// picks the scenarios, brings up what they need and calls this.
 //
-//   node QA/e2e/run.js --setup pn-fn-seed-multi [--scenarios <id>,<id>] [--dry-run] [--no-cleanup]
-//                      [--no-record] [--action send|create-token|start-wallet] [--unlocked]
-//                      [--created-tokens] [--affected <pick>,<pick>] [--since <git ref>]
+//   node QA/e2e/run.js --setup <setup> [--action <action>] [--scenarios <id>,<id>] [--dry-run]
+//                      [--unlocked] [--created-tokens] [--affected <pick>,<pick>] [--since <ref>]
+//                      [--keep] [--reuse] [--no-cleanup] [--no-record] [--results <dir>]
 //
 // --unlocked picks scenarios as if an unlocked private balance were the only one, so the cover
-// is all spent on that state. --created-tokens (send only, implies --unlocked)
-// sends only custom tokens, made in the app by the run instead of minted from outside.
+// is all spent on that state. --created-tokens (send only) sends only custom tokens, made in the
+// app by the run instead of minted from outside.
 //
 // --affected runs only the scenarios the graph's impact tool says a change reaches, each pick a
 // feature, a flag or an <axis>:<value>; --since picks the features whose files changed since a
-// git ref, uncommitted changes included. For while developing: the full suite comes at the end.
+// git ref, uncommitted changes included.
+//
+// --keep leaves the wallet of the run in the app, and --reuse starts from it, when it fits the
+// scenarios, instead of onboarding a new one (2 to 4 min). For developing: what a scenario leaves
+// behind can change the next one, so a failure on a reused wallet is worth a run on a fresh one.
 //
 // The run records the emulator's screen through each flow but onboarding, and writes viewer.html
 // in its evidence dir: the recordings as a playlist, each beside its steps, the running one
@@ -34,7 +39,6 @@
 // "Run"), or a debug build with Metro serving its JS. Scenarios the kit can't set up yet are
 // recorded as skipped, with the reason.
 
-const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -42,16 +46,22 @@ const { execFileSync, spawn, spawnSync } = require('child_process');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const YAML = require('yaml');
 const { loadGraph } = require('../graph/tools/load');
-const { allScenarios } = require('../graph/tools/scenarios');
 const { assertEmulator } = require('./lib/device');
 const sendFlow = require('./lib/sendFlow');
 const createTokenFlow = require('./lib/createTokenFlow');
-const { runOrder } = require('./lib/runOrder');
+const { planScenarios } = require('./lib/plan');
+const flows = require('./lib/flows');
+const ledger = require('./lib/ledger');
+const { keyOf } = require('./lib/jobs');
+const { workIndex, checkoutIds, appId } = require('./lib/fingerprint');
+const { reachOf, currentOf } = require('./lib/select');
+const { staleApp } = require('./lib/app');
+const { screenOf } = require('./lib/screen');
+const { runReceive } = require('./lib/receiveScenarios');
+const { runPayment, runHistory } = require('./lib/historyScenarios');
 const { tokenPlan } = require('./lib/tokenPlan');
-const { createdTokenOutcome } = require('./lib/createdTokens');
 const walletStart = require('./lib/walletStart');
 const { htrOnDashboard, numpadKeys } = require('./lib/dashboard');
-const { unrunnableReason } = require('./lib/unrunnable');
 const { reachedIn, BACK } = require('./lib/flowSteps');
 const { keysTapped, startPinServer } = require('./lib/pinServer');
 const { pickOf, picksOfFiles, affectedIds } = require('./lib/affected');
@@ -77,6 +87,11 @@ const HTR = { name: 'Hathor', symbol: 'HTR', uid: '00' };
 const STATES = ['unlocked', 'locked', 'broken-key'];
 // Received privately before the wallet is locked, so there is something locked.
 const PRIVATE_HTR = '5';
+// What the payer pays the app of each custom token, before the payments and the history entries.
+const PAID_TOKENS = '10000';
+const PAID_HTR = '50';
+// Which wallet the app holds, on the device, for --reuse.
+const WALLET_MARK = '/data/local/tmp/e2e-wallet';
 const PIN = '123456';
 const ACCESS_KEY = 'asyncstorage:access';
 const DB = '/data/data/network.hathor.wallet/databases/RKStorage';
@@ -95,12 +110,15 @@ function parseArgs(argv) {
     else if (argv[i] === '--affected') args.affected = argv[i += 1].split(',');
     else if (argv[i] === '--since') args.since = argv[i += 1];
     else if (argv[i] === '--dry-run') args.dryRun = true;
+    else if (argv[i] === '--keep') args.keep = true;
+    else if (argv[i] === '--reuse') Object.assign(args, { reuse: true, keep: true });
+    else if (argv[i] === '--results') args.results = argv[i += 1];
     else if (argv[i] === '--no-cleanup') args.noCleanup = true;
     else if (argv[i] === '--no-record') args.noRecord = true;
     else throw new Error(`unknown argument ${argv[i]}`);
   }
   if (!args.setup) {
-    throw new Error('usage: run.js --setup <setup id> [--action send|create-token|start-wallet] [--unlocked] [--created-tokens] [--scenarios <id>,<id>] [--affected <pick>,<pick>] [--since <git ref>] [--dry-run] [--no-cleanup] [--no-record]');
+    throw new Error(`usage: run.js --setup <setup id> [--action ${flows.ACTIONS.join('|')}] [--scenarios <id>,<id>] [--unlocked] [--created-tokens] [--affected <pick>,<pick>] [--since <git ref>] [--dry-run] [--keep] [--reuse] [--no-cleanup] [--no-record] [--results <dir>]`);
   }
   return args;
 }
@@ -171,7 +189,7 @@ async function preflight(setup) {
       // eslint-disable-next-line no-await-in-loop
       await check();
     } catch (e) {
-      throw new Error(`${name} is not available (${e.message}); see QA/e2e/README.md "Run"`);
+      throw new Error(`${name} is not available (${e.message}); see QA/e2e/README.md "Run by hand"`);
     }
   }
 }
@@ -362,21 +380,10 @@ async function createTokensInApp(ctx, dir, wanted) {
   return made;
 }
 
-/** The facade a start-wallet scenario ends on. */
-const facadeOf = (scenario, outcome) => (
-  outcome.id === 'edge-fallback' ? 'fullnode' : scenario.values.facade);
-
 /** A digest of the flow a scenario runs, the same in every run while the flow is: the viewer
  * uses it to tell which scenarios changed since someone watched them. */
-function flowVersion(scenario, outcome, token) {
-  const build = {
-    send: () => sendFlow.buildSendFlow(scenario, outcome, { address: '<address>', token, pinUrl: '<pin>' }),
-    'create-token': () => createTokenFlow.buildCreateTokenFlow(scenario, outcome, { name: '<name>', symbol: '<symbol>', pinUrl: '<pin>' }),
-    'start-wallet': () => walletStart.buildServerFlow(facadeOf(scenario, outcome)),
-  };
-  const flow = build[scenario.action]();
-  return crypto.createHash('sha1').update(flow).digest('hex').slice(0, 12);
-}
+const flowVersion = (scenario, outcome, token, ids) => (
+  flows.digest(flows.flowOf(scenario, outcome, token) || ids.actions[scenario.action]));
 
 /** Runs a flow the kit writes: `file` in `dir`, then the Maestro run. */
 function runWritten(flow, dir, file, yaml, as) {
@@ -392,6 +399,7 @@ async function onboard(setup, dir, ctx) {
   await getJson(`${UNLEASH_URL}/flags`, {
     method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(flags),
   });
+  adbShell(`rm -f ${WALLET_MARK}`);
   log('app: fresh install on the privnet');
   execFileSync(path.join(E2E, 'bin', 'app-on-privnet.sh'), ['--fresh'], {
     stdio: ['ignore', 'ignore', 'inherit'],
@@ -426,7 +434,7 @@ async function onboard(setup, dir, ctx) {
 
 /** Makes the group's custom tokens, and the destinations, of a send run. */
 async function prepareSends(dir, ctx, plan) {
-  const { tokens: wanted, keyOf } = tokenPlan(plan);
+  const { tokens: wanted, keyOf: tokenKeys } = tokenPlan(plan);
   let made = {};
   // The treasury keeps the tokens' authorities, so the cleanup can melt them; tokens.json tells
   // the cleanup what was minted, even when the run stops half-way.
@@ -453,7 +461,7 @@ async function prepareSends(dir, ctx, plan) {
     });
   }
   const tokens = { htr: HTR };
-  Object.entries(keyOf).forEach(([id, key]) => { tokens[id] = key === 'htr' ? HTR : made[key]; });
+  Object.entries(tokenKeys).forEach(([id, key]) => { tokens[id] = key === 'htr' ? HTR : made[key]; });
 
   const peerSeed = path.join(dir, 'peer.seed');
   fs.writeFileSync(peerSeed, `${walletTool('new-seed')}\n`, { mode: 0o600 });
@@ -465,7 +473,7 @@ async function prepareSends(dir, ctx, plan) {
     shielded: walletTool('shielded-address', peerSeed),
   };
   log(`destinations: ${JSON.stringify(destinations)}`);
-  return { tokens, destinations };
+  return { tokens, destinations, byKind: { deposit: made.deposit, fee: made.fee } };
 }
 
 const adbShell = (command) => execFileSync(ADB, ['shell', command], { encoding: 'utf8' }).trim();
@@ -484,6 +492,7 @@ async function startInState(state, dir, ctx) {
         const had = await htrShown(() => true);
         walletTool('send-private', walletTool('shielded-address', ctx.seedFile), PRIVATE_HTR, 'amount');
         await htrShown((cents) => cents === had + BigInt(PRIVATE_HTR) * 100n);
+        ctx.locked = 1;
       });
     }
     await step(`runner: stop the app${state === 'unlocked' ? '' : `, make its record ${state}`}`, async () => {
@@ -524,12 +533,135 @@ async function unlock() {
   }
 }
 
-/** A fresh wallet for the scenarios of one private balance state. */
+const seedIn = (dir, name) => {
+  const file = path.join(dir, name);
+  if (!fs.existsSync(file)) fs.writeFileSync(file, `${walletTool('new-seed')}\n`, { mode: 0o600 });
+  return file;
+};
+
+/**
+ * A minter of tokens the payer holds, to pay the app with. The treasury keeps their authorities,
+ * for the cleanup to melt them. The two are apart because the payer's private sends leave it
+ * private HTR, which wallet-lib can't pay a fee token's creation with (ROADMAP "Findings").
+ */
+function treasuryMinter(dir, treasurySeed, payerSeed) {
+  const file = path.join(dir, 'tokens.json');
+  if (!fs.existsSync(file)) fs.writeFileSync(file, '[]');
+  const payer = walletTool('address', payerSeed);
+  return (kind, name, symbol) => {
+    const uid = walletTool('mint', payer, kind, name, symbol, '100000', treasurySeed);
+    const minted = JSON.parse(fs.readFileSync(file, 'utf8'));
+    fs.writeFileSync(file, JSON.stringify([...minted, { uid, kind, symbol }], null, 2));
+    log(`treasury: minted ${symbol} ${uid}`);
+    return { name, symbol, uid };
+  };
+}
+
+/** Pays the app what the payments and history scenarios start from, and registers the tokens. */
+async function prepareReceives(dir, ctx) {
+  const treasurySeed = seedIn(dir, 'treasury.seed');
+  const payerSeed = seedIn(dir, 'payer.seed');
+  const mint = treasuryMinter(dir, treasurySeed, payerSeed);
+  const tokens = { deposit: mint('deposit', 'E2E Deposit', 'E2ED'), fee: mint('fee', 'E2E Fee', 'E2EF') };
+  Object.values(tokens).forEach(({ uid }) => walletTool('send', payerSeed, ctx.appAddress, uid, PAID_TOKENS, 'public'));
+  await fund(ctx.appAddress, PAID_HTR);
+  const importDir = path.join(dir, 'import-tokens');
+  await chapter(ctx, { kind: 'setup', id: 'import-tokens', title: 'Setup: import the 2 tokens paid' }, importDir, async ({ flow }) => {
+    const names = Object.values(tokens).map(({ name }) => name);
+    const imported = await runWritten(flow, importDir, 'flow.yaml', walletStart.buildImportFlow(names));
+    if (!imported.ok) throw new Error(`importing the tokens failed: ${imported.failed}`);
+  });
+  const paid = { '00': BigInt(PAID_HTR) * 100n };
+  Object.values(tokens).forEach(({ uid }) => { paid[uid] = BigInt(PAID_TOKENS); });
+  return {
+    tokens,
+    treasurySeed,
+    payerSeed,
+    peerSeed: seedIn(dir, 'peer.seed'),
+    book: Object.fromEntries(Object.entries(paid)
+      .map(([uid, units]) => [uid, { private: 0n, public: units }])),
+    totals: paid,
+  };
+}
+
+// What a kept wallet is, for a later run; bigints as strings.
+const KEPT = ['appAddress', 'seedFile', 'treasurySeed', 'payerSeed', 'peerSeed', 'tokens', 'destinations', 'book', 'totals', 'locked'];
+const asJson = (value) => JSON.stringify(value, (key, v) => (typeof v === 'bigint' ? `${v}n` : v), 1);
+const fromJson = (text) => JSON.parse(text, (key, v) => (typeof v === 'string' && /^-?\d+n$/.test(v) ? BigInt(v.slice(0, -1)) : v));
+
+// Actions whose wallets are made alike, so that one can go on with another's.
+const KIND = {
+  send: 'send', 'create-token': 'bare', receive: 'bare', 'receive-payment': 'paid', history: 'paid',
+};
+
+function keepWallet(setup, state, dir, ctx, failed) {
+  const wallet = {
+    setup: setup.id, state, kind: KIND[ctx.action], action: ctx.action, failed, dir,
+  };
+  KEPT.forEach((field) => { wallet[field] = ctx[field]; });
+  if (ctx.action === 'send') wallet.tokens = ctx.byKind;
+  fs.writeFileSync(path.join(dir, 'wallet.json'), asJson(wallet), { mode: 0o600 });
+}
+
+/** The wallet the app holds from a run with --keep, when these scenarios can go on with it. */
+function keptWallet(setup, state, ctx, plan) {
+  const refuse = (why) => {
+    log(`not reusing a wallet: ${why}`);
+    return null;
+  };
+  let dir = '';
+  try {
+    dir = adbShell(`cat ${WALLET_MARK} 2>/dev/null`);
+  } catch (e) { /* no mark */ }
+  const file = path.join(dir, 'wallet.json');
+  if (!dir || !fs.existsSync(file)) return refuse('the app holds none that a run kept');
+  const wallet = fromJson(fs.readFileSync(file, 'utf8'));
+  if (wallet.setup !== setup.id || wallet.state !== state) return refuse(`the app's is ${wallet.state}, on ${wallet.setup}`);
+  if (wallet.kind !== KIND[ctx.action]) return refuse(`the app's was made for ${wallet.kind} scenarios`);
+  // What an unlocked wallet holds is read again from its seed; what a locked one shows can't be.
+  if (state !== 'unlocked' && (wallet.failed || wallet.action !== ctx.action)) return refuse('what the app should show of it isn\'t known');
+  if (ctx.createdTokens) return refuse('created tokens need a fresh one');
+  if (plan.some((p) => p.scenario.values.funding === 'zero-htr')) return refuse('a scenario needs a wallet with no HTR');
+  if (ctx.action === 'send') {
+    const tokenKey = tokenPlan(plan).keyOf;
+    if (Object.values(tokenKey).some((key) => key.startsWith('own') || key.endsWith('Large'))) return refuse('a scenario needs a token of its own');
+  }
+  return wallet;
+}
+
+/** A wallet for the scenarios of one private balance state: a fresh one, or the app's. */
 async function prepareGroup(setup, state, dir, ctx, plan) {
-  const wallet = await onboard(setup, dir, ctx);
-  Object.assign(ctx, wallet);
-  if (ctx.action === 'send') Object.assign(ctx, await prepareSends(dir, ctx, plan));
+  Object.assign(ctx, Object.fromEntries(KEPT.map((field) => [field, undefined])), { locked: 0 });
+  const kept = ctx.reuse && ctx.action !== 'start-wallet' ? keptWallet(setup, state, ctx, plan) : null;
+  if (kept) {
+    KEPT.forEach((field) => { ctx[field] = kept[field]; });
+    ctx.walletDir = kept.dir;
+    log(`reusing the app's wallet ${kept.appAddress}`);
+    if (state === 'unlocked' && KIND[ctx.action] === 'paid') {
+      const held = fromJson(walletTool('balances', ctx.seedFile));
+      ctx.book = { '00': { private: 0n, public: 0n }, ...held };
+      ctx.totals = Object.fromEntries(Object.entries(ctx.book)
+        .map(([uid, balance]) => [uid, balance.private + balance.public]));
+    }
+    if (ctx.action === 'send') {
+      const tokenKey = tokenPlan(plan).keyOf;
+      const bySymbol = { htr: HTR, deposit: kept.tokens.deposit, fee: kept.tokens.fee };
+      ctx.byKind = kept.tokens;
+      ctx.tokens = Object.fromEntries(Object.entries(tokenKey)
+        .map(([id, key]) => [id, bySymbol[key]]));
+    }
+    await screenOf(ADB).home();
+    return;
+  }
+  ctx.walletDir = dir;
+  Object.assign(ctx, await onboard(setup, dir, ctx));
+  if (ctx.action === 'send') {
+    Object.assign(ctx, await prepareSends(dir, ctx, plan));
+  } else if (KIND[ctx.action] === 'paid') {
+    Object.assign(ctx, await prepareReceives(dir, ctx));
+  }
   if (state !== 'unlocked' || ctx.action === 'start-wallet') await startInState(state, dir, ctx);
+  adbShell(`echo '${dir}' > ${WALLET_MARK}`);
 }
 
 /**
@@ -605,7 +737,7 @@ async function runCreateScenario(scenario, outcome, ctx, dir, { step, flow }) {
 
 /** The group's setup started the wallet; this reads which facade it ended on. */
 async function runStartScenario(scenario, outcome, dir, { flow }) {
-  const facade = facadeOf(scenario, outcome);
+  const facade = flows.facadeOf(scenario, outcome);
   const result = await runWritten(flow, dir, 'flow.yaml', walletStart.buildServerFlow(facade));
   // The app's own mark of a fallback, so that each outcome has a second witness.
   const ignored = adbShell(`sqlite3 ${DB} "select count(*) from catalystLocalStorage where key='featureFlags:ignoreWalletServiceFlag'"`) === '1';
@@ -616,9 +748,36 @@ async function runStartScenario(scenario, outcome, dir, { flow }) {
   };
 }
 
+// The scenarios the runner drives over adb (lib/screen.js).
+const BY_ADB = {
+  receive: (scenario, outcome, ctx, dir, api) => runReceive(scenario, ctx, dir, api),
+  'receive-payment': runPayment,
+  history: runHistory,
+};
+
+async function runByAdb(scenario, outcome, ctx, dir, api) {
+  const screen = screenOf(ADB);
+  let result;
+  try {
+    const notes = await BY_ADB[scenario.action](scenario, outcome, ctx, dir, { ...api, screen });
+    result = { status: 'passed', notes: `reached: ${outcome.id}; ${notes}` };
+  } catch (e) {
+    fs.writeFileSync(path.join(dir, 'failure.png'), screen.screenshot());
+    fs.writeFileSync(path.join(dir, 'failure.json'), JSON.stringify(screen.nodes(), null, 1));
+    result = { status: 'failed', notes: e.message };
+  }
+  try {
+    await api.step(BACK, () => screen.home());
+  } catch (e) {
+    result.notes += `; ${e.message}`;
+  }
+  return result;
+}
+
 async function runScenario(scenario, outcome, ctx, dir, api) {
   if (scenario.action === 'create-token') return runCreateScenario(scenario, outcome, ctx, dir, api);
   if (scenario.action === 'start-wallet') return runStartScenario(scenario, outcome, dir, api);
+  if (BY_ADB[scenario.action]) return runByAdb(scenario, outcome, ctx, dir, api);
   const { step, flow } = api;
   const { values } = scenario;
   if (values.funding === 'enough-htr') {
@@ -673,7 +832,9 @@ function writeResults(setupId, results, startedAt, ctx) {
     scope: { reason: `e2e runner: ${ctx.action} scenarios of ${setupId}${ctx.createdTokens ? ', with tokens created in the app' : ''}${ctx.unlocked ? ', unlocked private balance only' : ''}${ctx.subset ? `, only ${ctx.subset}` : ''}`, picks: ctx.picks.map((pick) => pick.id) },
     results,
   };
-  const file = path.join(REPO, 'QA', 'graph', 'runs', `${startedAt.slice(0, 19).replace(/[:T]/g, '-')}-${setupId}-${ctx.action}${ctx.createdTokens ? '-created-tokens' : ''}.yaml`);
+  const resultsDir = ctx.resultsDir || path.join(REPO, 'QA', 'graph', 'runs');
+  fs.mkdirSync(resultsDir, { recursive: true });
+  const file = path.join(resultsDir, `${startedAt.slice(0, 19).replace(/[:T]/g, '-')}-${setupId}-${ctx.action}${ctx.createdTokens ? '-created-tokens' : ''}.yaml`);
   const header = `# This test was run based on the YAML of ${yamlDate}, version from commit ${yamlCommit}, `
     + `with the tools at commit ${toolsCommit}${dirty}.\n`;
   fs.writeFileSync(file, header + YAML.stringify(doc));
@@ -705,35 +866,15 @@ async function main() {
   const graph = loadGraph(path.join(REPO, 'QA', 'graph', 'graph.yaml'));
   const setup = graph.setups.find((s) => s.id === args.setup);
   if (!setup) throw new Error(`unknown setup ${args.setup}`);
-  const action = graph.actions.find((a) => a.id === args.action);
-  const outcomes = Object.fromEntries(action.path.outcomes.map((o) => [o.id, o]));
-  if (!action || !['send', 'create-token', 'start-wallet'].includes(action.id)) throw new Error(`the kit can't run the action ${args.action}`);
-  const only = {};
-  if (args.unlocked) only['private-balance'] = ['unlocked'];
-  if (args.createdTokens) {
-    only.token = ['deposit', 'fee'];
-    // 2^40 units need a deposit of 110M HTR; the minted tokens cover that amount.
-    only.amount = ['normal', 'max', 'over-balance', 'empty', 'decimals'];
-  }
-  const picked = {
-    ...graph,
-    axes: graph.axes.map((axis) => (only[axis.id]
-      ? { ...axis, values: axis.values.filter((v) => only[axis.id].includes(v.id)) } : axis)),
-  };
-  const all = allScenarios(picked)
-    .filter((s) => s.setup === setup.id && s.action === action.id);
+  if (!flows.ACTIONS.includes(args.action)) throw new Error(`the kit can't run the action ${args.action}; it runs ${flows.ACTIONS.join(', ')}`);
+  const everything = planScenarios(graph, { ...args, setup: setup.id });
+  const all = everything.map((p) => p.scenario);
+  const unknown = (args.scenarios || []).filter((id) => !all.some((s) => s.id === id));
+  if (unknown.length) throw new Error(`no such scenario here: ${unknown.join(', ')}`);
   const { picks, affected } = affectedBy(args, graph, all);
-  const scenarios = all
-    .filter((s) => !args.scenarios || args.scenarios.includes(s.id))
-    .filter((s) => !affected || affected.has(s.id));
-
-  const expected = (s) => {
-    const outcome = outcomes[s.expected[0]];
-    return args.createdTokens ? createdTokenOutcome(s, outcome, outcomes) : outcome;
-  };
-  const plan = runOrder(scenarios.map((s) => ({
-    scenario: s, skip: unrunnableReason(s), outcome: expected(s),
-  })));
+  const plan = everything
+    .filter(({ scenario: { id } }) => !args.scenarios || args.scenarios.includes(id))
+    .filter(({ scenario: { id } }) => !affected || affected.has(id));
   log(`${plan.length} of ${all.length} scenarios, ${plan.filter((p) => !p.skip).length} runnable`);
   if (args.dryRun) {
     plan.forEach((p) => {
@@ -744,9 +885,23 @@ async function main() {
 
   if (!plan.length) return;
   await preflight(setup);
+  // The code as it is now, at the start: what the results are of.
+  const index = workIndex(REPO);
+  const stale = staleApp(appId(index));
+  if (stale) log(`WARNING: ${stale}`);
+  const ids = checkoutIds(index, graph, flows.ACTION_FILES);
+  const reach = reachOf(graph, all);
+  // An app of other sources says nothing of these: such results don't count as passes of them.
+  const current = (p) => ({
+    ...currentOf({ ...p, flow: flows.digest(flows.flowOf(p.scenario, p.outcome)) }, ids, reach),
+    ...(stale ? { status: 'stale app' } : {}),
+    ...(args.reuse ? { reused: true } : {}),
+  });
   const runDir = path.join(E2E, 'evidence', startedAt.slice(0, 19).replace(/[:T]/g, '-'));
   fs.mkdirSync(runDir, { recursive: true });
-  await runPlan(setup, plan, runDir, startedAt, { ...args, picks });
+  await runPlan(setup, plan, runDir, startedAt, {
+    ...args, picks, ids, current,
+  });
   log('when done: tear down the emulator and the privnet, and Metro if a debug build ran (README)');
 }
 
@@ -767,7 +922,7 @@ function cleanUp(dir, args) {
 }
 
 /** Runs the scenarios of one private balance state on a fresh wallet. */
-async function runGroup(setup, state, plan, ctx, args, record) {
+async function runGroup(setup, state, plan, ctx, args, record, lastGroup) {
   const dir = path.join(ctx.runDir, state);
   fs.mkdirSync(dir, { recursive: true });
   log(`private balance ${state}: ${plan.length} scenarios`);
@@ -794,9 +949,10 @@ async function runGroup(setup, state, plan, ctx, args, record) {
       // eslint-disable-next-line no-continue
       continue;
     }
-    info.flowVersion = flowVersion(p.scenario, p.outcome, ctx.tokens && ctx.tokens[p.scenario.id]);
+    info.flowVersion = flowVersion(p.scenario, p.outcome, ctx.action === 'send' && ctx.tokens ? ctx.tokens[p.scenario.id] : undefined, ctx.ids);
     const scenarioDir = path.join(dir, 'scenarios', String(i + 1).padStart(2, '0'));
     log(`run  ${p.scenario.id} -> ${p.outcome.id}`);
+    const scenarioStart = Date.now();
     let result;
     try {
       // eslint-disable-next-line no-await-in-loop
@@ -806,10 +962,18 @@ async function runGroup(setup, state, plan, ctx, args, record) {
       result = { status: 'failed', notes: `runner error: ${e.message}` };
     }
     log(`     ${result.status}: ${result.notes}`);
+    ledger.record(keyOf(p.scenario, ctx.createdTokens), {
+      status: result.status,
+      at: new Date().toISOString(),
+      seconds: Math.round((Date.now() - scenarioStart) / 1000),
+      ...ctx.current(p),
+    });
     results.push({ scenario: p.scenario.id, status: result.status, notes: result.notes });
   }
   if (record) writeViewer(ctx);
-  cleanUp(dir, args);
+  // The app holds one wallet, so only the last group's can be kept.
+  if (args.keep && !broken && lastGroup) keepWallet(setup, state, ctx.walletDir, ctx, results.some(({ status }) => status === 'failed'));
+  else cleanUp(ctx.walletDir || dir, args);
   return results;
 }
 
@@ -827,6 +991,19 @@ async function runPlan(setup, plan, runDir, startedAt, args) {
     createdTokens: args.createdTokens,
     unlocked: args.unlocked,
     picks: args.picks,
+    reuse: args.reuse,
+    resultsDir: args.results,
+    ids: args.ids,
+    current: args.current,
+    // For the scenarios driven over adb.
+    walletTool,
+    adbShell,
+    clearSendAddress,
+    unlock,
+    fund,
+    transaction: async (id) => (await getJson(`${NODE_URL}transaction?id=${id}`)).tx,
+    mintForPayer: (...token) => (
+      treasuryMinter(path.dirname(ctx.seedFile), ctx.treasurySeed, ctx.payerSeed)(...token)),
     subset: [args.scenarios && 'the scenarios named', (args.affected || args.since) && 'what the picks reach'].filter(Boolean).join(', of those '),
   };
   const pinServer = await startPinServer(ADB, PIN, () => ctx.pinKeys);
@@ -834,8 +1011,12 @@ async function runPlan(setup, plan, runDir, startedAt, args) {
   const results = [];
   for (const state of STATES) {
     const group = plan.filter((p) => p.scenario.values['private-balance'] === state);
-    // eslint-disable-next-line no-await-in-loop
-    if (group.length) results.push(...await runGroup(setup, state, group, ctx, args, record));
+    const lastGroup = STATES.slice(STATES.indexOf(state) + 1)
+      .every((other) => !plan.some((p) => p.scenario.values['private-balance'] === other));
+    if (group.length) {
+      // eslint-disable-next-line no-await-in-loop
+      results.push(...await runGroup(setup, state, group, ctx, args, record, lastGroup));
+    }
   }
   pinServer.close();
   const file = writeResults(setup.id, results, startedAt, ctx);

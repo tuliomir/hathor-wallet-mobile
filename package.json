@@ -17,6 +17,11 @@
     "setup:release": "npm ci && ./node_modules/.bin/allow-scripts && rn-nodeify --install stream,process,path,events,crypto,console,buffer,zlib --hack && npx patch-package",
     "qa:graph": "node QA/graph/tools/cli.js render",
     "qa:graph:check": "node QA/graph/tools/cli.js check",
+    "e2e:status": "node QA/e2e/suite.js status",
+    "e2e:dev": "node QA/e2e/suite.js dev",
+    "e2e:smoke": "node QA/e2e/suite.js smoke",
+    "e2e:full": "node QA/e2e/suite.js full",
+    "e2e:down": "node QA/e2e/suite.js down",
     "i18n": "make i18n",
     "checki18n": "make check_i18n"
   },
