@@ -41,6 +41,7 @@ const { treeIndex, workIndex, checkoutIds, appId, } = require('./lib/fingerprint
 const ledger = require('./lib/ledger');
 const { reachOf, currentOf, standing, forDev, } = require('./lib/select');
 const { smokeOf } = require('./lib/smoke');
+const { tokenPlan } = require('./lib/tokenPlan');
 const app = require('./lib/app');
 
 const E2E = __dirname;
@@ -51,7 +52,9 @@ const FULL = path.join(EVIDENCE, 'full.json');
 const MODES = ['status', 'dev', 'smoke', 'full', 'down'];
 // Estimates, in seconds, where the ledger has no time of a scenario.
 const SCENARIO = 60;
-const SETUP = { unlocked: 150, locked: 240, 'broken-key': 240 };
+// Measured on 2026-11-25: a wallet's setup, and each token the app creates for a send-created job.
+const SETUP = { unlocked: 160, locked: 230, 'broken-key': 220 };
+const CREATED_TOKEN = 100;
 
 const log = (msg) => console.log(`${new Date().toISOString().slice(11, 19)} ${msg}`);
 const git = (...args) => execFileSync('git', args, { cwd: REPO, encoding: 'utf8' }).trim();
@@ -112,11 +115,19 @@ function rowsOf(args) {
   return { rows, appSources: appId(index), ids };
 }
 
-/** What running these rows should take: the scenarios, and a wallet per state of each job. */
+/** What running these rows should take: the scenarios, a wallet per state of each job, and the
+ * tokens the app creates for each wallet of a job with created tokens. */
 function estimate(rows) {
-  const wallets = new Set(rows.map(({ job, scenario }) => `${job.id} ${scenario.values['private-balance']}`));
-  return rows.reduce((sum, row) => sum + row.seconds, 0)
-    + [...wallets].reduce((sum, wallet) => sum + SETUP[wallet.split(' ')[1]], 0);
+  const wallets = new Map();
+  rows.forEach((row) => {
+    const key = `${row.job.id} ${row.scenario.values['private-balance']}`;
+    wallets.set(key, [...(wallets.get(key) || []), row]);
+  });
+  const setups = [...wallets].reduce((sum, [key, own]) => {
+    const created = own[0].job.createdTokens ? Object.keys(tokenPlan(own).tokens).length : 0;
+    return sum + SETUP[key.split(' ')[1]] + created * CREATED_TOKEN;
+  }, 0);
+  return rows.reduce((sum, row) => sum + row.seconds, 0) + setups;
 }
 
 const byJob = (rows) => JOBS
