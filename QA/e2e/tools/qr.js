@@ -10,7 +10,10 @@
 //   node qr.js <screenshot.png>
 
 const fs = require('fs');
+// Dependencies of this package alone, which the repo's lint doesn't install.
+// eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
 const { PNG } = require('pngjs');
+// eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
 const jsQR = require('jsqr');
 
 const { data, width, height } = PNG.sync.read(fs.readFileSync(process.argv[2]));

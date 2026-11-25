@@ -221,7 +221,8 @@ async function dev(args) {
   const { rows, appSources } = rowsOf(args);
   const { run, owed } = forDev(rows, smokeOf, args);
   if (!run.length) {
-    log('nothing to run: every scenario last passed with what is here, or is owed');
+    log(args.since ? `nothing to run: nothing that reaches a scenario differs from ${args.since}`
+      : 'nothing to run: every scenario last passed with what is here');
     announceOwed(owed);
     return;
   }
