@@ -1,0 +1,84 @@
+# This test was run based on the YAML of 2026-11-24, version from commit e749d426, with the tools at commit ab9a329d (with uncommitted changes).
+yamlCommit: e749d426
+yamlDate: 2026-11-24
+toolsCommit: ab9a329d (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-24 10:19:58
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: send scenarios of pn-ws-seed-multi"
+  picks: []
+results:
+  - scenario: send:pn-ws-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-privacy-needs-shielded"
+  - scenario: send:pn-ws-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-privacy-needs-shielded"
+  - scenario: send:pn-ws-seed-multi:simple.fee.public.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-htr-and-fees"
+  - scenario: send:pn-ws-seed-multi:multisig.deposit.public.private-over-limit.zero-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:multisig.fee.public.max.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-htr-and-fees"
+  - scenario: send:pn-ws-seed-multi:shielded.deposit.hide-amount.normal.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-privacy-fee"
+  - scenario: send:pn-ws-seed-multi:shielded.deposit.private.decimals.zero-htr.unlocked
+    status: passed
+    notes: "reached: err-privacy-fee"
+  - scenario: send:pn-ws-seed-multi:simple.htr.public.over-balance.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-insufficient-funds"
+  - scenario: send:pn-ws-seed-multi:simple.htr.public.empty.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-invalid-amount"
+  - scenario: send:pn-ws-seed-multi:simple.htr.hide-amount.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-privacy-needs-shielded"
+  - scenario: send:pn-ws-seed-multi:simple.htr.hide-amount.max.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-privacy-needs-shielded"
+  - scenario: send:pn-ws-seed-multi:shielded.deposit.hide-amount.private-over-limit.enough-htr.unlocked
+    status: passed
+    notes: "reached: err-private-over-limit"
+  - scenario: send:pn-ws-seed-multi:simple.htr.public.max.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:simple.htr.public.decimals.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:simple.deposit.public.private-over-limit.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:multisig.htr.public.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:multisig.htr.public.decimals.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent; the destination received it"
+  - scenario: send:pn-ws-seed-multi:shielded.htr.hide-amount.decimals.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.htr.private.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.deposit.hide-amount.max.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.fee.public.decimals.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.fee.public.private-over-limit.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.fee.hide-amount.normal.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
+  - scenario: send:pn-ws-seed-multi:shielded.fee.private.max.enough-htr.unlocked
+    status: passed
+    notes: "reached: ok-sent"
