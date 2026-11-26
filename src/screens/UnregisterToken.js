@@ -120,6 +120,7 @@ class UnregisterToken extends React.Component {
               {t`I want to unregister the token **${tokenLabel}**`}
             </TextFmt>
             <Switch
+              testID='unregister-token-switch'
               onValueChange={this.toggleSwitch}
               trackColor={{ true: COLORS.primary }}
               value={this.state.switchValue}
@@ -130,6 +131,7 @@ class UnregisterToken extends React.Component {
             <NewHathorButton
               secondary
               color={COLORS.primary}
+              testID='unregister-token-confirm'
               disabled={!this.state.switchValue}
               onPress={this.unregisterConfirmed}
               title={t`Unregister token`}

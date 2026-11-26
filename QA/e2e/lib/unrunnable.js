@@ -6,11 +6,13 @@
  */
 
 /**
- * Why the kit can't run a scenario, or null when it can, as it can all of them today. A reason
- * given here lists the scenario as skipped in every run, with its way back in ROADMAP.md.
+ * Why the kit can't run a scenario, or null when it can. A reason given here lists the scenario
+ * as skipped in every run, with its way back in ROADMAP.md.
  */
-// eslint-disable-next-line no-unused-vars
 function unrunnableReason(scenario) {
+  if (scenario.action === 'register-token' && scenario.values['register-by'] === 'qr') {
+    return 'registering by QR code needs a camera helper: the emulator\'s virtual camera showing the token\'s QR code (ROADMAP "Phase 2")';
+  }
   return null;
 }
 

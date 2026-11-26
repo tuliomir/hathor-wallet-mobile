@@ -34,7 +34,13 @@ function planScenarios(graph, { setup, action: actionId, createdTokens, unlocked
     axes: graph.axes.map((axis) => (only[axis.id]
       ? { ...axis, values: axis.values.filter((v) => only[axis.id].includes(v.id)) } : axis)),
   };
-  return runOrder(allScenarios(narrowed).filter((s) => s.setup === setup).map((scenario) => {
+  // An action that doesn't vary the private balance runs on an unlocked wallet, the runner's
+  // first; the runner, the suite and the dashboard group scenarios by that state.
+  const stated = (scenario) => (scenario.values['private-balance'] ? scenario : {
+    ...scenario, values: { ...scenario.values, 'private-balance': 'unlocked' },
+  });
+  const own = allScenarios(narrowed).filter((s) => s.setup === setup).map(stated);
+  return runOrder(own.map((scenario) => {
     const outcome = outcomes[scenario.expected[0]];
     return {
       scenario,

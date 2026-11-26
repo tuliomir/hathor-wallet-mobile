@@ -37,7 +37,7 @@ Run tests through these commands: each run shows live on the run dashboard and p
 | `suite.js`, `ledger.json` | The suites ("Which command to run"), and what each scenario passed with in the last full run. |
 | `run.js` | The runner under them: the scenarios of one action on one setup, with a results file (`QA/graph/runs/`, or `--results <dir>`) and evidence in `evidence/` (git-ignored). Its options are at its top. |
 | `bin/app-on-privnet.sh` | Points the app at the privnet before it starts, writing its storage as root. `--fresh` wipes it first. Refuses anything but an emulator: store builds share the app id, so a wipe on a phone would erase its wallet. |
-| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow, and `flowSteps.js` has the steps they share; `walletStart.js` writes the flows around starting the wallet; `pinServer.js` taps the PIN for a running flow; `affected.js` finds the scenarios a change reaches; `tokenPlan.js` says which token each send gets; `createdTokens.js` has what differs for tokens created in the app; `payAgain.js` pays again what came in the same second as another transaction; `unrunnable.js` says why a scenario can't run (none today); `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `jobs.js`, `plan.js`, `fingerprint.js`, `ledger.js`, `select.js` and `smoke.js` pick what a suite runs, and `app.js` brings up what it runs on; `screen.js` drives the app over adb, and `receiveScenarios.js` and `historyScenarios.js` use it, with what the app should show in `book.js`; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
+| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow, and `flowSteps.js` has the steps they share; `walletStart.js` writes the flows around starting the wallet; `pinServer.js` taps the PIN for a running flow; `affected.js` finds the scenarios a change reaches; `tokenPlan.js` says which token each send gets; `createdTokens.js` has what differs for tokens created in the app; `payAgain.js` pays again what came in the same second as another transaction; `unrunnable.js` says why a scenario can't run (the QR code registrations); `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `jobs.js`, `plan.js`, `fingerprint.js`, `ledger.js`, `select.js` and `smoke.js` pick what a suite runs, and `app.js` brings up what it runs on; `screen.js` drives the app over adb, and `receiveScenarios.js`, `historyScenarios.js` and `registerScenarios.js` use it, with what the app should show in `book.js`; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
 | `viewer/` | `viewer.html`, the run viewer; `bin/serve-viewer.js` serves the runs' viewers and the live dashboard. |
 | `dashboard/` | `dashboard.html`, the live dashboard of suite runs ("Watching a run live"); `lib/progress.js` keeps the `progress.json` it reads, and `lib/live.js` its server and link. Its design: `design/dashboard/`. |
 | `flows/` | Maestro flows. `onboard.yaml`: new wallet on the privnet, ending on the dashboard. `to_dashboard.yaml`: back to the dashboard from wherever a scenario ended. `enter_pin.yaml`: the PIN, by taps. |
@@ -161,7 +161,7 @@ On the wallet service neither state exists: with such a record the app starts ag
 
 On its lock screen the app never goes idle, so Maestro takes 30 to 50 s over each key there and `uiautomator` never answers. `unlock` in `run.js` reads the keys' places from one `maestro hierarchy`, which doesn't wait for idle, and taps them with adb.
 
-A scenario the kit can't run goes in `unrunnableReason` (`lib/unrunnable.js`) with its reason, and every run lists it as skipped. There are none today; keep it that way, with a way back in `ROADMAP.md` for each one added.
+A scenario the kit can't run goes in `unrunnableReason` (`lib/unrunnable.js`) with its reason, and every run lists it as skipped, with a way back in `ROADMAP.md` for each one. Today: registering a token by its QR code ("Registering tokens again").
 
 ## Receiving, payments and history
 
@@ -170,6 +170,16 @@ A scenario the kit can't run goes in `unrunnableReason` (`lib/unrunnable.js`) wi
 What the app should show comes from the payments themselves and from the fullnode's JSON (`lib/book.js`), never from the app. For a payment that must not show (a private one to a locked wallet, any to a private address with a broken key), the runner then makes a public one and waits for it: absence only counts once the app is seen to be up to date.
 
 These run over adb, with no Maestro but to import a token: a screen is read in one dump (2.2 s) that answers all its checks (`screen.shows`), so a scenario takes 15 to 30 s, or about 70 s when the app is closed and opened again. Ask for everything a screen should show in one `shows`; one call per element took twice as long.
+
+## Registering tokens again
+
+`register-token` runs on the wallet the payments and history scenarios use, with E2ED and E2EF paid and imported, over adb. For each token it opens the token's details and checks the fee model against the token's version on the fullnode, and the configuration string against wallet-lib's; copies the string; unregisters the token, first tapping the confirmation with the switch off (nothing must happen), then with it on; registers it again through Settings > Register a token > Manual info, pasting the string; and checks the balance and the details again. The wallet ends as it started, so the next job can go on with it.
+
+- **The copy is checked by the paste.** "Copied to clipboard!" shows for 1.5 s, less than one uiautomator dump takes, and Android's own preview of what was copied isn't in the dump. So the runner first has the app copy something else (a tap on the Receive address), and the string pasted on the manual screen must then be the token's.
+- **Android's clipboard preview covers the Home tab** after a copy, until something else on screen is touched: the runner touches the QR code, then Home.
+- **Buttons under the navigation bar.** Unregister token's button sits under Android's navigation bar, so a tap at its centre presses Home and leaves the app (ROADMAP "Findings"). The runner taps such buttons by their top edge (`press` in `lib/registerScenarios.js`).
+- **The camera permission.** Register a token asks for the camera once per install, before the scanner; the runner allows it and goes on to Manual info.
+- **By QR code** is in the graph and skipped: it needs the emulator's virtual camera to show the token's QR code (ROADMAP "Phase 2").
 
 ## Running less, and faster
 

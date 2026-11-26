@@ -60,6 +60,7 @@ const { screenOf } = require('./lib/screen');
 const { payAgain } = require('./lib/payAgain');
 const { runReceive } = require('./lib/receiveScenarios');
 const { runPayment, runHistory } = require('./lib/historyScenarios');
+const { runRegister } = require('./lib/registerScenarios');
 const { tokenPlan } = require('./lib/tokenPlan');
 const walletStart = require('./lib/walletStart');
 const { htrOnDashboard, numpadKeys } = require('./lib/dashboard');
@@ -601,7 +602,7 @@ const fromJson = (text) => JSON.parse(text, (key, v) => (typeof v === 'string' &
 
 // Actions whose wallets are made alike, so that one can go on with another's.
 const KIND = {
-  send: 'send', 'create-token': 'bare', receive: 'bare', 'receive-payment': 'paid', history: 'paid',
+  send: 'send', 'create-token': 'bare', receive: 'bare', 'receive-payment': 'paid', history: 'paid', 'register-token': 'paid',
 };
 
 function keepWallet(setup, state, dir, ctx, failed) {
@@ -765,6 +766,7 @@ const BY_ADB = {
   receive: (scenario, outcome, ctx, dir, api) => runReceive(scenario, ctx, dir, api),
   'receive-payment': runPayment,
   history: runHistory,
+  'register-token': runRegister,
 };
 
 async function runByAdb(scenario, outcome, ctx, dir, api) {
@@ -1021,6 +1023,7 @@ async function runPlan(setup, plan, runDir, startedAt, args) {
     unlock,
     fund,
     transaction: async (id) => (await getJson(`${NODE_URL}transaction?id=${id}`)).tx,
+    tokenOnChain: (uid) => getJson(`${NODE_URL}thin_wallet/token?id=${uid}`),
     mintForPayer: (...token) => (
       treasuryMinter(path.dirname(ctx.seedFile), ctx.treasurySeed, ctx.payerSeed)(...token)),
     subset: [args.scenarios && 'the scenarios named', (args.affected || args.since) && 'what the picks reach'].filter(Boolean).join(', of those '),

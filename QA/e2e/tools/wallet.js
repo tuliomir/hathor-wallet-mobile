@@ -26,11 +26,14 @@
 //   wallet.js mint <address> <deposit|fee> <name> <symbol> <units> <treasury-seed-file>
 //                                            creates a custom token paid to the address, with
 //                                            the authorities kept by the treasury; prints its uid
+//   wallet.js config-string <uid> <name> <symbol>
+//                                            the token's configuration string, as wallet-lib
+//                                            writes it
 //   wallet.js cleanup <run-dir>              gives a run's HTR and deposits back to genesis
 
 const fs = require('fs');
 const path = require('path');
-const { walletUtils, addressUtils, HathorWallet, Connection, config, TokenVersion } = require('@hathor/wallet-lib');
+const { walletUtils, addressUtils, tokensUtils, HathorWallet, Connection, config, TokenVersion, } = require('@hathor/wallet-lib');
 const { isLocalNode } = require('../lib/localNode');
 const { payAgain } = require('../lib/payAgain');
 
@@ -325,13 +328,17 @@ async function main([command, ...args]) {
   if (command === 'mint') {
     return mint(...args);
   }
+  if (command === 'config-string') {
+    return tokensUtils.getConfigurationString(...args);
+  }
   if (command === 'cleanup') {
     return cleanup(args[0]);
   }
   throw new Error('usage: wallet.js new-seed | address <seed-file> [index] | shielded-address <seed-file>'
     + ' | shielded-addresses <seed-file> <count>'
     + ' | balances <seed-file> | send <seed-file> <address> <uid> <units> <public|amount|full> | send-private <address> <HTR> <amount|full>'
-    + ' | mint <address> <deposit|fee> <name> <symbol> <units> <treasury-seed-file> | cleanup <run-dir>');
+    + ' | mint <address> <deposit|fee> <name> <symbol> <units> <treasury-seed-file>'
+    + ' | config-string <uid> <name> <symbol> | cleanup <run-dir>');
 }
 
 // wallet-lib keeps handles open after its work is done, so exit explicitly.

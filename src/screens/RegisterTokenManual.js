@@ -147,6 +147,7 @@ class RegisterTokenManual extends React.Component {
             <View>
               <SimpleInput
                 label={t`Configuration string`}
+                testID='register-token-config'
                 autoFocus={!this.props.route.params?.configurationString}
                 multiline
                 onChangeText={this.onConfigStringChange}
@@ -162,6 +163,7 @@ class RegisterTokenManual extends React.Component {
             {(this.state.validating || this.state.registering) && renderSpinner()}
             <NewHathorButton
               title={t`Register token`}
+              testID='register-token-submit'
               disabled={this.state.configString === '' || this.state.token === null || this.state.registering}
               onPress={this.onButtonPress}
             />

@@ -17,6 +17,7 @@ const RUNS = [
   { name: 'send-created', action: 'send', createdTokens: true },
   { name: 'create-token', action: 'create-token' },
   { name: 'start-wallet', action: 'start-wallet' },
+  { name: 'register-token', action: 'register-token' },
 ];
 
 const JOBS = Object.entries(SETUPS).flatMap(([facade, setup]) => RUNS.map((run) => ({

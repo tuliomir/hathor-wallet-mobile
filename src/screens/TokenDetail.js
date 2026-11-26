@@ -36,6 +36,7 @@ class TokenDetail extends React.Component {
     const renderUnregisterButton = () => (
       <SimpleButton
         title={t`Unregister`}
+        testID='token-details-unregister'
         onPress={this.unregisterClicked}
       />
     );

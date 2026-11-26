@@ -329,8 +329,8 @@ features:
     flags: [reown, nano-contract]
     links:
       - { to: camera-permission, reason: Scanning the configuration needs the camera permission }
-    introduces: []
-    actions: []
+    introduces: ['register-by:qr']
+    actions: [register-token]
 
   - id: feature-flags
     name: Remote feature flags
@@ -425,12 +425,16 @@ features:
 
   - id: token-unregister
     name: Unregister token
-    description: The user removes a custom token from the wallet's list.
-    status: out-of-scope
+    description: The user removes a custom token from the wallet's list, after confirming it on a switch.
+    status: in-scope
     screens: [UnregisterToken]
     files:
       - src/screens/UnregisterToken.js
     flags: []
+    links:
+      - { to: tx-history, reason: "The token's details, where Unregister is, open from the token's screen" }
+    introduces: []
+    actions: [register-token]
 
   - id: token-import
     name: Import detected tokens
@@ -980,6 +984,17 @@ axes:
       cost: cheap
       transitions: []
 
+  - id: register-by
+    name: How the configuration string is entered
+    kind: action
+    values:
+      - { id: manual, name: 'Pasted on the manual screen (Settings > Register a token > Manual info)' }
+      - { id: qr, name: Scanned from the QR code of another device }
+    how: Copy the string on the token's details (a tap copies it) and paste it, or scan the details' QR code shown on another device.
+    switch:
+      cost: cheap
+      transitions: []
+
   - id: private-balance
     name: Private balance state
     kind: action
@@ -1377,6 +1392,27 @@ actions:
           verified: true
           note: The app says nothing about it, and ignores the wallet service for a day (featureFlags:ignoreWalletServiceFlag in its storage).
 
+  - id: register-token
+    name: Unregister a token and register it again
+    feature: token-register
+    axes: [token, register-by]
+    setups: [tn-ws-seed-multi, tn-fn-seed-multi, tns-ws-seed-multi, tns-fn-seed-multi, pn-fn-seed-multi, pn-ws-seed-multi]
+    path:
+      steps:
+        - { id: info, screen: TokenDetail, name: "Open the token from Home, then its details (the dots on the upper right): read the fee model" }
+        - { id: copy, screen: TokenDetail, name: Tap the configuration string to copy it }
+        - { id: unregister, screen: UnregisterToken, name: 'Tap Unregister; Unregister token does nothing until the switch "I want to unregister the token" is on; turn it on and confirm' }
+        - { id: register, screen: RegisterTokenManual, name: 'Register the configuration string again, pasted on the manual screen or scanned' }
+        - { id: check, screen: MainScreen, name: "Open the token again: the same balance, and the same fee model on its details" }
+      outcomes:
+        - id: ok-registered-again
+          kind: success
+          at: check
+          message: "You're going to register the following token:"
+          source: 'src/screens/RegisterTokenManual.js:119'
+          verified: false
+          note: 'Before Register token, the screen names the token. After it, the token is back on Home with the balance it had, and its details show the fee model they showed before: "Fee Model: Deposit-Based" or "Fee Model: Fee-Based" (src/components/TokenDetails.js:53, :59). Between the two, Home does not list it, and the banner offers it for import, as the wallet still holds it (src/components/TokenImportBanner.js:63).'
+
 constraints:
   # send
   - id: c-send-shielded-dest-outside
@@ -1767,3 +1803,10 @@ constraints:
     class: edge
     outcome: edge-fallback
     note: 'The wallet registers without shielded keys (unlockScanKeyForRegistration in wallet-lib), and the app starts it again on the fullnode facade (fallBackToFullnodeFacade in src/sagas/wallet.js).'
+
+  # register-token
+  - id: c-reg-htr
+    action: register-token
+    when: { token: htr }
+    class: invalid
+    note: HTR is always registered; its screen has no details to unregister it from (tokenInfo in src/screens/MainScreen.js).

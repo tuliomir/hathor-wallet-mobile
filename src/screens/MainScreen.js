@@ -307,7 +307,7 @@ class MainScreen extends React.Component {
     const renderRightElement = () => {
       if (this.props.selectedToken.uid !== hathorConstants.NATIVE_TOKEN_UID) {
         return (
-          <SimpleButton onPress={this.tokenInfo}>
+          <SimpleButton testID='token-info' onPress={this.tokenInfo}>
             <ActionDot />
           </SimpleButton>
         );

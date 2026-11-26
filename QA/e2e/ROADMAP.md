@@ -6,9 +6,9 @@ Status on 2026-11-25, evening. The kit runs the QA graph's receive, receive-paym
 
 | | |
 |---|---|
-| Graph | 44 features, 13 setups, 6 actions modelled (send, create-token, start-wallet, receive, receive-payment, history): 430 scenarios. Multichain isn't modelled. |
-| Automated | Six actions on two setups (`pn-fn-seed-multi`, `pn-ws-seed-multi`): 179 scenarios, 14 jobs. The last full run is "Full run of 2026-11-25" below; `ledger.json` has what each scenario passed with. |
-| Held back | Nothing. |
+| Graph | 44 features, 13 setups, 7 actions modelled (send, create-token, start-wallet, receive, receive-payment, history, register-token): 454 scenarios. Multichain isn't modelled. |
+| Automated | Seven actions on two setups (`pn-fn-seed-multi`, `pn-ws-seed-multi`): 187 scenarios, 16 jobs, 4 of them skipped. The last full run is "Full run of 2026-11-25" below, of 179; `ledger.json` has what each scenario passed with. `register-token` (2026-11-26) passed in `dev` on both facades, 2 of 2 each, and isn't in `ledger.json` until a full run. |
+| Held back | Registering a token by QR code, 4 scenarios: it needs a camera helper ("Phase 2"). |
 | Official QA (`QA/QA*.md`) | On 2026-11-04 about 33 of its 756 numbered steps ran automatically (4%). Not recounted since: token creation, and sends of the created tokens, were added. |
 | Funds | A send run gives its HTR and minted deposits back to genesis. Tokens created in the app keep their deposits (about 10 HTR each for the sends; up to the whole balance in the create run), and the create run isn't cleaned up. |
 | Watching | Every flow is recorded with `screenrecord`, at no cost in time, into a playlist viewer with the steps beside the screen, long waits skipped, speeds and seeks on keys, and per-scenario validation marks. |
@@ -30,6 +30,7 @@ From the full run of 2026-11-25 (`a1ce8fd1`), 5 h 02 min in all.
 
 What the kit found in the app, still to decide unless marked settled.
 
+- **Unregister token's button is under Android's navigation bar.** Seen on 0.41.0-rc.1, on the emulator (android-36, three-button navigation), on 2026-11-26: the bottom of the button "Unregister token" is drawn under the navigation bar, so a tap at its centre presses Home and leaves the app; its top edge works. `src/App.js` gives a bottom safe area to a list of routes (`RegisterTokenManual` and `ResetWallet` among them), and `UnregisterToken` isn't on it. Not checked on a phone, nor with gesture navigation. The kit taps the button's top edge (`press` in `lib/registerScenarios.js`).
 - **A fee-based token can't be created while all the wallet's HTR is private.** Seen in the app on 0.41.0-rc.1, fullnode: after a fully private 15.00 HTR payment, Create token for a fee token ends in "full validation failed: shielded balance equation does not hold" (screenshot: `evidence/fee-token-private-htr.png`, git-ignored). Reproduced in Node with wallet-lib 4.3.0 and 4.4.0, with amount-shielded and fully shielded HTR; a deposit token builds, and so does a fee token when the wallet also has public HTR. Not modelled in the graph yet: `funding` has no private-only value. The kit's payer and treasury are separate wallets because of it (`treasuryMinter` in `run.js`). Worth an issue in wallet-lib, and a message in the app instead of the raw error.
 - **On the wallet service, a public payment of an unregistered token to the private address is offered for import only at the next start.** Seen on 0.41.0-rc.1: no banner, while a public payment made after it shows; after a restart the banner offers the token. wallet-lib's wallet-service `getTxBalance` looks only at the legacy addresses, and the app asks for the token list only when a shielded output pays it (`paysShieldedToWallet`, `src/sagas/wallet.js`). The graph expects it (`c-pay-ws-late-offer`). Private payments and payments to legacy addresses are offered at once.
 
@@ -75,7 +76,7 @@ What the new checks were seen failing on, each by breaking what it guards: a pay
 
 1. **The smoke rule** (`lib/smoke.js`) is a placeholder, for the owner to write.
 2. **The run dashboard**: built (README "Watching a run live"), from state 1 of the design; the design's other states are drawn by the same page from `progress.json`, not designed yet (`design/dashboard/screens/STATES.md`). Not yet: a live screenshot of the phone, which would need addresses masked.
-3. **Registering and unregistering tokens.**
+3. **Registering and unregistering tokens**: done by configuration string (README "Registering tokens again"). By QR code needs the camera helper below.
 4. Model a private-only `funding` for create-token, to keep the fee-token finding in the regression.
 
 ## Future possibilities
@@ -126,7 +127,12 @@ Things that would help, and that the kit can't do without a change to the app. N
 
 ### Phase 2: the whole app on the privnet with the fullnode
 
-Creating tokens, receiving, payments and history are done. Model the remaining actions in the graph, then automate them: registering and unregistering tokens; unlocking and exporting the privacy keys; importing and resetting a wallet; settings, address mode, custom network; nano contracts (the privnet has them on). With small helpers: Reown (a WalletConnect client scripted in Node), biometry (`adb emu finger touch`), QR scanning (the emulator's virtual camera scene). Order to decide: by QA pain, by risk, or by reuse (create-token first, since other actions need tokens).
+Creating tokens, receiving, payments, history, and unregistering a token and registering it again by its configuration string are done. Two steps of QA.md "Register a token Tests" are not:
+
+- **Registering by QR code** (`register-token:*:*.qr`, skipped in `lib/unrunnable.js`). Way back: a camera helper that puts an image in the emulator's virtual camera scene (the AVD's `virtualscene` back camera, or a custom poster image), here the QR code of the token's details, which the runner can draw from the configuration string. Then the scenario taps Register a token and waits for the scanner to read it, with no Manual info.
+- **Switching to another network and back, then checking that the registered tokens are still there.** Left out of the graph's register-token action on purpose: it belongs to the custom-network work below, which has to bring the app back to the privnet with its wallet (the network setting is per network, and the privnet is a custom one).
+
+Model the remaining actions in the graph, then automate them: unlocking and exporting the privacy keys; importing and resetting a wallet; settings, address mode, custom network; nano contracts (the privnet has them on). With small helpers: Reown (a WalletConnect client scripted in Node), biometry (`adb emu finger touch`), QR scanning (the emulator's virtual camera scene). Order to decide: by QA pain, by risk, or by reuse (create-token first, since other actions need tokens).
 
 ### Phase 3: the wallet-service facade locally
 

@@ -226,4 +226,6 @@ async function runHistory(scenario, outcome, ctx, dir, { screen, step }) {
   return `${row.description} ${row.amount} in ${txId}; ${fee ? `fees ${shown(fees.total)} HTR` : 'no fees shown'}`;
 }
 
-module.exports = { runPayment, runHistory, HTR };
+module.exports = {
+  runPayment, runHistory, openAt, HTR,
+};

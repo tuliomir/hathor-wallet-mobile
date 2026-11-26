@@ -73,7 +73,7 @@ const TokenDetails = (props) => {
 
     return (
       <View style={styles.feeModelWrapper}>
-        <Text style={styles.feeModelLabel}>{feeModelInfo.model}</Text>
+        <Text testID='token-details-fee-model' style={styles.feeModelLabel}>{feeModelInfo.model}</Text>
         <Text style={styles.feeModelDescription}>{feeModelInfo.description}</Text>
       </View>
     );

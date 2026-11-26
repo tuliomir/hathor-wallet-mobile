@@ -25,6 +25,7 @@ class RegisterToken extends React.Component {
         // translator: Used when the QR Code Scanner is opened, and user will manually
         // enter the information.
         title={t`Manual info`}
+        testID='register-token-manual'
         onPress={() => this.props.navigation.navigate('RegisterTokenManual')}
       />
     );
