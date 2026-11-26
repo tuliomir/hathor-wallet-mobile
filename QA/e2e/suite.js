@@ -45,7 +45,7 @@ const { planScenarios } = require('./lib/plan');
 const { ACTION_FILES, flowOf, digest } = require('./lib/flows');
 const { treeIndex, workIndex, checkoutIds, appId, } = require('./lib/fingerprint');
 const ledger = require('./lib/ledger');
-const { reachOf, currentOf, standing, forDev, } = require('./lib/select');
+const { reachOf, currentOf, standing, forDev, settled, } = require('./lib/select');
 const { smokeOf } = require('./lib/smoke');
 const { tokenPlan } = require('./lib/tokenPlan');
 const app = require('./lib/app');
@@ -121,7 +121,7 @@ function rowsOf(args) {
       ...row,
       seconds: (entries[row.key] && entries[row.key].seconds) || SCENARIO,
       measured: Boolean(entries[row.key] && entries[row.key].seconds),
-      standing: standing(entry, current, reach[row.scenario.id], {
+      standing: row.skip ? { state: 'skipped', why: [row.skip] } : standing(entry, current, reach[row.scenario.id], {
         lacksKit: Boolean(base && base.lacksKit),
       }),
     };
@@ -158,7 +158,7 @@ function reasons(rows) {
 }
 
 function printStatus({ rows, appSources }) {
-  const states = ['fresh', 'owed', 'changed', 'failed', 'new'];
+  const states = ['fresh', 'owed', 'changed', 'failed', 'new', 'skipped'];
   console.log(`${'job'.padEnd(20)}${states.map((s) => s.padStart(9)).join('')}${'full run'.padStart(11)}`);
   byJob(rows).forEach(({ job, rows: own }) => {
     const counts = states.map((state) => own.filter((row) => row.standing.state === state).length);
@@ -220,7 +220,7 @@ function appLabel(appSources) {
 /** The scenarios a run leaves out that may need running, by reason, for the dashboard. */
 function notCoveredOf(left, clearedBy) {
   const byReason = new Map();
-  left.filter((row) => row.standing.state !== 'fresh').forEach((row) => {
+  left.filter((row) => !settled(row)).forEach((row) => {
     const reasonsOf = row.standing.why.length ? row.standing.why : [row.standing.state];
     reasonsOf.forEach((why) => {
       const entry = byReason.get(why) || { reason: why, count: 0, scenarios: [] };
@@ -230,7 +230,7 @@ function notCoveredOf(left, clearedBy) {
     });
   });
   return {
-    owed: left.filter((row) => row.standing.state !== 'fresh').length,
+    owed: left.filter((row) => !settled(row)).length,
     fresh: left.filter((row) => row.standing.state === 'fresh').length,
     byReason: [...byReason.values()].sort((a, b) => b.count - a.count),
     clearedBy,
@@ -322,8 +322,12 @@ function printSummary(summary) {
     const again = tries > 1 ? ` (try ${tries})` : '';
     console.log(`${job.id.padEnd(20)} ${counts ? `passed ${counts.passed}, failed ${counts.failed}, skipped ${counts.skipped}` : `did not finish (${planned} planned)`}${again}`);
   });
-  const ok = summary.every(({ counts, planned }) => counts && counts.passed === planned);
-  console.log(ok ? 'all passed' : 'NOT all passed; failures: the job\'s viewer, or failure.png in its evidence. On a reused wallet, try --fresh.');
+  // A skip is a scenario the kit can't run yet (lib/unrunnable.js), which every run lists.
+  const ok = summary.every(({ counts, planned }) => (
+    counts && counts.passed + counts.skipped === planned));
+  const skipped = summary.reduce((sum, { counts }) => sum + ((counts && counts.skipped) || 0), 0);
+  const skips = skipped ? `, ${skipped} skipped as the kit can't run them yet (lib/unrunnable.js)` : '';
+  console.log(ok ? `all passed${skips}` : 'NOT all passed; failures: the job\'s viewer, or failure.png in its evidence. On a reused wallet, try --fresh.');
   if (!ok) process.exitCode = 1;
   return ok;
 }
@@ -443,7 +447,8 @@ async function full(args) {
     closeLive({ text: 'every job ran, some with failures', resume: 'npm run e2e:full -- --resume --retry' });
     return;
   }
-  ledger.commitBaseline(rows.map(({ key }) => key), state.startedAt);
+  // A skipped scenario has no result to keep (lib/unrunnable.js).
+  ledger.commitBaseline(rows.filter((row) => !row.skip).map(({ key }) => key), state.startedAt);
   fs.rmSync(FULL);
   log(`full run of ${state.commit.slice(0, 8)}: ${rows.length} scenarios; commit the results in QA/graph/runs and ledger.json`);
   closeLive({ text: `finished: the baseline ledger of ${state.commit.slice(0, 8)} is written` });

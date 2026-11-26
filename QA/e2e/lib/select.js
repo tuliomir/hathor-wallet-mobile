@@ -74,6 +74,12 @@ function standing(entry, current, reach, { lacksKit = false } = {}) {
 }
 
 /**
+ * Whether a scenario needs nothing of a run: `fresh`, or `skipped`, one the kit can't run yet
+ * (lib/unrunnable.js), which a run would only list again.
+ */
+const settled = (row) => ['fresh', 'skipped'].includes(row.standing.state);
+
+/**
  * What `dev` runs, and what that leaves owed.
  * - A scenario that is new, failed, or whose own test changed runs.
  * - One whose feature's files changed runs on the fullnode (a job with `primary`); on the wallet
@@ -88,7 +94,7 @@ function forDev(rows, pick, { all, quick } = {}) {
   const jobs = [...new Set(rows.map((row) => row.job.id))];
   const run = jobs.flatMap((id) => {
     const ofJob = rows.filter((row) => row.job.id === id);
-    const stale = ofJob.filter((row) => row.standing.state !== 'fresh');
+    const stale = ofJob.filter((row) => !settled(row));
     const sampleOf = (from) => (from.length ? pick(from) : []);
     if (quick) return sampleOf(stale);
     const changed = stale.filter((row) => row.standing.state !== 'owed');
@@ -99,7 +105,9 @@ function forDev(rows, pick, { all, quick } = {}) {
     if (needed.length) return needed;
     return sampleOf(stale);
   });
-  return { run, owed: rows.filter((row) => row.standing.state !== 'fresh' && !run.includes(row)) };
+  return { run, owed: rows.filter((row) => !settled(row) && !run.includes(row)) };
 }
 
-module.exports = { reachOf, currentOf, standing, forDev };
+module.exports = {
+  reachOf, currentOf, standing, forDev, settled,
+};

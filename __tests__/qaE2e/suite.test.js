@@ -87,6 +87,12 @@ describe('what dev runs', () => {
     expect(names(forDev(rows, one))).toEqual([['a'], ['b']]);
     expect(names(forDev([row(fn, 'c', fresh)], one))).toEqual([[], []]);
   });
+
+  it('neither runs nor owes what the kit can\'t run yet', () => {
+    const skipped = { state: 'skipped', why: ['needs a camera helper'] };
+    expect(names(forDev([row(fn, 'a', skipped), row(fn, 'b', fresh)], one))).toEqual([[], []]);
+    expect(names(forDev([row(fn, 'a', skipped), row(fn, 'b', owed)], one, { quick: true }))).toEqual([['b'], []]);
+  });
 });
 
 describe('the suite', () => {
