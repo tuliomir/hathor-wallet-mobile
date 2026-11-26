@@ -99,6 +99,12 @@ const DB = '/data/data/network.hathor.wallet/databases/RKStorage';
 
 const sleep = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 const log = (msg) => console.log(`${new Date().toISOString().slice(11, 19)} ${msg}`);
+// What the run does, for the live dashboard (lib/progress.js). Only suite.js opens the channel:
+// run alone, run.js reports nothing.
+const report = (type, data = {}) => {
+  if (!process.send || !process.connected) return;
+  process.send({ e2e: { type, at: new Date().toISOString(), ...data } });
+};
 
 function parseArgs(argv) {
   const args = { action: 'send' };
@@ -226,6 +232,7 @@ async function chapter(ctx, info, dir, body) {
   const parts = [];
   const api = {
     async step(text, fn) {
+      report('step', { text });
       const start = Date.now();
       try {
         return await fn();
@@ -234,6 +241,7 @@ async function chapter(ctx, info, dir, body) {
       }
     },
     async flow(file, outDir, as) {
+      report('step', { text: as || `Maestro: ${path.basename(file)}` });
       const start = Date.now();
       const result = await maestro(file, outDir);
       parts.push({ start, end: Date.now(), text: as, outDir });
@@ -288,7 +296,8 @@ function writeViewer(ctx) {
   const runs = fs.readdirSync(evidence).filter((name) => fs.existsSync(path.join(evidence, name, 'viewer.html'))).sort().reverse();
   const items = runs.map((name) => `<li><a href="${name}/viewer.html">${name}</a></li>`).join('\n');
   fs.writeFileSync(path.join(evidence, 'index.html'), `<!doctype html><meta charset="utf-8"><title>e2e runs</title>
-<style>body{font:15px system-ui;margin:2em;background:#111;color:#eee}a{color:#8cf}</style><h1>e2e runs</h1><ul>${items}</ul>`);
+<style>body{font:15px system-ui;margin:2em;background:#111;color:#eee}a{color:#8cf}</style><h1>e2e runs</h1>
+<p><a href="live/">Live dashboard of the suite runs</a></p><ul>${items}</ul>`);
 }
 
 /** The token a create flow left on its details screen, as the fullnode knows it. */
@@ -632,12 +641,14 @@ function keptWallet(setup, state, ctx, plan) {
 
 /** A wallet for the scenarios of one private balance state: a fresh one, or the app's. */
 async function prepareGroup(setup, state, dir, ctx, plan) {
-  Object.assign(ctx, Object.fromEntries(KEPT.map((field) => [field, undefined])), { locked: 0 });
+  const cleared = Object.fromEntries(KEPT.map((field) => [field, undefined]));
+  Object.assign(ctx, cleared, { locked: 0, reusedWallet: false });
   const kept = ctx.reuse && ctx.action !== 'start-wallet' ? keptWallet(setup, state, ctx, plan) : null;
   if (kept) {
     KEPT.forEach((field) => { ctx[field] = kept[field]; });
     ctx.walletDir = kept.dir;
     log(`reusing the app's wallet ${kept.appAddress}`);
+    ctx.reusedWallet = true;
     if (state === 'unlocked' && KIND[ctx.action] === 'paid') {
       const held = fromJson(walletTool('balances', ctx.seedFile));
       ctx.book = { '00': { private: 0n, public: 0n }, ...held };
@@ -929,11 +940,14 @@ async function runGroup(setup, state, plan, ctx, args, record, lastGroup) {
   log(`private balance ${state}: ${plan.length} scenarios`);
   const results = [];
   let broken = null;
+  report('setup-started', { wallet: state });
   try {
     await prepareGroup(setup, state, dir, ctx, plan.filter((p) => !p.skip));
+    report('setup-finished', { wallet: state, reused: ctx.reusedWallet });
   } catch (e) {
     broken = `setup failed: ${e.message}`;
     log(broken);
+    report('setup-finished', { wallet: state, error: e.message });
   }
   for (const [i, p] of plan.entries()) {
     const info = {
@@ -947,12 +961,14 @@ async function runGroup(setup, state, plan, ctx, args, record, lastGroup) {
       const status = p.skip ? 'skipped' : 'failed';
       results.push({ scenario: p.scenario.id, status, notes: p.skip || broken });
       ctx.chapters.push({ ...info, status, notes: p.skip || broken });
+      report('scenario-not-run', { scenario: p.scenario.id, status: p.skip ? 'skipped' : 'did not run', note: p.skip || broken });
       // eslint-disable-next-line no-continue
       continue;
     }
     info.flowVersion = flowVersion(p.scenario, p.outcome, ctx.action === 'send' && ctx.tokens ? ctx.tokens[p.scenario.id] : undefined, ctx.ids);
     const scenarioDir = path.join(dir, 'scenarios', String(i + 1).padStart(2, '0'));
     log(`run  ${p.scenario.id} -> ${p.outcome.id}`);
+    report('scenario-started', { scenario: p.scenario.id });
     const scenarioStart = Date.now();
     let result;
     try {
@@ -963,6 +979,7 @@ async function runGroup(setup, state, plan, ctx, args, record, lastGroup) {
       result = { status: 'failed', notes: `runner error: ${e.message}` };
     }
     log(`     ${result.status}: ${result.notes}`);
+    report('scenario-finished', { scenario: p.scenario.id, status: result.status, note: result.notes });
     ledger.record(keyOf(p.scenario, ctx.createdTokens), {
       status: result.status,
       at: new Date().toISOString(),
@@ -972,6 +989,7 @@ async function runGroup(setup, state, plan, ctx, args, record, lastGroup) {
     results.push({ scenario: p.scenario.id, status: result.status, notes: result.notes });
   }
   if (record) writeViewer(ctx);
+  report('step', { text: 'giving the wallet\'s funds back, or keeping the wallet for the next job' });
   // The app holds one wallet, so only the last group's can be kept.
   if (args.keep && !broken && lastGroup) keepWallet(setup, state, ctx.walletDir, ctx, results.some(({ status }) => status === 'failed'));
   else cleanUp(ctx.walletDir || dir, args);
@@ -1007,6 +1025,7 @@ async function runPlan(setup, plan, runDir, startedAt, args) {
       treasuryMinter(path.dirname(ctx.seedFile), ctx.treasurySeed, ctx.payerSeed)(...token)),
     subset: [args.scenarios && 'the scenarios named', (args.affected || args.since) && 'what the picks reach'].filter(Boolean).join(', of those '),
   };
+  if (record) report('viewer', { viewer: `${path.basename(runDir)}/viewer.html` });
   const pinServer = await startPinServer(ADB, PIN, () => ctx.pinKeys);
   ctx.pinServer = pinServer;
   const results = [];

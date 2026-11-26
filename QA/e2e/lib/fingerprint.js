@@ -20,11 +20,13 @@ const sha1 = (text) => crypto.createHash('sha1').update(text).digest('hex');
 // What the app is built from. The kit's npm scripts are in package.json too, so only its
 // dependencies count.
 const APP = /^(src\/|locale\/|patches\/|android\/|package(-lock)?\.json$|(index|shim|i18nInit|babel\.config|metro\.config)\.js$|app\.json$)/;
-// Of the kit, what doesn't change how a scenario runs: the docs, the viewer and the suite's own
-// selection; and the builders of flows, as each scenario's flow is compared by itself.
-const NOT_KIT = new RegExp('^QA/e2e/(.*\\.md$|viewer/|evidence/|ledger\\.json$|suite\\.js$'
+// Of the kit, what doesn't change how a scenario runs: the docs, the viewer, the live dashboard
+// and its design, and the suite's own selection; and the builders of flows, as each scenario's
+// flow is compared by itself.
+const NOT_KIT = new RegExp('^QA/e2e/(.*\\.md$|viewer/|dashboard/|design/|evidence/|ledger\\.json$|suite\\.js$'
   + '|bin/(serve-viewer|try-branch)'
-  + '|lib/(jobs|fingerprint|ledger|select|smoke|app|timeline|affected|sendFlow|createTokenFlow)\\.js$)');
+  + '|lib/(jobs|fingerprint|ledger|select|smoke|app|timeline|affected|sendFlow|createTokenFlow'
+  + '|progress|live)\\.js$)');
 
 /** A package.json's id in an index: its dependencies only. */
 function packageId(text) {

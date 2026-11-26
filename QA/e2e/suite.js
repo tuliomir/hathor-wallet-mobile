@@ -15,6 +15,8 @@
 //   node QA/e2e/suite.js full [--resume]   everything: release QA, or the last check of a change to
 //                                          the suite
 //   node QA/e2e/suite.js down              gives back kept wallets' funds; takes everything down
+//   node QA/e2e/suite.js say <kind> <text> a message on the live dashboard: why, note, finding or
+//                                          correction; --job <id>, --link <url>, --run <id>
 //
 // Options, for `dev` and `smoke` unless said:
 //   --only <job>,...   only these jobs: fn/history, ws, send, ... (`status` too)
@@ -26,7 +28,11 @@
 //   --no-build         test the app that is installed, whatever it was built from
 //   --retry            full, with --resume: run the jobs that had failures again, and say so
 //   --minutes <n>      full: start no job expected to end later than that; go on with --resume
+//   --why <text>       why this run: pinned on the live dashboard
+//   --name <text>      the run's name on the dashboard
 //
+// Every run that isn't a dry run shows live on the dashboard (lib/live.js), and prints its link.
+
 // What each scenario last passed with is in ledger.json (committed, of the last full run) and
 // evidence/ledger.local.json (this machine's runs). lib/select.js says what counts as changed.
 
@@ -43,13 +49,15 @@ const { reachOf, currentOf, standing, forDev, } = require('./lib/select');
 const { smokeOf } = require('./lib/smoke');
 const { tokenPlan } = require('./lib/tokenPlan');
 const app = require('./lib/app');
+const progress = require('./lib/progress');
+const live = require('./lib/live');
 
 const E2E = __dirname;
 const REPO = path.resolve(E2E, '..', '..');
 const EVIDENCE = path.join(E2E, 'evidence');
 const RUNS = path.join(REPO, 'QA', 'graph', 'runs');
 const FULL = path.join(EVIDENCE, 'full.json');
-const MODES = ['status', 'dev', 'smoke', 'full', 'down'];
+const MODES = ['status', 'dev', 'smoke', 'full', 'down', 'say'];
 // Estimates, in seconds, where the ledger has no time of a scenario.
 const SCENARIO = 60;
 // Measured on 2026-11-25: a wallet's setup, and each token the app creates for a send-created job.
@@ -59,11 +67,16 @@ const CREATED_TOKEN = 100;
 const log = (msg) => console.log(`${new Date().toISOString().slice(11, 19)} ${msg}`);
 const git = (...args) => execFileSync('git', args, { cwd: REPO, encoding: 'utf8' }).trim();
 const minutes = (seconds) => (seconds < 90 ? `${Math.round(seconds)} s` : `${Math.round(seconds / 60)} min`);
+// The run on the live dashboard, once one started.
+let liveRun = null;
 
 function parseArgs(argv) {
   const [mode, ...rest] = argv;
-  const args = { mode };
-  const valued = { '--only': 'only', '--since': 'since', '--minutes': 'minutes' };
+  const args = { mode, argv: rest };
+  const valued = {
+    '--only': 'only', '--since': 'since', '--minutes': 'minutes', '--why': 'why', '--name': 'name', '--job': 'job', '--link': 'link', '--run': 'run',
+  };
+  if (mode === 'say') [args.kind, args.text] = [rest.shift(), rest.shift()];
   const flags = {
     '--dry-run': 'dryRun', '--fresh': 'fresh', '--no-build': 'noBuild', '--resume': 'resume', '--retry': 'retry', '--quick': 'quick', '--all': 'all',
   };
@@ -107,6 +120,7 @@ function rowsOf(args) {
     return {
       ...row,
       seconds: (entries[row.key] && entries[row.key].seconds) || SCENARIO,
+      measured: Boolean(entries[row.key] && entries[row.key].seconds),
       standing: standing(entry, current, reach[row.scenario.id], {
         lacksKit: Boolean(base && base.lacksKit),
       }),
@@ -114,6 +128,10 @@ function rowsOf(args) {
   });
   return { rows, appSources: appId(index), ids };
 }
+
+/** What making a wallet's tokens in the app adds to its setup, for a job with created tokens. */
+const createdSeconds = (job, rows) => (job.createdTokens
+  ? Object.keys(tokenPlan(rows).tokens).length * CREATED_TOKEN : 0);
 
 /** What running these rows should take: the scenarios, a wallet per state of each job, and the
  * tokens the app creates for each wallet of a job with created tokens. */
@@ -123,10 +141,8 @@ function estimate(rows) {
     const key = `${row.job.id} ${row.scenario.values['private-balance']}`;
     wallets.set(key, [...(wallets.get(key) || []), row]);
   });
-  const setups = [...wallets].reduce((sum, [key, own]) => {
-    const created = own[0].job.createdTokens ? Object.keys(tokenPlan(own).tokens).length : 0;
-    return sum + SETUP[key.split(' ')[1]] + created * CREATED_TOKEN;
-  }, 0);
+  const setups = [...wallets].reduce((sum, [key, own]) => (
+    sum + SETUP[key.split(' ')[1]] + createdSeconds(own[0].job, own)), 0);
   return rows.reduce((sum, row) => sum + row.seconds, 0) + setups;
 }
 
@@ -166,15 +182,90 @@ function list(rows) {
   });
 }
 
+// What lib/app.js says it does, as the dashboard's phases. A build blocks the suite for up to
+// 5 min, heartbeat included, so the page is told to expect that silence.
+// Each: what it usually takes, and how long a silence it may cause (seconds).
+const PHASES = [
+  [/^building/, 'build', 300, 600], [/^installing/, 'build', 30, 120], [/^booting/, 'boot', 150, 0], [/^starting the privnet/, 'boot', 60, 0],
+];
+function phaseLog(msg) {
+  log(msg);
+  const found = PHASES.find(([pattern]) => pattern.test(msg)) || [];
+  const [, phase, expectedSeconds, quietSeconds] = found;
+  if (liveRun && phase) {
+    liveRun.event({
+      type: 'phase', phase, text: msg, expectedSeconds, quietSeconds,
+    });
+  }
+}
+
 async function bringUp(rows, args, appSources) {
-  await app.ensurePrivnet(rows.some(({ job }) => job.setup.startsWith('pn-ws')), log);
-  await app.ensureEmulator(log);
+  await app.ensurePrivnet(rows.some(({ job }) => job.setup.startsWith('pn-ws')), phaseLog);
+  await app.ensureEmulator(phaseLog);
   if (args.noBuild) {
     const stale = app.staleApp(appSources);
     if (stale) log(`WARNING: ${stale}; its results won't count`);
-    return;
+  } else {
+    app.ensureApp(appSources, phaseLog);
   }
-  app.ensureApp(appSources, log);
+  if (liveRun) liveRun.progress.run.app = appLabel(appSources);
+}
+
+/** The app the run tests, as the dashboard's header says it. */
+function appLabel(appSources) {
+  const { version } = JSON.parse(fs.readFileSync(path.join(REPO, 'package.json'), 'utf8'));
+  return `${version}-e2e, ${app.installedId() === appSources ? 'built from these sources' : 'NOT built from these sources'}`;
+}
+
+/** The scenarios a run leaves out that may need running, by reason, for the dashboard. */
+function notCoveredOf(left, clearedBy) {
+  const byReason = new Map();
+  left.filter((row) => row.standing.state !== 'fresh').forEach((row) => {
+    const reasonsOf = row.standing.why.length ? row.standing.why : [row.standing.state];
+    reasonsOf.forEach((why) => {
+      const entry = byReason.get(why) || { reason: why, count: 0, scenarios: [] };
+      entry.count += 1;
+      entry.scenarios.push(`${row.job.id} ${row.scenario.id.split(':').pop()}`);
+      byReason.set(why, entry);
+    });
+  });
+  return {
+    owed: left.filter((row) => row.standing.state !== 'fresh').length,
+    fresh: left.filter((row) => row.standing.state === 'fresh').length,
+    byReason: [...byReason.values()].sort((a, b) => b.count - a.count),
+    clearedBy,
+    notes: ['Android only, on the emulator; iOS is not part of this kit.'],
+  };
+}
+
+/**
+ * Opens the run on the live dashboard. `run` are the rows it runs, `all` every row it could have,
+ * `left` those it leaves out that the dashboard lists as not covered.
+ */
+async function openLive(args, { mode, run, all, left, id, clearedBy, }) {
+  const tree = dirty() ? 'uncommitted changes' : 'clean';
+  const fresh = () => progress.newProgress({
+    id,
+    mode,
+    name: args.name || `${mode} run of ${git('rev-parse', '--abbrev-ref', 'HEAD')}`,
+    commit: git('rev-parse', '--short=8', 'HEAD'),
+    branch: git('rev-parse', '--abbrev-ref', 'HEAD'),
+    tree,
+    device: `Android emulator (${process.env.AVD || 'hnni'})`,
+    selection: { options: [mode, ...args.argv].join(' '), picked: run.length, of: all.length },
+    notCovered: notCoveredOf(left, clearedBy),
+  }, byJob(run), { setupSeconds: SETUP, extraSeconds: createdSeconds });
+  liveRun = await live.open({
+    id, fresh, log, why: args.why, name: args.name,
+  });
+  return liveRun;
+}
+
+/** Ends the run on the dashboard. */
+function closeLive(event) {
+  if (!liveRun) return;
+  liveRun.event({ type: 'run-finished', ...event });
+  liveRun.close();
 }
 
 /** One run of run.js; gives the results file's path, or null when it didn't finish. */
@@ -183,7 +274,10 @@ function runJob(job, scenarioIds, options) {
   if (job.createdTokens) argv.push('--created-tokens');
   if (scenarioIds) argv.push('--scenarios', scenarioIds.join(','));
   return new Promise((resolve, reject) => {
-    const child = spawn('node', argv, { stdio: ['ignore', 'pipe', 'inherit'] });
+    const child = spawn('node', argv, { stdio: ['ignore', 'pipe', 'inherit', 'ipc'] });
+    child.on('message', (m) => {
+      if (liveRun && m && m.e2e) liveRun.event({ ...m.e2e, job: job.id });
+    });
     let out = '';
     child.stdout.on('data', (text) => {
       out += text;
@@ -207,11 +301,19 @@ async function runRows(rows, args, appSources) {
     log(`== ${job.id}: ${own.length} scenarios`);
     const options = ['--results', path.join(EVIDENCE, 'results')];
     options.push(args.fresh ? '--keep' : '--reuse');
+    liveRun.event({ type: 'job-started', job: job.id, tries: 1 });
     // eslint-disable-next-line no-await-in-loop
     const counts = await runJob(job, own.map((row) => row.scenario.id), options);
+    liveRun.event({ type: 'job-finished', job: job.id, counts });
     summary.push({ job, counts, planned: own.length });
   }
   return summary;
+}
+
+/** The dashboard's end of a dev or smoke run. */
+function finishLive(summary) {
+  const failed = summary.some(({ counts }) => !counts || counts.failed);
+  closeLive({ text: failed ? 'finished, NOT all passed' : 'finished, all passed' });
 }
 
 function printSummary(summary) {
@@ -245,7 +347,12 @@ async function dev(args) {
     announceOwed(owed);
     return;
   }
-  printSummary(await runRows(run, args, appSources));
+  await openLive(args, {
+    mode: 'dev', run, all: rows, left: owed, id: live.runId('dev'), clearedBy: 'npm run e2e:full',
+  });
+  const summary = await runRows(run, args, appSources);
+  finishLive(summary);
+  printSummary(summary);
   announceOwed(owed);
 }
 
@@ -253,8 +360,16 @@ async function smoke(args) {
   const { rows, appSources } = rowsOf(args);
   const run = byJob(rows).flatMap(({ rows: own }) => smokeOf(own));
   log(`smoke: ${run.length} of ${rows.length} scenarios, about ${minutes(estimate(run))}`);
-  if (args.dryRun) list(run);
-  else printSummary(await runRows(run, args, appSources));
+  if (args.dryRun) {
+    list(run);
+    return;
+  }
+  await openLive(args, {
+    mode: 'smoke', run, all: rows, left: rows.filter((row) => !run.includes(row)), id: live.runId('smoke'), clearedBy: 'npm run e2e:dev, or npm run e2e:full',
+  });
+  const summary = await runRows(run, args, appSources);
+  finishLive(summary);
+  printSummary(summary);
 }
 
 /** The tree's uncommitted changes, but for the results and the ledger a full run itself writes. */
@@ -274,13 +389,26 @@ async function full(args) {
   if (state && !args.resume) throw new Error(`a full run of ${state.startedAt} is under way: --resume it, or delete ${path.relative(REPO, FULL)}`);
   if (!state && args.resume) throw new Error('there is no full run to resume');
   if (state && state.code !== code) throw new Error('the code changed since this full run started, so its results would be of two versions: delete evidence/full.json and start over');
-  state = state || { startedAt: new Date().toISOString(), code, commit: git('rev-parse', 'HEAD'), done: {} };
+  state = state || {
+    startedAt: new Date().toISOString(), code, commit: git('rev-parse', 'HEAD'), done: {}, liveId: live.runId('full'), parts: 0,
+  };
+  // A full run from before the dashboard goes on under a new id.
+  state.liveId = state.liveId || live.runId('full');
+  state.parts = (state.parts || 0) + 1;
   const save = () => {
     fs.mkdirSync(EVIDENCE, { recursive: true });
     fs.writeFileSync(FULL, JSON.stringify(state, null, 1));
   };
   save();
   const end = args.minutes ? Date.now() + Number(args.minutes) * 60000 : Infinity;
+  const resume = `npm run e2e:full -- --resume${args.minutes ? ` --minutes ${args.minutes}` : ''}`;
+  await openLive(args, {
+    mode: 'full', run: rows, all: rows, left: [], id: state.liveId, clearedBy: null,
+  });
+  liveRun.event({
+    type: 'part-started', n: state.parts, minutes: args.minutes ? Number(args.minutes) : null, endsBy: Number.isFinite(end) ? new Date(end).toISOString() : null,
+  });
+  liveRun.progress.run.resume = resume;
   await bringUp(rows, {}, appSources);
   const failedIn = (done) => done.counts.passed < done.planned;
   const todo = byJob(rows).filter(({ job }) => {
@@ -290,13 +418,20 @@ async function full(args) {
   for (const { job, rows: own } of todo) {
     if (Date.now() + estimate(own) * 1000 > end) {
       log(`stopping before ${job.id}, about ${minutes(estimate(own))}: go on with suite.js full --resume`);
+      liveRun.event({ type: 'part-ended', text: `part ${state.parts} ended before ${job.id}; the rest needs a resume`, resume });
+      liveRun.close();
       return;
     }
     log(`== ${job.id}: ${own.length} scenarios, about ${minutes(estimate(own))}`);
+    const before = state.done[job.id];
+    liveRun.event({ type: 'job-started', job: job.id, tries: before ? before.tries + 1 : 1 });
     // eslint-disable-next-line no-await-in-loop
     const counts = await runJob(job, null, ['--results', RUNS]);
-    if (!counts) throw new Error(`${job.id} did not finish; fix what stopped it, then suite.js full --resume`);
-    const before = state.done[job.id];
+    liveRun.event({ type: 'job-finished', job: job.id, counts });
+    if (!counts) {
+      closeLive({ state: 'stopped', text: `${job.id} did not finish`, resume: 'npm run e2e:full -- --resume' });
+      throw new Error(`${job.id} did not finish; fix what stopped it, then suite.js full --resume`);
+    }
     state.done[job.id] = {
       counts, planned: own.length, tries: before ? before.tries + 1 : 1,
     };
@@ -305,11 +440,13 @@ async function full(args) {
   if (Object.values(state.done).some(failedIn) && !args.retry) {
     printSummary(byJob(rows).map(({ job }) => ({ job, ...state.done[job.id] })));
     log('every job ran, some with failures: --resume --retry runs those again');
+    closeLive({ text: 'every job ran, some with failures', resume: 'npm run e2e:full -- --resume --retry' });
     return;
   }
   ledger.commitBaseline(rows.map(({ key }) => key), state.startedAt);
   fs.rmSync(FULL);
   log(`full run of ${state.commit.slice(0, 8)}: ${rows.length} scenarios; commit the results in QA/graph/runs and ledger.json`);
+  closeLive({ text: `finished: the baseline ledger of ${state.commit.slice(0, 8)} is written` });
   printSummary(byJob(rows).map(({ job }) => ({ job, ...state.done[job.id] })));
 }
 
@@ -338,16 +475,36 @@ function down() {
   app.down(log);
 }
 
+/** Leaves a message on a run's dashboard: the newest run, or --run's. */
+function say(args) {
+  const id = args.run || progress.newestId();
+  if (!id) throw new Error('there is no run on the dashboard to say it to');
+  progress.say(id, progress.message({
+    kind: args.kind, text: args.text, job: args.job, link: args.link,
+  }));
+  log(`said to ${id}`);
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.mode === 'status') printStatus(rowsOf(args));
   else if (args.mode === 'dev') await dev(args);
   else if (args.mode === 'smoke') await smoke(args);
   else if (args.mode === 'full') await full(args);
+  else if (args.mode === 'say') say(args);
   else down();
 }
 
+// Stopped by hand: the dashboard says so, instead of going silent.
+['SIGINT', 'SIGTERM'].forEach((signal) => process.on(signal, () => {
+  if (liveRun) closeLive({ state: 'stopped', text: `stopped by ${signal}`, resume: liveRun.progress.run.mode === 'full' ? 'npm run e2e:full -- --resume' : undefined });
+  process.exit(130);
+}));
+
 main().catch((e) => {
   console.error(`suite: ${e.message}`);
+  if (liveRun && !['finished', 'stopped', 'paused'].includes(liveRun.progress.run.state)) {
+    closeLive({ state: 'stopped', text: `stopped: ${e.message}` });
+  }
   process.exit(1);
 });
