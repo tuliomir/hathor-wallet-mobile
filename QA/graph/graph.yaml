@@ -283,7 +283,7 @@ features:
       - { to: wallet-load, reason: The imported wallet starts and loads its history }
       - { to: address-mode, reason: An imported wallet with transactions past the first address is moved to multi-address mode }
     introduces: []
-    actions: []
+    actions: [reset-import]
 
   - id: passkey-onboarding
     name: Passkey wallet
@@ -355,8 +355,9 @@ features:
     flags: []
     links:
       - { to: wallet-create, reason: A reset ends on the onboarding screens of wallet creation }
+      - { to: network-settings, reason: A reset forgets the custom network (cleanNetworkSettings) }
     introduces: []
-    actions: []
+    actions: [reset-import]
 
   # Out of scope for v1 (inventory only)
   - id: wallet-load
@@ -439,7 +440,7 @@ features:
   - id: token-import
     name: Import detected tokens
     description: The wallet finds tokens it holds but has not registered and offers to import them.
-    status: out-of-scope
+    status: in-scope
     screens: [ImportTokensScreen, ConfirmImportScreen]
     files:
       - src/screens/ImportTokensScreen.js
@@ -449,6 +450,10 @@ features:
       - src/components/ImportTokensModal.js
       - src/components/TokenListCard.js
     flags: []
+    links:
+      - { to: token-register, reason: Importing a token registers it }
+    introduces: []
+    actions: [reset-import]
 
   - id: nft
     name: NFT display
@@ -1412,6 +1417,36 @@ actions:
           source: 'src/screens/RegisterTokenManual.js:119'
           verified: false
           note: 'Before Register token, the screen names the token. After it, the token is back on Home with the balance it had, and its details show the fee model they showed before: "Fee Model: Deposit-Based" or "Fee Model: Fee-Based" (src/components/TokenDetails.js:53, :59). Between the two, Home does not list it, and the banner offers it for import, as the wallet still holds it (src/components/TokenImportBanner.js:63).'
+
+  - id: reset-import
+    name: Reset the wallet, then import it again
+    feature: reset-wallet
+    axes: []
+    setups: [tn-ws-seed-single, tn-ws-seed-multi, tn-fn-seed-single, tn-fn-seed-multi, tns-ws-seed-multi, tns-fn-seed-multi, tns-ws-seed-single, pn-fn-seed-multi, pn-ws-seed-multi]
+    path:
+      steps:
+        - { id: reset, screen: ResetWallet, name: 'Settings > Reset wallet: Reset Wallet does nothing until the switch "I want to reset my wallet" is on; turn it on and confirm' }
+        - { id: reopen, screen: WelcomeScreen, name: Close the app and open it again; it starts on the welcome screen }
+        - { id: words, screen: LoadWordsScreen, name: 'Import Wallet; type 24 random words: the error shows and Next stays off' }
+        - { id: import, screen: ChoosePinScreen, name: 'Type the wallet''s own 24 words, choose the PIN, start the wallet' }
+        - { id: load, screen: MainScreen, name: "The history and the balance of HTR load back; the app is on the setup's facade" }
+        - { id: tokens, screen: ImportTokensScreen, name: 'The banner offers the custom tokens the wallet holds: import some, leave one; the banner still offers it' }
+        - { id: rest, screen: ImportTokensScreen, name: "Import the rest: the banner goes, and Settings > Import tokens has nothing left" }
+      outcomes:
+        - id: err-invalid-words
+          kind: error
+          at: words
+          message: 'Invalid words.'
+          source: 'src/screens/InitWallet.js:308'
+          verified: false
+          note: "wallet-lib's message (walletUtils.wordsValid), followed by \"List of invalid words: ...\". Every scenario sees it on the way, before it types the right words."
+        - id: ok-imported
+          kind: success
+          at: rest
+          message: 'No tokens available to import'
+          source: 'src/screens/ImportTokensScreen.js:135'
+          verified: false
+          note: 'The wallet is as it was before the reset: same balances, same history, every token registered again, the first ones through the banner (src/components/TokenImportBanner.js:70) while one stays offered.'
 
 constraints:
   # send

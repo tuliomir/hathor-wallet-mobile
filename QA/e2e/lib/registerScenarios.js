@@ -104,4 +104,4 @@ async function runRegister(scenario, outcome, ctx, dir, { screen, step }) {
   return `${token.symbol} unregistered and registered again by its configuration string: ${shown(balance)}, ${details['token-details-fee-model']}; once unregistered, it left Home and the banner offered it`;
 }
 
-module.exports = { runRegister, feeModelOf };
+module.exports = { runRegister, feeModelOf, press };

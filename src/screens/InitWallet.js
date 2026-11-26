@@ -392,6 +392,7 @@ class LoadWordsScreen extends React.Component {
               <View style={this.style.inputView}>
                 <Text style={this.style.label}>{t`Words`}</Text>
                 <TextInput
+                  testID='load-words-input'
                   style={this.style.input}
                   textAlignVertical='top'
                   onChangeText={this.onChangeText}
@@ -422,6 +423,7 @@ class LoadWordsScreen extends React.Component {
               </View>
               <View style={this.style.buttonView}>
                 <NewHathorButton
+                  testID='load-words-next'
                   onPress={this.loadClicked}
                   disabled={!this.state.isValid}
                   title={t`Next`}

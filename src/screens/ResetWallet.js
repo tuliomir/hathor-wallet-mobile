@@ -114,6 +114,7 @@ class ResetWallet extends React.Component {
           </Text>
           <View style={this.style.switchView}>
             <Switch
+              testID='reset-wallet-switch'
               onValueChange={this.toggleSwitch}
               trackColor={{ true: PRIMARY_COLOR }}
               value={this.state.switchValue}
@@ -126,6 +127,7 @@ class ResetWallet extends React.Component {
             <NewHathorButton
               secondary
               color={PRIMARY_COLOR}
+              testID='reset-wallet-confirm'
               disabled={!this.state.switchValue}
               onPress={this.onPressResetWallet}
               title={t`Reset Wallet`}

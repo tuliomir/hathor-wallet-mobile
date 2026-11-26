@@ -12,7 +12,7 @@ const sendFlow = require('./sendFlow');
 const createTokenFlow = require('./createTokenFlow');
 const walletStart = require('./walletStart');
 
-const ACTIONS = ['send', 'create-token', 'start-wallet', 'receive', 'receive-payment', 'history', 'register-token'];
+const ACTIONS = ['send', 'create-token', 'start-wallet', 'receive', 'receive-payment', 'history', 'register-token', 'reset-import'];
 
 // The kit's files only these actions' scenarios go through, whose change reaches nothing else. The
 // builders of Maestro flows aren't here: the flow they write for a scenario says more.
@@ -21,6 +21,7 @@ const ACTION_FILES = {
   'receive-payment': ['QA/e2e/lib/historyScenarios.js', 'QA/e2e/lib/book.js'],
   history: ['QA/e2e/lib/historyScenarios.js', 'QA/e2e/lib/book.js'],
   'register-token': ['QA/e2e/lib/registerScenarios.js'],
+  'reset-import': ['QA/e2e/lib/resetScenarios.js'],
 };
 
 /** The facade a start-wallet scenario ends on. */

@@ -61,13 +61,14 @@ const { payAgain } = require('./lib/payAgain');
 const { runReceive } = require('./lib/receiveScenarios');
 const { runPayment, runHistory } = require('./lib/historyScenarios');
 const { runRegister } = require('./lib/registerScenarios');
+const { runResetImport } = require('./lib/resetScenarios');
 const { tokenPlan } = require('./lib/tokenPlan');
 const walletStart = require('./lib/walletStart');
 const { htrOnDashboard, numpadKeys } = require('./lib/dashboard');
 const { reachedIn, BACK } = require('./lib/flowSteps');
 const { keysTapped, startPinServer } = require('./lib/pinServer');
 const { pickOf, picksOfFiles, affectedIds } = require('./lib/affected');
-const { startRecording } = require('./lib/recorder');
+const { startRecording, blackout } = require('./lib/recorder');
 const { entriesFrom, runnerEntry, skipRanges } = require('./lib/timeline');
 
 const E2E = __dirname;
@@ -241,6 +242,18 @@ async function chapter(ctx, info, dir, body) {
         parts.push({ start, end: Date.now(), text });
       }
     },
+    /** A runner step whose screen shows a secret: blacked out in the recording. */
+    async hidden(text, fn) {
+      report('step', { text });
+      const start = Date.now();
+      try {
+        return await fn();
+      } finally {
+        parts.push({
+          start, end: Date.now(), text: `${text} (hidden in the recording)`, hidden: true,
+        });
+      }
+    },
     async flow(file, outDir, as) {
       report('step', { text: as || `Maestro: ${path.basename(file)}` });
       const start = Date.now();
@@ -261,6 +274,9 @@ async function chapter(ctx, info, dir, body) {
   const video = path.join(dir, 'screen.mp4');
   const stoppedAt = await recording.stop(video);
   const { t0 } = recording;
+  // Half a second either side: the frames' times are good to about 0.2 s (README "Watching a run").
+  blackout(video, parts.filter((part) => part.hidden)
+    .map((part) => [Math.max(0, (part.start - t0) / 1000 - 0.5), (part.end - t0) / 1000 + 0.5]));
   const flowDirs = parts.filter((part) => part.outDir).map((part) => part.outDir);
   const entries = parts.flatMap((part) => {
     if (!part.outDir) return [runnerEntry(part, t0)];
@@ -530,19 +546,37 @@ async function startInState(state, dir, ctx) {
  * idle, so the keys' places come from one of those, and adb taps them.
  */
 async function unlock() {
-  execFileSync(ADB, ['shell', 'monkey -p network.hathor.wallet -c android.intent.category.LAUNCHER 1'], { stdio: 'ignore' });
+  launchApp();
+  await typePin('the lock screen');
+}
+
+const launchApp = () => execFileSync(ADB, ['shell', 'monkey -p network.hathor.wallet -c android.intent.category.LAUNCHER 1'], { stdio: 'ignore' });
+
+/** Types the PIN on the keypad on screen, which may never go idle (see unlock). */
+async function typePin(where = 'the PIN screen') {
   let keys = {};
   for (let i = 0; i < 10 && Object.keys(keys).length < 10; i += 1) {
     const { stdout } = spawnSync(MAESTRO, ['hierarchy'], { encoding: 'utf8', env: MAESTRO_ENV, maxBuffer: 64 * 1024 * 1024 });
     keys = numpadKeys(stdout);
   }
-  if (Object.keys(keys).length < 10) throw new Error('the lock screen did not show');
+  if (Object.keys(keys).length < 10) throw new Error(`${where} did not show`);
   for (const digit of PIN) {
     execFileSync(ADB, ['shell', 'input', 'tap', ...keys[digit]]);
     // eslint-disable-next-line no-await-in-loop
     await sleep(500);
   }
 }
+
+/** Writes the privnet into the stopped app's storage, as before onboarding (app-on-privnet.sh). */
+function pointAtPrivnet(facade) {
+  execFileSync(path.join(E2E, 'bin', 'app-on-privnet.sh'), [], {
+    stdio: ['ignore', 'ignore', 'inherit'],
+    env: { ...process.env, WALLET_SERVICE: facade === 'wallet-service' ? '1' : '' },
+  });
+}
+
+/** The keys the app keeps in its storage, read as root. */
+const storageKeys = () => adbShell(`sqlite3 ${DB} "select key from catalystLocalStorage"`).split('\n').filter(Boolean);
 
 const seedIn = (dir, name) => {
   const file = path.join(dir, name);
@@ -602,7 +636,13 @@ const fromJson = (text) => JSON.parse(text, (key, v) => (typeof v === 'string' &
 
 // Actions whose wallets are made alike, so that one can go on with another's.
 const KIND = {
-  send: 'send', 'create-token': 'bare', receive: 'bare', 'receive-payment': 'paid', history: 'paid', 'register-token': 'paid',
+  send: 'send',
+  'create-token': 'bare',
+  receive: 'bare',
+  'receive-payment': 'paid',
+  history: 'paid',
+  'register-token': 'paid',
+  'reset-import': 'paid',
 };
 
 function keepWallet(setup, state, dir, ctx, failed) {
@@ -767,6 +807,7 @@ const BY_ADB = {
   'receive-payment': runPayment,
   history: runHistory,
   'register-token': runRegister,
+  'reset-import': runResetImport,
 };
 
 async function runByAdb(scenario, outcome, ctx, dir, api) {
@@ -1021,6 +1062,13 @@ async function runPlan(setup, plan, runDir, startedAt, args) {
     adbShell,
     clearSendAddress,
     unlock,
+    launchApp,
+    typePin,
+    pointAtPrivnet,
+    storageKeys,
+    // What --reuse goes by: a reset drops it until the wallet is back.
+    forgetWallet: () => adbShell(`rm -f ${WALLET_MARK}`),
+    markWallet: () => adbShell(`echo '${ctx.walletDir}' > ${WALLET_MARK}`),
     fund,
     transaction: async (id) => (await getJson(`${NODE_URL}transaction?id=${id}`)).tx,
     tokenOnChain: (uid) => getJson(`${NODE_URL}thin_wallet/token?id=${uid}`),

@@ -8,6 +8,7 @@
 // Records the emulator's screen with Android's own screenrecord: the device encodes, nothing is
 // rendered afterwards, so a recording is ready the moment the run stops it.
 
+const fs = require('fs');
 const { spawn, execFileSync } = require('child_process');
 
 const DEVICE_FILE = '/data/local/tmp/e2e-recording.mp4';
@@ -54,4 +55,27 @@ function startRecording(adb) {
   });
 }
 
-module.exports = { startRecording };
+/** ffmpeg's filter that blacks out the whole frame over these [from, to] seconds. */
+function blackoutFilter(ranges) {
+  const when = ranges.map(([from, to]) => `between(t,${from.toFixed(2)},${to.toFixed(2)})`).join('+');
+  return `drawbox=x=0:y=0:w=iw:h=ih:color=black:t=fill:enable='${when}'`;
+}
+
+/**
+ * Blacks out a recording over these ranges, in place: for a screen that shows a secret. When
+ * ffmpeg fails the recording is deleted, never kept with the secret in it.
+ */
+function blackout(file, ranges) {
+  if (!ranges.length) return;
+  const out = file.replace(/\.mp4$/, '.blackout.mp4');
+  try {
+    execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', file, '-vf', blackoutFilter(ranges), '-an', out]);
+    fs.renameSync(out, file);
+  } catch (e) {
+    fs.rmSync(file, { force: true });
+    fs.rmSync(out, { force: true });
+    throw new Error(`could not black out the recording, so it was deleted: ${e.message.split('\n')[0]}`);
+  }
+}
+
+module.exports = { startRecording, blackout, blackoutFilter };
