@@ -37,6 +37,13 @@ beforeAll(async () => {
     fs.mkdirSync(path.dirname(full), { recursive: true });
     fs.writeFileSync(full, 'x');
   });
+  const live = path.join(dir, 'evidence', 'live', 'full-1');
+  fs.mkdirSync(live, { recursive: true });
+  fs.writeFileSync(path.join(live, 'progress.json'), JSON.stringify({
+    run: { id: 'full-1', mode: 'full', state: 'running' }, messages: [{ at: 'a', kind: 'why', text: 'why' }],
+  }));
+  fs.writeFileSync(path.join(live, 'messages.ndjson'), `${JSON.stringify({ at: 'b', kind: 'note', text: 'said later' })}\n`);
+  fs.writeFileSync(path.join(live, 'app.seed'), 'x');
   const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   server = spawn('node', [path.join(dir, 'bin', 'serve-viewer.js'), String(port)]);
@@ -63,6 +70,29 @@ describe('serve-viewer', () => {
     '/run/send-1/..%2fonboard/screen.mp4',
     '/run/%6fnboard/screen.mp4',
     '/run/app.seed',
+  ])('does not serve %s', async (url) => {
+    expect(await status(url)).toBe(404);
+  });
+});
+
+describe('serve-viewer, the live dashboard', () => {
+  it('lists the runs, and serves a run\'s progress with what was said to it since', async () => {
+    expect(await (await fetch(`${base}/live/runs.json`)).json()).toEqual([{ id: 'full-1', mode: 'full', state: 'running' }]);
+    const p = await (await fetch(`${base}/live/full-1/progress.json`)).json();
+    expect(p.messages.map((m) => m.text)).toEqual(['why', 'said later']);
+  });
+
+  it('sends /live to /live/, where the page reads its data by relative paths', async () => {
+    const res = await fetch(`${base}/live`, { redirect: 'manual' });
+    expect(res.status).toBe(301);
+    expect(res.headers.get('location')).toBe('/live/');
+  });
+
+  it.each([
+    '/live/full-1/app.seed',
+    '/live/full-1/messages.ndjson',
+    '/live/..%2frun/progress.json',
+    '/live/nothing/progress.json',
   ])('does not serve %s', async (url) => {
     expect(await status(url)).toBe(404);
   });
