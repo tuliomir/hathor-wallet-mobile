@@ -10,7 +10,7 @@ The design of the live dashboard for a mobile e2e run (brief: `../claude-design-
 | `screens/STATES.md` | Which artboard shows which of the brief's 11 states, at which width, and how far each is | this folder |
 | `tools/` | Scripts that work on these files | this folder |
 
-The `*.dc.html` files are design-canvas components: they render on the canvas, not opened on their own. The working dashboard page will be a separate single HTML file built from these tokens and components.
+The `*.dc.html` files are design-canvas components: they render on the canvas, not opened on their own. The working page is `QA/e2e/dashboard/dashboard.html`, one HTML file with these tokens inlined; a change to the tokens or the components is copied there by hand.
 
 ## Keeping it up to date
 

@@ -10,4 +10,4 @@ Run the `qa-graph-check` skill (`.agents/skills/qa-graph-check/SKILL.md`) before
 
 ## End-to-end tests
 
-`npm run e2e:dev` runs, on an Android emulator and a local network, the scenarios your change reaches: minutes, not the hours of everything. Run it before opening a PR that touches `src/`, and after each change while you write tests. Follow the `e2e-suite` skill (`.agents/skills/e2e-suite/SKILL.md`), which also says how to run it for a branch that lacks `QA/e2e/`.
+`npm run e2e:dev` runs, on an Android emulator and a local network, the scenarios your change reaches: minutes, not the hours of everything. Run it before opening a PR that touches `src/`, and after each change while you write tests. Follow the `e2e-suite` skill (`.agents/skills/e2e-suite/SKILL.md`), which also says how to run it for a branch that lacks `QA/e2e/`. Every suite run prints a live dashboard link: give it to the person you work for.

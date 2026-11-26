@@ -74,7 +74,7 @@ What the new checks were seen failing on, each by breaking what it guards: a pay
 ### Next session
 
 1. **The smoke rule** (`lib/smoke.js`) is a placeholder, for the owner to write.
-2. **A dashboard of the running suite**, from the design prompt in `design/` (branch `docs/e2e-dashboard-prompt` on the fork). `suite.js` would write a `progress.json` it reads.
+2. **The run dashboard**: built (README "Watching a run live"), from state 1 of the design; the design's other states are drawn by the same page from `progress.json`, not designed yet (`design/dashboard/screens/STATES.md`). Not yet: a live screenshot of the phone, which would need addresses masked.
 3. **Registering and unregistering tokens.**
 4. Model a private-only `funding` for create-token, to keep the fee-token finding in the regression.
 

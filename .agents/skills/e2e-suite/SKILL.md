@@ -21,9 +21,13 @@ Put `--dry-run` first on any of them: it lists what would run, why, and about ho
 
 Use Node 22 (`.nvmrc`). Long runs go in the background; a run prints `all passed` or `NOT all passed`, with one line per job, at its end.
 
+Run through these commands, not `maestro test` or `run.js` alone: the suite puts every run on a live dashboard (README "Watching a run live"). Add `-- --why "<why this run>"`.
+
 Done when you've read the dry run and its time fits what you are doing.
 
 ## 2. Run it, and read the failures
+
+When it starts, the run prints `dashboard:` lines. Give the person the link, the tailnet one when printed, in your next message. While it runs, tell them through the dashboard what they should know: `node QA/e2e/suite.js say finding "<suspected app bug>" --job <job>`, `say note`, and `say correction` for anything you said that was wrong.
 
 - `failed` scenarios: `failure.png` and `failure.json` beside the scenario in `QA/e2e/evidence/<run>/`, or the run's `viewer.html`. The note says what was on screen and what was wanted.
 - `dev` goes on with the wallet the app holds (`--reuse`). A failure there may come from what an earlier scenario left: run it again with `--fresh` before you believe it.

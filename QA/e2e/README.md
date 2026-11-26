@@ -8,6 +8,8 @@ The host setup (KVM, JDK 17, NDK, Maestro, the AVD) and the Android and Maestro 
 
 `npm run e2e:status` says where every scenario stands, in a second. The commands below start the privnet and the emulator, and build and install the app of this checkout's sources, when they have to. `-- --dry-run` after any of them lists what would run, why, and about how long it takes. All the options are at the top of `suite.js`.
 
+Run tests through these commands: each run shows live on the run dashboard and prints its link ("Watching a run live"). `run.js` alone, or a flow through `maestro test`, still works, unwatched. Add `-- --why "<why this run>"` so the dashboard says why it is happening.
+
 | Moment | Command | What runs |
 |---|---|---|
 | Iterating on the app or on a scenario | `npm run e2e:dev -- --quick`, or `-- --only <job>` | A sample of each job your change reaches, or the changed scenarios of the jobs named |
@@ -36,7 +38,8 @@ The host setup (KVM, JDK 17, NDK, Maestro, the AVD) and the Android and Maestro 
 | `run.js` | The runner under them: the scenarios of one action on one setup, with a results file (`QA/graph/runs/`, or `--results <dir>`) and evidence in `evidence/` (git-ignored). Its options are at its top. |
 | `bin/app-on-privnet.sh` | Points the app at the privnet before it starts, writing its storage as root. `--fresh` wipes it first. Refuses anything but an emulator: store builds share the app id, so a wipe on a phone would erase its wallet. |
 | `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow, and `flowSteps.js` has the steps they share; `walletStart.js` writes the flows around starting the wallet; `pinServer.js` taps the PIN for a running flow; `affected.js` finds the scenarios a change reaches; `tokenPlan.js` says which token each send gets; `createdTokens.js` has what differs for tokens created in the app; `payAgain.js` pays again what came in the same second as another transaction; `unrunnable.js` says why a scenario can't run (none today); `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `jobs.js`, `plan.js`, `fingerprint.js`, `ledger.js`, `select.js` and `smoke.js` pick what a suite runs, and `app.js` brings up what it runs on; `screen.js` drives the app over adb, and `receiveScenarios.js` and `historyScenarios.js` use it, with what the app should show in `book.js`; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
-| `viewer/` | `viewer.html`, the run viewer; `bin/serve-viewer.js` serves the runs' viewers. |
+| `viewer/` | `viewer.html`, the run viewer; `bin/serve-viewer.js` serves the runs' viewers and the live dashboard. |
+| `dashboard/` | `dashboard.html`, the live dashboard of suite runs ("Watching a run live"); `lib/progress.js` keeps the `progress.json` it reads, and `lib/live.js` its server and link. Its design: `design/dashboard/`. |
 | `flows/` | Maestro flows. `onboard.yaml`: new wallet on the privnet, ending on the dashboard. `to_dashboard.yaml`: back to the dashboard from wherever a scenario ended. `enter_pin.yaml`: the PIN, by taps. |
 
 ## How the flags work
@@ -98,6 +101,52 @@ tailscale serve --bg 18090             # https://<this machine>.<tailnet>.ts.net
 ```
 
 The index there lists the runs. An evidence dir also holds the run's seeds and Maestro's logs, which `serve-viewer.js` doesn't serve, so copy only the viewer and the recordings when sharing a run. Runs from before onboarding stopped being recorded still show the seed: the server withholds their `onboard/screen.mp4`, but their `viewer.html` lists five of its words. `tailscale serve --https=443 off` stops it. Timing: the recording's first frame is taken from screenrecord's "Configuring recorder" line on the host clock, and Maestro times its commands on the host clock too; the steps match the screen to about 0.2 s. `--no-record` skips the recordings and the viewer.
+
+## Watching a run live
+
+Every `dev`, `smoke` and `full` run shows on a dashboard, live: whether it is healthy, when it ends (a clock time with a range), what it is doing this second, what failed and whether it can wait, why it runs, what it leaves owed, and its log. Its design, and the brief it answers, are in `design/dashboard/`.
+
+```
+dashboard: http://127.0.0.1:18090/live/  (run full-20261126-131500)
+dashboard on the tailnet: https://<this machine>.<tailnet>.ts.net/live/
+```
+
+The suite prints those lines when the run starts. It starts `bin/serve-viewer.js` when nothing answers on port 18090 (`E2E_VIEWER_PORT` changes it), and leaves it running, for the finished run and the past ones, which the page's run picker opens read-only. The tailnet line shows when `tailscale serve --bg 18090` was set up on this machine, which lasts; without it, the suite says that command. The page only reads: it shows commands to copy and starts nothing.
+
+How it works:
+
+- `suite.js` keeps `evidence/live/<run>/progress.json` (`lib/progress.js`), rewritten on every event and every 2 s; the page reads it every 2 s. A full run keeps one id over all its parts.
+- `run.js` reports what it does (a wallet's setup, each scenario and runner step) over an IPC channel only `suite.js` opens. Started alone, it reports nothing.
+- An agent talks to the person watching: `--why "<text>"` when the run starts, then `node QA/e2e/suite.js say <note|finding|correction|why> "<text>" [--job fn/send] [--link <url>]` at any time, to the newest run or `--run <id>`. A correction shows as prominently as the why.
+- Full addresses are shortened wherever they show; seeds and the PIN are never reported. The phone's screen isn't captured live, since it shows addresses: the recordings are in the job's viewer.
+
+When the runner and the page agree:
+
+- **Time left** is the estimate of what is left: each queued scenario's time, each wallet setup not started, and what the running ones have left of theirs. A scenario's time is what it last took (the ledger), or a guess of 60 s; a setup is what `SETUP` in `suite.js` says. The **range** is ±15% of the measured part, ±40% of the guessed and ±20% of the setups.
+- **Drift** is, for each job done, how long it took against its estimate, and for the running one, its time so far against the estimate of what it finished. The page names the jobs that drifted by 30 s or more. Bars of jobs not started yet move by the drift so far.
+- A **part** of a full run ends before the first job that would end after `--minutes`. The page plays that forward over the jobs left to say when this part ends and how many parts the rest takes; elapsed time leaves out the pauses between parts.
+- **Stuck** is no event for 3 times the longest gap between events so far, and never less than 12 min (3 times a wallet's setup), unless the runner said a long silence was coming (a build blocks it for up to 10 min). **No word from the runner** is `progress.json` not rewritten for 15 s: the runner stopped. **Offline** is the page not reaching the server.
+
+Fields added to the design's schema (`design/sample-progress.json`):
+
+| Field | Meaning |
+|---|---|
+| `run.stuckAfterSeconds` | When no event for that long counts as stuck |
+| `run.parts[]` | Each part's `n`, `startedAt` and `endedAt`, so elapsed leaves the pauses out |
+| `run.part.minutes` | The part's `--minutes`, which the page plans the next parts with |
+| `run.resume` | The command that goes on: a resume, or a retry of the failed jobs |
+| `run.finishedAt`, `run.state: stopped` | When the run ended; `stopped` when it ended on an error or a signal |
+| `run.notCovered` | What the run leaves owed: `owed`, `fresh` (left out as fresh), `byReason[]` (`reason`, `count`, `scenarios`), `clearedBy`, `notes` |
+| `current.quietUntil` | A silence the runner announced (a build), which isn't stuck |
+| `current.expectedSeconds` | What a build or boot phase usually takes |
+| `current.step.text` | The runner step or flow running now |
+| `job.estimateFrom`, `job.guessed` | `last run`, `guess` or `mixed`, and how many of its scenarios are guessed |
+| `job.counts`, `job.viewer` | What `run.js` reported at the end, and the job's viewer, beside `/live/` |
+| `job.status: did not finish` | `run.js` stopped in it |
+| `group.scenarios`, `group.setupError`, `group.reused` | The group's size; why its setup broke; whether it went on with the app's wallet |
+| `scenario.firstTry` | The first try's status and note, when the job ran a second time |
+| `messages[].job`, `messages[].scenario`, `messages[].link` | What a message points at |
+| `events[].type`, `events[].status` | The event's kind, which the log filters by, and a scenario's result |
 
 ## Private balance states
 
