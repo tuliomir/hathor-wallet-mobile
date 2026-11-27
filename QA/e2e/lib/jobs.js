@@ -56,4 +56,13 @@ function jobsOf(list) {
 /** A scenario's key in the ledger: sends of created tokens share the ids of the plain sends. */
 const keyOf = (scenario, createdTokens) => `${createdTokens ? 'created:' : ''}${scenario.id}`;
 
-module.exports = { JOBS, jobsOf, keyOf };
+/**
+ * Whether a job ran all it planned: each scenario passed, or skipped as the kit can't run it yet
+ * (lib/unrunnable.js). A skip is no failure: `full --retry` doesn't run the job again for it.
+ */
+const ranAll = (counts, planned) => (
+  Boolean(counts) && counts.passed + (counts.skipped || 0) === planned);
+
+module.exports = {
+  JOBS, jobsOf, keyOf, ranAll,
+};

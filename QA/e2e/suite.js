@@ -40,7 +40,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync, spawn } = require('child_process');
 const { loadGraph } = require('../graph/tools/load');
-const { JOBS, jobsOf, keyOf } = require('./lib/jobs');
+const { JOBS, jobsOf, keyOf, ranAll, } = require('./lib/jobs');
 const { planScenarios } = require('./lib/plan');
 const { ACTION_FILES, flowOf, digest } = require('./lib/flows');
 const { treeIndex, workIndex, checkoutIds, appId, } = require('./lib/fingerprint');
@@ -334,8 +334,7 @@ function printSummary(summary) {
     console.log(`${job.id.padEnd(20)} ${counts ? `passed ${counts.passed}, failed ${counts.failed}, skipped ${counts.skipped}` : `did not finish (${planned} planned)`}${again}`);
   });
   // A skip is a scenario the kit can't run yet (lib/unrunnable.js), which every run lists.
-  const ok = summary.every(({ counts, planned }) => (
-    counts && counts.passed + counts.skipped === planned));
+  const ok = summary.every(({ counts, planned }) => ranAll(counts, planned));
   const skipped = summary.reduce((sum, { counts }) => sum + ((counts && counts.skipped) || 0), 0);
   const skips = skipped ? `, ${skipped} skipped as the kit can't run them yet (lib/unrunnable.js)` : '';
   console.log(ok ? `all passed${skips}` : 'NOT all passed; failures: the job\'s viewer, or failure.png in its evidence. On a reused wallet, try --fresh.');
@@ -425,7 +424,7 @@ async function full(args) {
   });
   liveRun.progress.run.resume = resume;
   await bringUp(rows, {}, appSources);
-  const failedIn = (done) => done.counts.passed < done.planned;
+  const failedIn = (done) => !ranAll(done.counts, done.planned);
   const todo = byJob(rows).filter(({ job }) => {
     const done = state.done[job.id];
     return !done || (args.retry && failedIn(done));

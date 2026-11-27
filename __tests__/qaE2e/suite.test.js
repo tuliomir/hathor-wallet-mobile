@@ -10,7 +10,9 @@
 import { describe, expect, it } from '@jest/globals';
 import path from 'path';
 import { loadGraph } from '../../QA/graph/tools/load';
-import { JOBS, jobsOf, keyOf } from '../../QA/e2e/lib/jobs';
+import {
+  JOBS, jobsOf, keyOf, ranAll,
+} from '../../QA/e2e/lib/jobs';
 import { planScenarios } from '../../QA/e2e/lib/plan';
 import { ACTIONS, flowOf, digest } from '../../QA/e2e/lib/flows';
 import { merged } from '../../QA/e2e/lib/ledger';
@@ -149,5 +151,18 @@ describe('the ledger', () => {
     const committed = { a: { at: '2', status: 'passed' }, b: { at: '2' } };
     const local = { a: { at: '1', status: 'failed' }, b: { at: '3' }, c: { at: '1' } };
     expect(merged(committed, local)).toEqual({ a: committed.a, b: local.b, c: local.c });
+  });
+});
+
+describe('a job that ran all it planned', () => {
+  it('counts a skip as no failure, so that full --retry leaves the job be', () => {
+    expect(ranAll({ passed: 2, failed: 0, skipped: 2 }, 4)).toBe(true);
+    expect(ranAll({ passed: 25, failed: 0, skipped: 0 }, 25)).toBe(true);
+  });
+
+  it('is not one with a failure, or one that did not finish', () => {
+    expect(ranAll({ passed: 20, failed: 5, skipped: 0 }, 25)).toBe(false);
+    expect(ranAll({ passed: 1, failed: 1, skipped: 2 }, 4)).toBe(false);
+    expect(ranAll(null, 4)).toBe(false);
   });
 });
