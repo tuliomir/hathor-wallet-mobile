@@ -1,0 +1,57 @@
+# This test was run based on the YAML of 2026-11-27, version from commit 1bf8946a, with the tools at commit 1bf8946a (with uncommitted changes).
+yamlCommit: 1bf8946a
+yamlDate: 2026-11-27
+toolsCommit: 1bf8946a (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-27 00:15:12
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: history scenarios of pn-ws-seed-multi"
+  picks: []
+results:
+  - scenario: history:pn-ws-seed-multi:htr.received.public.unlocked
+    status: passed
+    notes: "reached: ok-balance; Received HTR 1.01 in
+      0098494b7e53485642bb6b2e67bce2add9fc2039f196dc38d6a816e346b762f3; no fees
+      shown"
+  - scenario: history:pn-ws-seed-multi:htr.sent.private.unlocked
+    status: passed
+    notes: "reached: ok-balance; Sent HTR -1.06 in
+      004365b2d9b0c386be751226cee7c9dc70991fee87f78d324081bc259c702c26; no fees
+      shown"
+  - scenario: history:pn-ws-seed-multi:htr.self.hide-amount.unlocked
+    status: passed
+    notes: "reached: ok-balance; Sent HTR -0.02 in
+      00fc2608b17a4e04d0e5801fa5c5773e707e7f2f10510d683e9ea471c87de06b; no fees
+      shown"
+  - scenario: history:pn-ws-seed-multi:deposit.received.private.unlocked
+    status: passed
+    notes: "reached: ok-balance; Received E2ED 1.04 in
+      008ac1e298c96f5b6ca6606eae20adf1a3fbd4390dba1d62a312039270b6474d; no fees
+      shown"
+  - scenario: history:pn-ws-seed-multi:deposit.sent.hide-amount.unlocked
+    status: passed
+    notes: "reached: ok-balance; Sent E2ED -1.05 in
+      00c1c380aefbe36d70729f543dcc627b91f56ab0aec099a958b72143b8e8c642; no fees
+      shown"
+  - scenario: history:pn-ws-seed-multi:deposit.self.public.unlocked
+    status: passed
+    notes: "reached: ok-balance; You sent E2ED to yourself 0.00 in
+      0077db2a0b53bfb5c16f0310f556b70517d893d519aee45e98f2b2b00d46f383; no fees
+      shown"
+  - scenario: history:pn-ws-seed-multi:fee.received.hide-amount.unlocked
+    status: passed
+    notes: "reached: ok-balance; Received E2EF 1.07 in
+      007d29bf1846bb28fff96ee6aa5282637a902be887493d9cf40aa57b2a952c8b; no fees
+      shown"
+  - scenario: history:pn-ws-seed-multi:fee.sent.public.unlocked
+    status: passed
+    notes: "reached: ok-balance; Sent E2EF -1.08 in
+      005a233f3d9339845c51f0ec4e150ff3e573bc0dad8d1d4f42b1e81474210dde; no fees
+      shown"
+  - scenario: history:pn-ws-seed-multi:fee.self.private.unlocked
+    status: passed
+    notes: "reached: ok-balance; You sent E2EF to yourself 0.00 in
+      006849eee956a433eb4c899185d7f1ebc153c948b6b3cf7312b8c9e80a3ff11b; no fees
+      shown"

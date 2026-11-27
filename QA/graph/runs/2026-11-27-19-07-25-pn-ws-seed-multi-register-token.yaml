@@ -1,0 +1,30 @@
+# This test was run based on the YAML of 2026-11-27, version from commit 1bf8946a, with the tools at commit 1bf8946a (with uncommitted changes).
+yamlCommit: 1bf8946a
+yamlDate: 2026-11-27
+toolsCommit: 1bf8946a (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-27 00:15:12
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: register-token scenarios of pn-ws-seed-multi"
+  picks: []
+results:
+  - scenario: register-token:pn-ws-seed-multi:deposit.manual
+    status: passed
+    notes: "reached: ok-registered-again; E2ED unregistered and registered again by
+      its configuration string: 100.00, Fee Model: Deposit-Based; once
+      unregistered, it left Home and the banner offered it"
+  - scenario: register-token:pn-ws-seed-multi:deposit.qr
+    status: skipped
+    notes: "registering by QR code needs a camera helper: the emulator's virtual
+      camera showing the token's QR code (ROADMAP \"Phase 2\")"
+  - scenario: register-token:pn-ws-seed-multi:fee.manual
+    status: passed
+    notes: "reached: ok-registered-again; E2EF unregistered and registered again by
+      its configuration string: 100.00, Fee Model: Fee-Based; once unregistered,
+      it left Home and the banner offered it"
+  - scenario: register-token:pn-ws-seed-multi:fee.qr
+    status: skipped
+    notes: "registering by QR code needs a camera helper: the emulator's virtual
+      camera showing the token's QR code (ROADMAP \"Phase 2\")"

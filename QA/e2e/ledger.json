@@ -1,195 +1,228 @@
 {
+ "address-mode:pnp-fn-seed-single": {
+  "status": "passed",
+  "at": "2026-11-27T19:37:51.238Z",
+  "seconds": 267,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-kept-multi",
+  "checks": "d7466557816c",
+  "features": {
+   "address-mode": "e7c277283d51",
+   "shielded": "302b30cbec60",
+   "wallet-load": "6dee5ac45e35"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "address-mode:pnp-ws-seed-single": {
+  "status": "passed",
+  "at": "2026-11-27T19:44:18.740Z",
+  "seconds": 251,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-kept-multi",
+  "checks": "d7466557816c",
+  "features": {
+   "address-mode": "e7c277283d51",
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "shielded": "302b30cbec60",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
  "create-token:pn-fn-seed-multi:deposit.empty-name.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:24:43.312Z",
+  "at": "2026-11-27T15:41:53.036Z",
   "seconds": 39,
   "flow": "9c4d6f844ab4",
   "outcome": "err-empty-name",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.short-symbol.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:25:37.030Z",
-  "seconds": 54,
+  "at": "2026-11-27T15:42:46.313Z",
+  "seconds": 53,
   "flow": "b3f452a909ce",
   "outcome": "err-short-symbol",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.cents.zero-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T20:41:55.357Z",
-  "seconds": 71,
+  "at": "2026-11-27T15:59:07.265Z",
+  "seconds": 74,
   "flow": "e79e1bde8dad",
   "outcome": "err-private-unavailable",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.cents.zero-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T20:32:42.311Z",
-  "seconds": 72,
+  "at": "2026-11-27T15:49:51.805Z",
+  "seconds": 71,
   "flow": "98fd07eb9f70",
   "outcome": "err-locked",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.cents.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:19:52.298Z",
+  "at": "2026-11-27T15:37:00.974Z",
   "seconds": 82,
   "flow": "1639a2d5effe",
   "outcome": "err-late-deposit-fn",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.empty.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:24:04.097Z",
-  "seconds": 58,
+  "at": "2026-11-27T15:41:14.344Z",
+  "seconds": 60,
   "flow": "22bb9be71c18",
   "outcome": "err-empty-amount",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.exact.enough-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T20:44:35.252Z",
-  "seconds": 82,
+  "at": "2026-11-27T16:01:48.593Z",
+  "seconds": 83,
   "flow": "9f12e32e2c8f",
   "outcome": "err-private-unavailable",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.exact.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T20:35:25.913Z",
-  "seconds": 82,
+  "at": "2026-11-27T15:52:29.655Z",
+  "seconds": 79,
   "flow": "0e2d988d7ed9",
   "outcome": "err-locked",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.exact.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:27:08.511Z",
-  "seconds": 91,
+  "at": "2026-11-27T15:44:17.831Z",
+  "seconds": 92,
   "flow": "efb63c385cf6",
   "outcome": "ok-created",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.normal.enough-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T20:43:13.627Z",
+  "at": "2026-11-27T16:00:25.422Z",
   "seconds": 78,
   "flow": "2f2c418eeb29",
   "outcome": "err-private-unavailable",
@@ -197,83 +230,83 @@
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.normal.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T20:34:04.035Z",
-  "seconds": 82,
+  "at": "2026-11-27T15:51:10.305Z",
+  "seconds": 78,
   "flow": "a87171bec2b5",
   "outcome": "err-locked",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:18:30.281Z",
-  "seconds": 56,
+  "at": "2026-11-27T15:35:38.575Z",
+  "seconds": 54,
   "flow": "06db534c5abf",
   "outcome": "err-not-enough-htr",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.over-balance.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:21:47.988Z",
+  "at": "2026-11-27T15:38:56.523Z",
   "seconds": 61,
   "flow": "bbea14074e91",
   "outcome": "err-not-enough-htr",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.over-by-rounding.enough-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T20:45:54.996Z",
+  "at": "2026-11-27T16:03:08.304Z",
   "seconds": 80,
   "flow": "cbc11083c589",
   "outcome": "err-private-unavailable",
@@ -281,191 +314,191 @@
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.over-by-rounding.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T20:36:43.704Z",
-  "seconds": 78,
+  "at": "2026-11-27T15:53:50.813Z",
+  "seconds": 81,
   "flow": "ae996b344b1a",
   "outcome": "err-locked",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:deposit.valid.over-by-rounding.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:23:05.763Z",
+  "at": "2026-11-27T15:40:14.120Z",
   "seconds": 78,
   "flow": "b65bb31d322b",
   "outcome": "err-late-deposit-fn",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:fee.valid.cents.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T20:38:00.625Z",
-  "seconds": 77,
+  "at": "2026-11-27T15:55:09.281Z",
+  "seconds": 78,
   "flow": "73715d7b24f0",
   "outcome": "err-locked",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:fee.valid.normal.enough-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T20:47:13.804Z",
-  "seconds": 79,
+  "at": "2026-11-27T16:04:25.908Z",
+  "seconds": 78,
   "flow": "20ced35208fc",
   "outcome": "err-private-unavailable",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:fee.valid.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:28:31.307Z",
-  "seconds": 83,
+  "at": "2026-11-27T15:45:44.210Z",
+  "seconds": 86,
   "flow": "4c9c8fa15773",
   "outcome": "ok-created",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-fn-seed-multi:fee.valid.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:20:47.241Z",
+  "at": "2026-11-27T15:37:55.949Z",
   "seconds": 55,
   "flow": "d3b430207363",
   "outcome": "err-not-enough-htr",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:deposit.empty-name.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:43:18.210Z",
-  "seconds": 37,
+  "at": "2026-11-27T18:43:41.889Z",
+  "seconds": 38,
   "flow": "8a2b6e110514",
   "outcome": "err-empty-name",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:deposit.short-symbol.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:44:10.869Z",
-  "seconds": 53,
+  "at": "2026-11-27T18:44:35.736Z",
+  "seconds": 54,
   "flow": "a56be8baa7e8",
   "outcome": "err-short-symbol",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:deposit.valid.cents.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:38:23.022Z",
+  "at": "2026-11-27T18:38:46.879Z",
   "seconds": 86,
   "flow": "446dc9a9d16f",
   "outcome": "err-late-deposit-ws",
@@ -473,21 +506,21 @@
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:deposit.valid.empty.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:42:41.638Z",
+  "at": "2026-11-27T18:43:04.139Z",
   "seconds": 59,
   "flow": "e4bde24d0b08",
   "outcome": "err-empty-amount",
@@ -495,87 +528,87 @@
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:deposit.valid.exact.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:47:15.120Z",
-  "seconds": 92,
+  "at": "2026-11-27T18:47:39.993Z",
+  "seconds": 93,
   "flow": "73ff2b752bff",
   "outcome": "ok-created",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:deposit.valid.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:45:43.577Z",
-  "seconds": 93,
+  "at": "2026-11-27T18:46:06.945Z",
+  "seconds": 91,
   "flow": "b3c710cf2e56",
   "outcome": "ok-created",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:deposit.valid.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:36:56.789Z",
-  "seconds": 54,
+  "at": "2026-11-27T18:37:20.603Z",
+  "seconds": 55,
   "flow": "5166fe714535",
   "outcome": "err-not-enough-htr",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:deposit.valid.over-balance.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:40:20.844Z",
+  "at": "2026-11-27T18:40:44.480Z",
   "seconds": 63,
   "flow": "f691fc078a7a",
   "outcome": "err-not-enough-htr",
@@ -583,43 +616,43 @@
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:deposit.valid.over-by-rounding.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:41:42.962Z",
-  "seconds": 82,
+  "at": "2026-11-27T18:42:04.853Z",
+  "seconds": 80,
   "flow": "30a4a93330ad",
   "outcome": "err-late-deposit-ws",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:fee.valid.cents.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:50:17.337Z",
+  "at": "2026-11-27T18:50:35.704Z",
   "seconds": 91,
   "flow": "8e285c543e32",
   "outcome": "ok-created",
@@ -627,65 +660,65 @@
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:fee.valid.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:48:45.910Z",
-  "seconds": 91,
+  "at": "2026-11-27T18:49:04.760Z",
+  "seconds": 85,
   "flow": "deb4adf320a5",
   "outcome": "ok-created",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "create-token:pn-ws-seed-multi:fee.valid.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:39:17.582Z",
-  "seconds": 55,
+  "at": "2026-11-27T18:39:41.179Z",
+  "seconds": 54,
   "flow": "17b7419b0905",
   "outcome": "err-not-enough-htr",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "shielded": "302b30cbec60",
    "token-create": "65477ec44aab",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:multisig.deposit.public.max.zero-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T20:13:26.921Z",
+  "at": "2026-11-27T15:30:25.737Z",
   "seconds": 51,
   "flow": "65e474f4b0d2",
   "outcome": "err-invalid-amount",
@@ -697,17 +730,17 @@
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:multisig.deposit.public.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:46:58.191Z",
-  "seconds": 83,
+  "at": "2026-11-27T15:04:06.360Z",
+  "seconds": 80,
   "flow": "dd13ea96ef3d",
   "outcome": "ok-sent",
   "checks": null,
@@ -716,15 +749,15 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:multisig.fee.public.decimals.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T20:06:44.664Z",
+  "at": "2026-11-27T15:23:39.259Z",
   "seconds": 82,
   "flow": "10dcb36f0db5",
   "outcome": "ok-sent",
@@ -732,22 +765,22 @@
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:shielded.deposit.hide-amount.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:48:34.455Z",
-  "seconds": 96,
+  "at": "2026-11-27T15:05:40.377Z",
+  "seconds": 94,
   "flow": "07d9b66b0860",
   "outcome": "ok-sent",
   "checks": null,
@@ -759,16 +792,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:shielded.deposit.hide-amount.normal.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T20:03:58.057Z",
-  "seconds": 80,
+  "at": "2026-11-27T15:20:56.886Z",
+  "seconds": 82,
   "flow": "0d9c8ead1085",
   "outcome": "edge-locked-unlock",
   "checks": null,
@@ -781,17 +814,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:shielded.deposit.private.decimals.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:53:27.828Z",
-  "seconds": 94,
+  "at": "2026-11-27T15:10:35.370Z",
+  "seconds": 99,
   "flow": "9ffa23112151",
   "outcome": "ok-sent",
   "checks": null,
@@ -803,16 +836,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:shielded.deposit.private.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:51:54.011Z",
-  "seconds": 92,
+  "at": "2026-11-27T15:08:56.014Z",
+  "seconds": 102,
   "flow": "a5f440572b54",
   "outcome": "ok-sent",
   "checks": null,
@@ -824,16 +857,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:shielded.deposit.private.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:50:21.978Z",
-  "seconds": 108,
+  "at": "2026-11-27T15:07:14.275Z",
+  "seconds": 94,
   "flow": "507ef42aeb3c",
   "outcome": "ok-sent",
   "checks": null,
@@ -845,86 +878,86 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:shielded.fee.hide-amount.decimals.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:42:35.568Z",
-  "seconds": 78,
+  "at": "2026-11-27T14:59:49.054Z",
+  "seconds": 82,
   "flow": "a5c52df8235f",
   "outcome": "err-privacy-fee",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:shielded.fee.private.max.zero-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T20:02:37.700Z",
-  "seconds": 83,
+  "at": "2026-11-27T15:19:34.592Z",
+  "seconds": 79,
   "flow": "0d83dfa6ad20",
   "outcome": "edge-locked-unlock",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:shielded.fee.public.normal.enough-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T20:15:29.215Z",
-  "seconds": 67,
+  "at": "2026-11-27T15:32:27.377Z",
+  "seconds": 65,
   "flow": "71edc74d95f8",
   "outcome": "err-insufficient-funds",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:40:11.881Z",
-  "seconds": 58,
+  "at": "2026-11-27T14:57:20.878Z",
+  "seconds": 64,
   "flow": "80819ffbe9e5",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -936,16 +969,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:simple.deposit.hide-amount.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:45:35.079Z",
-  "seconds": 61,
+  "at": "2026-11-27T15:02:46.487Z",
+  "seconds": 60,
   "flow": "56e1d4a8c951",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -957,16 +990,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:39:13.988Z",
-  "seconds": 56,
+  "at": "2026-11-27T14:56:16.960Z",
+  "seconds": 61,
   "flow": "a7b0e5795280",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -978,15 +1011,15 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:simple.deposit.public.decimals.enough-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T20:14:22.532Z",
+  "at": "2026-11-27T15:31:22.187Z",
   "seconds": 56,
   "flow": "d260b708633e",
   "outcome": "err-insufficient-funds",
@@ -998,17 +1031,17 @@
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:simple.deposit.public.empty.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:44:34.195Z",
-  "seconds": 57,
+  "at": "2026-11-27T15:01:46.228Z",
+  "seconds": 56,
   "flow": "d95af282f709",
   "outcome": "err-invalid-amount",
   "checks": null,
@@ -1017,16 +1050,16 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:simple.deposit.public.max.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T20:05:22.188Z",
-  "seconds": 84,
+  "at": "2026-11-27T15:22:17.606Z",
+  "seconds": 81,
   "flow": "1d6014ec214f",
   "outcome": "ok-sent",
   "checks": null,
@@ -1037,17 +1070,17 @@
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:simple.deposit.public.over-balance.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:43:37.341Z",
-  "seconds": 62,
+  "at": "2026-11-27T15:00:50.097Z",
+  "seconds": 61,
   "flow": "77b5f745dee8",
   "outcome": "err-insufficient-funds",
   "checks": null,
@@ -1056,35 +1089,35 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-fn-seed-multi:simple.fee.public.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:41:17.302Z",
-  "seconds": 65,
+  "at": "2026-11-27T14:58:27.231Z",
+  "seconds": 66,
   "flow": "f5bd01f42a57",
   "outcome": "err-htr-and-fees",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:multisig.deposit.public.decimals.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:13:19.157Z",
-  "seconds": 88,
+  "at": "2026-11-27T18:13:46.129Z",
+  "seconds": 96,
   "flow": "aff4f2ca5c58",
   "outcome": "ok-sent",
   "checks": null,
@@ -1094,17 +1127,17 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:multisig.deposit.public.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:23:17.645Z",
-  "seconds": 88,
+  "at": "2026-11-27T18:23:49.533Z",
+  "seconds": 84,
   "flow": "6bdd4027fa44",
   "outcome": "ok-sent",
   "checks": null,
@@ -1114,38 +1147,38 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:multisig.fee.public.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:24:50.720Z",
-  "seconds": 93,
+  "at": "2026-11-27T18:25:28.621Z",
+  "seconds": 99,
   "flow": "439534e51f01",
   "outcome": "ok-sent",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:shielded.deposit.hide-amount.decimals.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:28:07.201Z",
-  "seconds": 99,
+  "at": "2026-11-27T18:28:52.285Z",
+  "seconds": 105,
   "flow": "c39a23031a79",
   "outcome": "ok-sent",
   "checks": null,
@@ -1158,17 +1191,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:shielded.deposit.hide-amount.max.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:14:37.846Z",
-  "seconds": 79,
+  "at": "2026-11-27T18:15:03.411Z",
+  "seconds": 77,
   "flow": "369a2bafdeac",
   "outcome": "err-htr-and-fees",
   "checks": null,
@@ -1181,17 +1214,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:shielded.deposit.private.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:29:58.305Z",
-  "seconds": 111,
+  "at": "2026-11-27T18:30:36.301Z",
+  "seconds": 104,
   "flow": "dd6a14618ec2",
   "outcome": "ok-sent",
   "checks": null,
@@ -1204,17 +1237,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:shielded.deposit.private.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:15:55.144Z",
-  "seconds": 77,
+  "at": "2026-11-27T18:16:26.738Z",
+  "seconds": 83,
   "flow": "3e5fd2027f21",
   "outcome": "err-privacy-fee",
   "checks": null,
@@ -1227,16 +1260,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:shielded.deposit.public.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:26:28.440Z",
+  "at": "2026-11-27T18:27:06.912Z",
   "seconds": 98,
   "flow": "875b07ce2701",
   "outcome": "ok-sent",
@@ -1250,65 +1283,65 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:shielded.fee.hide-amount.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:31:42.659Z",
-  "seconds": 104,
+  "at": "2026-11-27T18:32:17.198Z",
+  "seconds": 101,
   "flow": "5024481f09a1",
   "outcome": "ok-sent",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:shielded.fee.private.decimals.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:33:30.810Z",
-  "seconds": 108,
+  "at": "2026-11-27T18:33:58.023Z",
+  "seconds": 101,
   "flow": "7405aef0f48a",
   "outcome": "ok-sent",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:10:27.147Z",
-  "seconds": 58,
+  "at": "2026-11-27T18:11:00.182Z",
+  "seconds": 57,
   "flow": "0cbd03ae2ba5",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -1321,17 +1354,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:simple.deposit.hide-amount.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:18:53.966Z",
-  "seconds": 59,
+  "at": "2026-11-27T18:19:25.744Z",
+  "seconds": 60,
   "flow": "eb522aa06133",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -1344,16 +1377,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:09:29.074Z",
+  "at": "2026-11-27T18:10:03.057Z",
   "seconds": 57,
   "flow": "1e764332108d",
   "outcome": "err-privacy-needs-shielded",
@@ -1367,17 +1400,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:simple.deposit.public.decimals.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:21:49.272Z",
-  "seconds": 85,
+  "at": "2026-11-27T18:22:25.111Z",
+  "seconds": 88,
   "flow": "47b213839630",
   "outcome": "ok-sent",
   "checks": null,
@@ -1387,17 +1420,17 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:simple.deposit.public.empty.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:17:55.370Z",
-  "seconds": 56,
+  "at": "2026-11-27T18:18:25.915Z",
+  "seconds": 55,
   "flow": "3cbccaa70377",
   "outcome": "err-invalid-amount",
   "checks": null,
@@ -1407,17 +1440,17 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:simple.deposit.public.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:20:24.707Z",
-  "seconds": 91,
+  "at": "2026-11-27T18:20:57.448Z",
+  "seconds": 92,
   "flow": "2f9462ea9665",
   "outcome": "ok-sent",
   "checks": null,
@@ -1427,16 +1460,16 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:simple.deposit.public.over-balance.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:16:58.930Z",
+  "at": "2026-11-27T18:17:30.799Z",
   "seconds": 64,
   "flow": "71d0475db081",
   "outcome": "err-insufficient-funds",
@@ -1447,41 +1480,41 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "created:send:pn-ws-seed-multi:simple.fee.public.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:11:50.958Z",
-  "seconds": 84,
+  "at": "2026-11-27T18:12:09.663Z",
+  "seconds": 69,
   "flow": "246771cd6c03",
   "outcome": "err-htr-and-fees",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:deposit.received.private.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:33:22.353Z",
+  "at": "2026-11-27T13:08:00.889Z",
   "seconds": 27,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "network-settings": "ee92e5fa1fcb",
@@ -1492,20 +1525,20 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:deposit.received.public.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T18:45:03.421Z",
+  "at": "2026-11-27T13:19:36.934Z",
   "seconds": 19,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-private-unavailable",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1513,21 +1546,21 @@
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:deposit.self.public.locked": {
   "status": "passed",
-  "at": "2026-11-25T18:39:50.494Z",
+  "at": "2026-11-27T13:14:26.719Z",
   "seconds": 21,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-locked-count",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1535,21 +1568,21 @@
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:deposit.sent.hide-amount.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:33:47.529Z",
+  "at": "2026-11-27T13:08:25.972Z",
   "seconds": 25,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "network-settings": "ee92e5fa1fcb",
@@ -1560,44 +1593,44 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:fee.received.public.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:34:12.955Z",
+  "at": "2026-11-27T13:08:51.116Z",
   "seconds": 25,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:fee.self.hide-amount.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:35:03.168Z",
+  "at": "2026-11-27T13:09:41.161Z",
   "seconds": 25,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
@@ -1606,46 +1639,46 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:fee.self.public.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T18:45:24.319Z",
+  "at": "2026-11-27T13:19:57.855Z",
   "seconds": 21,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-private-unavailable",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:fee.sent.private.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:34:37.979Z",
+  "at": "2026-11-27T13:09:16.085Z",
   "seconds": 25,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
@@ -1654,43 +1687,43 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:fee.sent.public.locked": {
   "status": "passed",
-  "at": "2026-11-25T18:40:14.055Z",
+  "at": "2026-11-27T13:14:50.553Z",
   "seconds": 24,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-locked-count",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:htr.received.hide-amount.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:32:30.520Z",
+  "at": "2026-11-27T13:07:09.044Z",
   "seconds": 27,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "network-settings": "ee92e5fa1fcb",
@@ -1701,20 +1734,20 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:htr.received.public.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T18:44:25.791Z",
+  "at": "2026-11-27T13:18:59.123Z",
   "seconds": 21,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-private-unavailable",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1722,21 +1755,21 @@
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:htr.received.public.locked": {
   "status": "passed",
-  "at": "2026-11-25T18:39:29.516Z",
+  "at": "2026-11-27T13:14:05.931Z",
   "seconds": 23,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-locked-count",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1744,21 +1777,21 @@
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:htr.self.private.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:32:55.481Z",
+  "at": "2026-11-27T13:07:33.832Z",
   "seconds": 25,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "network-settings": "ee92e5fa1fcb",
@@ -1769,20 +1802,20 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-fn-seed-multi:htr.sent.public.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T18:44:44.892Z",
+  "at": "2026-11-27T13:19:18.221Z",
   "seconds": 19,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-private-unavailable",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1790,21 +1823,21 @@
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-ws-seed-multi:deposit.received.private.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:18:17.580Z",
-  "seconds": 24,
+  "at": "2026-11-27T17:13:22.677Z",
+  "seconds": 23,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1816,21 +1849,21 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-ws-seed-multi:deposit.self.public.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:19:03.116Z",
+  "at": "2026-11-27T17:14:08.621Z",
   "seconds": 22,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1838,21 +1871,21 @@
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-ws-seed-multi:deposit.sent.hide-amount.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:18:41.130Z",
+  "at": "2026-11-27T17:13:46.511Z",
   "seconds": 24,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1864,25 +1897,25 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-ws-seed-multi:fee.received.hide-amount.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:19:29.669Z",
-  "seconds": 27,
+  "at": "2026-11-27T17:14:34.187Z",
+  "seconds": 26,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
@@ -1891,25 +1924,25 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-ws-seed-multi:fee.self.private.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:20:13.874Z",
-  "seconds": 24,
+  "at": "2026-11-27T17:15:17.886Z",
+  "seconds": 23,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
@@ -1918,44 +1951,44 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-ws-seed-multi:fee.sent.public.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:19:50.185Z",
+  "at": "2026-11-27T17:14:54.699Z",
   "seconds": 21,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-ws-seed-multi:htr.received.public.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:17:05.067Z",
-  "seconds": 22,
+  "at": "2026-11-27T17:12:10.508Z",
+  "seconds": 23,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1963,21 +1996,21 @@
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-ws-seed-multi:htr.self.hide-amount.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:17:53.991Z",
+  "at": "2026-11-27T17:12:59.447Z",
   "seconds": 25,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -1989,21 +2022,21 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "history:pn-ws-seed-multi:htr.sent.private.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:17:29.281Z",
+  "at": "2026-11-27T17:12:34.682Z",
   "seconds": 24,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-balance",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "dashboard": "dcca48e5232c",
    "feature-flags": "0db8546ccd77",
@@ -2015,578 +2048,578 @@
    "shielded-send": "770f62f36d3d",
    "token-import": "17c94d703742",
    "token-metadata": "729de7204ac5",
-   "token-register": "629a5b581a6d",
-   "tx-history": "e174d663a9fd",
+   "token-register": "6eca3fa066b5",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:deposit.hide-amount.registered.closed.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T18:27:41.361Z",
-  "seconds": 55,
+  "at": "2026-11-27T13:02:23.084Z",
+  "seconds": 54,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-not-shown",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T18:28:56.578Z",
-  "seconds": 45,
-  "flow": "da39a3ee5e6b",
-  "outcome": "ok-import-banner",
-  "checks": "571ab6338e5c",
-  "features": {
-   "feature-flags": "0db8546ccd77",
-   "network-settings": "ee92e5fa1fcb",
-   "payment-arrival": "5b746d84e479",
-   "shielded": "302b30cbec60",
-   "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
-   "wallet-load": "6dee5ac45e35",
-   "wallet-service": "912a0ea4d833"
-  },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
- },
- "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.locked": {
-  "status": "passed",
-  "at": "2026-11-25T18:20:55.007Z",
+  "at": "2026-11-27T13:03:39.008Z",
   "seconds": 46,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-import-banner",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.locked": {
+  "status": "passed",
+  "at": "2026-11-27T12:55:36.295Z",
+  "seconds": 46,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-import-banner",
+  "checks": "0965320a0749",
+  "features": {
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "payment-arrival": "5b746d84e479",
+   "shielded": "302b30cbec60",
+   "token-import": "17c94d703742",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:deposit.legacy-public.unregistered.open.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:12:21.426Z",
+  "at": "2026-11-27T12:47:07.931Z",
   "seconds": 44,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-import-banner",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:deposit.private.registered.open.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:12:57.011Z",
+  "at": "2026-11-27T12:47:43.293Z",
   "seconds": 18,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-received",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:deposit.shown-public.registered.open.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:12:39.181Z",
+  "at": "2026-11-27T12:47:25.601Z",
   "seconds": 18,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-received",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:fee.hide-amount.unregistered.open.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:14:02.325Z",
+  "at": "2026-11-27T12:48:49.100Z",
   "seconds": 47,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-import-banner",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:fee.legacy-public.registered.open.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:13:15.204Z",
+  "at": "2026-11-27T12:48:01.715Z",
   "seconds": 18,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-received",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:fee.private.registered.closed.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:15:09.334Z",
-  "seconds": 67,
+  "at": "2026-11-27T12:49:54.268Z",
+  "seconds": 65,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-received",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:fee.private.unregistered.open.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T18:28:11.151Z",
+  "at": "2026-11-27T13:02:52.992Z",
   "seconds": 30,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-not-shown",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:fee.shown-public.unregistered.closed.locked": {
   "status": "passed",
-  "at": "2026-11-25T18:22:25.782Z",
+  "at": "2026-11-27T12:57:06.875Z",
   "seconds": 91,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-import-banner",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:htr.hide-amount.registered.open.locked": {
   "status": "passed",
-  "at": "2026-11-25T18:19:43.751Z",
+  "at": "2026-11-27T12:54:24.650Z",
   "seconds": 25,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-locked-count",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:htr.legacy-public.registered.closed.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:11:37.783Z",
-  "seconds": 62,
+  "at": "2026-11-27T12:46:23.915Z",
+  "seconds": 65,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-received",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:htr.private.registered.open.locked": {
   "status": "passed",
-  "at": "2026-11-25T18:20:08.669Z",
+  "at": "2026-11-27T12:54:49.978Z",
   "seconds": 25,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-locked-count",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-fn-seed-multi:htr.shown-public.registered.open.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T18:26:46.379Z",
+  "at": "2026-11-27T13:01:28.682Z",
   "seconds": 25,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-not-shown",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-ws-seed-multi:deposit.hide-amount.unregistered.open.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:09:17.296Z",
-  "seconds": 49,
+  "at": "2026-11-27T17:04:30.178Z",
+  "seconds": 50,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-import-banner",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-ws-seed-multi:deposit.legacy-public.unregistered.open.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:06:59.493Z",
+  "at": "2026-11-27T17:02:10.119Z",
   "seconds": 47,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-import-banner",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-ws-seed-multi:deposit.private.registered.closed.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:10:21.090Z",
-  "seconds": 64,
-  "flow": "da39a3ee5e6b",
-  "outcome": "ok-received",
-  "checks": "571ab6338e5c",
-  "features": {
-   "feature-flags": "0db8546ccd77",
-   "network-settings": "ee92e5fa1fcb",
-   "payment-arrival": "5b746d84e479",
-   "shielded": "302b30cbec60",
-   "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
-   "wallet-load": "6dee5ac45e35",
-   "wallet-service": "912a0ea4d833"
-  },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
- },
- "receive-payment:pn-ws-seed-multi:deposit.shown-public.unregistered.closed.unlocked": {
-  "status": "passed",
-  "at": "2026-11-25T21:08:27.887Z",
-  "seconds": 88,
-  "flow": "da39a3ee5e6b",
-  "outcome": "ok-import-banner",
-  "checks": "571ab6338e5c",
-  "features": {
-   "feature-flags": "0db8546ccd77",
-   "network-settings": "ee92e5fa1fcb",
-   "payment-arrival": "5b746d84e479",
-   "shielded": "302b30cbec60",
-   "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
-   "wallet-load": "6dee5ac45e35",
-   "wallet-service": "912a0ea4d833"
-  },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
- },
- "receive-payment:pn-ws-seed-multi:deposit.shown-public.unregistered.open.unlocked": {
-  "status": "passed",
-  "at": "2026-11-25T21:04:12.364Z",
-  "seconds": 95,
-  "flow": "da39a3ee5e6b",
-  "outcome": "edge-late-offer",
-  "checks": "571ab6338e5c",
-  "features": {
-   "feature-flags": "0db8546ccd77",
-   "network-settings": "ee92e5fa1fcb",
-   "payment-arrival": "5b746d84e479",
-   "shielded": "302b30cbec60",
-   "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
-   "wallet-load": "6dee5ac45e35",
-   "wallet-service": "912a0ea4d833"
-  },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
- },
- "receive-payment:pn-ws-seed-multi:fee.hide-amount.registered.open.unlocked": {
-  "status": "passed",
-  "at": "2026-11-25T21:11:58.833Z",
-  "seconds": 21,
-  "flow": "da39a3ee5e6b",
-  "outcome": "ok-received",
-  "checks": "571ab6338e5c",
-  "features": {
-   "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
-   "network-settings": "ee92e5fa1fcb",
-   "payment-arrival": "5b746d84e479",
-   "shielded": "302b30cbec60",
-   "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
-   "wallet-load": "6dee5ac45e35",
-   "wallet-service": "912a0ea4d833"
-  },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
- },
- "receive-payment:pn-ws-seed-multi:fee.legacy-public.registered.closed.unlocked": {
-  "status": "passed",
-  "at": "2026-11-25T21:11:17.529Z",
-  "seconds": 56,
-  "flow": "da39a3ee5e6b",
-  "outcome": "ok-received",
-  "checks": "571ab6338e5c",
-  "features": {
-   "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
-   "network-settings": "ee92e5fa1fcb",
-   "payment-arrival": "5b746d84e479",
-   "shielded": "302b30cbec60",
-   "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
-   "wallet-load": "6dee5ac45e35",
-   "wallet-service": "912a0ea4d833"
-  },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
- },
- "receive-payment:pn-ws-seed-multi:fee.private.unregistered.open.unlocked": {
-  "status": "passed",
-  "at": "2026-11-25T21:12:51.927Z",
-  "seconds": 53,
-  "flow": "da39a3ee5e6b",
-  "outcome": "ok-import-banner",
-  "checks": "571ab6338e5c",
-  "features": {
-   "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
-   "network-settings": "ee92e5fa1fcb",
-   "payment-arrival": "5b746d84e479",
-   "shielded": "302b30cbec60",
-   "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
-   "wallet-load": "6dee5ac45e35",
-   "wallet-service": "912a0ea4d833"
-  },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
- },
- "receive-payment:pn-ws-seed-multi:fee.shown-public.registered.open.unlocked": {
-  "status": "passed",
-  "at": "2026-11-25T21:11:37.738Z",
-  "seconds": 20,
-  "flow": "da39a3ee5e6b",
-  "outcome": "ok-received",
-  "checks": "571ab6338e5c",
-  "features": {
-   "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
-   "network-settings": "ee92e5fa1fcb",
-   "payment-arrival": "5b746d84e479",
-   "shielded": "302b30cbec60",
-   "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
-   "wallet-load": "6dee5ac45e35",
-   "wallet-service": "912a0ea4d833"
-  },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
- },
- "receive-payment:pn-ws-seed-multi:htr.hide-amount.registered.closed.unlocked": {
-  "status": "passed",
-  "at": "2026-11-25T21:05:50.519Z",
+  "at": "2026-11-27T17:05:32.597Z",
   "seconds": 62,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-received",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
- "receive-payment:pn-ws-seed-multi:htr.legacy-public.registered.open.unlocked": {
+ "receive-payment:pn-ws-seed-multi:deposit.shown-public.unregistered.closed.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:04:30.046Z",
-  "seconds": 18,
+  "at": "2026-11-27T17:03:40.647Z",
+  "seconds": 91,
   "flow": "da39a3ee5e6b",
-  "outcome": "ok-received",
-  "checks": "571ab6338e5c",
+  "outcome": "ok-import-banner",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
- "receive-payment:pn-ws-seed-multi:htr.private.registered.open.unlocked": {
+ "receive-payment:pn-ws-seed-multi:deposit.shown-public.unregistered.open.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:06:12.896Z",
+  "at": "2026-11-27T16:59:22.614Z",
+  "seconds": 92,
+  "flow": "da39a3ee5e6b",
+  "outcome": "edge-late-offer",
+  "checks": "0965320a0749",
+  "features": {
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "payment-arrival": "5b746d84e479",
+   "shielded": "302b30cbec60",
+   "token-import": "17c94d703742",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "receive-payment:pn-ws-seed-multi:fee.hide-amount.registered.open.unlocked": {
+  "status": "passed",
+  "at": "2026-11-27T17:07:09.088Z",
   "seconds": 22,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-received",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
+  "features": {
+   "feature-flags": "0db8546ccd77",
+   "fee-tokens": "4cfd23be40bd",
+   "network-settings": "ee92e5fa1fcb",
+   "payment-arrival": "5b746d84e479",
+   "shielded": "302b30cbec60",
+   "token-import": "17c94d703742",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "receive-payment:pn-ws-seed-multi:fee.legacy-public.registered.closed.unlocked": {
+  "status": "passed",
+  "at": "2026-11-27T17:06:27.163Z",
+  "seconds": 55,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-received",
+  "checks": "0965320a0749",
+  "features": {
+   "feature-flags": "0db8546ccd77",
+   "fee-tokens": "4cfd23be40bd",
+   "network-settings": "ee92e5fa1fcb",
+   "payment-arrival": "5b746d84e479",
+   "shielded": "302b30cbec60",
+   "token-import": "17c94d703742",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "receive-payment:pn-ws-seed-multi:fee.private.unregistered.open.unlocked": {
+  "status": "passed",
+  "at": "2026-11-27T17:08:01.820Z",
+  "seconds": 53,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-import-banner",
+  "checks": "0965320a0749",
+  "features": {
+   "feature-flags": "0db8546ccd77",
+   "fee-tokens": "4cfd23be40bd",
+   "network-settings": "ee92e5fa1fcb",
+   "payment-arrival": "5b746d84e479",
+   "shielded": "302b30cbec60",
+   "token-import": "17c94d703742",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "receive-payment:pn-ws-seed-multi:fee.shown-public.registered.open.unlocked": {
+  "status": "passed",
+  "at": "2026-11-27T17:06:47.297Z",
+  "seconds": 20,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-received",
+  "checks": "0965320a0749",
+  "features": {
+   "feature-flags": "0db8546ccd77",
+   "fee-tokens": "4cfd23be40bd",
+   "network-settings": "ee92e5fa1fcb",
+   "payment-arrival": "5b746d84e479",
+   "shielded": "302b30cbec60",
+   "token-import": "17c94d703742",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "receive-payment:pn-ws-seed-multi:htr.hide-amount.registered.closed.unlocked": {
+  "status": "passed",
+  "at": "2026-11-27T17:01:00.894Z",
+  "seconds": 61,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-received",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "receive-payment:pn-ws-seed-multi:htr.legacy-public.registered.open.unlocked": {
+  "status": "passed",
+  "at": "2026-11-27T16:59:40.408Z",
+  "seconds": 18,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-received",
+  "checks": "0965320a0749",
+  "features": {
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "payment-arrival": "5b746d84e479",
+   "shielded": "302b30cbec60",
+   "token-import": "17c94d703742",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "receive-payment:pn-ws-seed-multi:htr.private.registered.open.unlocked": {
+  "status": "passed",
+  "at": "2026-11-27T17:01:23.584Z",
+  "seconds": 23,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-received",
+  "checks": "0965320a0749",
+  "features": {
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "payment-arrival": "5b746d84e479",
+   "shielded": "302b30cbec60",
+   "token-import": "17c94d703742",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive-payment:pn-ws-seed-multi:htr.shown-public.registered.open.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:04:48.975Z",
+  "at": "2026-11-27T16:59:59.397Z",
   "seconds": 19,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-received",
-  "checks": "571ab6338e5c",
+  "checks": "0965320a0749",
   "features": {
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "payment-arrival": "5b746d84e479",
    "shielded": "302b30cbec60",
    "token-import": "17c94d703742",
-   "tx-history": "e174d663a9fd",
+   "tx-history": "4c1f48a65836",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive:pn-fn-seed-multi:broken-key": {
   "status": "passed",
-  "at": "2026-11-25T18:07:57.238Z",
-  "seconds": 15,
+  "at": "2026-11-27T12:42:40.332Z",
+  "seconds": 14,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-private-unavailable",
   "checks": "086199a0590e",
   "features": {
-   "address-mode": "c74487bd6c41",
+   "address-mode": "e7c277283d51",
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "receive": "c4029e9792f4",
@@ -2595,18 +2628,18 @@
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive:pn-fn-seed-multi:locked": {
   "status": "passed",
-  "at": "2026-11-25T18:04:55.094Z",
+  "at": "2026-11-27T12:39:41.910Z",
   "seconds": 14,
   "flow": "da39a3ee5e6b",
   "outcome": "edge-private-locked",
   "checks": "086199a0590e",
   "features": {
-   "address-mode": "c74487bd6c41",
+   "address-mode": "e7c277283d51",
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "receive": "c4029e9792f4",
@@ -2615,36 +2648,36 @@
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive:pn-fn-seed-multi:unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:01:42.206Z",
-  "seconds": 46,
+  "at": "2026-11-27T12:36:30.190Z",
+  "seconds": 49,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-shared",
   "checks": "086199a0590e",
   "features": {
-   "address-mode": "c74487bd6c41",
+   "address-mode": "e7c277283d51",
    "network-settings": "ee92e5fa1fcb",
    "receive": "c4029e9792f4",
    "shielded": "302b30cbec60",
    "shielded-receive": "27a3e1df3422",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "receive:pn-ws-seed-multi:unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:59:38.264Z",
-  "seconds": 46,
+  "at": "2026-11-27T16:54:53.049Z",
+  "seconds": 45,
   "flow": "da39a3ee5e6b",
   "outcome": "ok-shared",
   "checks": "086199a0590e",
   "features": {
-   "address-mode": "c74487bd6c41",
+   "address-mode": "e7c277283d51",
    "feature-flags": "0db8546ccd77",
    "network-settings": "ee92e5fa1fcb",
    "receive": "c4029e9792f4",
@@ -2653,13 +2686,135 @@
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "register-token:pn-fn-seed-multi:deposit.manual": {
+  "status": "passed",
+  "at": "2026-11-27T19:05:36.456Z",
+  "seconds": 85,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-registered-again",
+  "checks": "09ae2a261d4d",
+  "features": {
+   "camera-permission": "d532f11b53db",
+   "network-settings": "ee92e5fa1fcb",
+   "token-register": "6eca3fa066b5",
+   "token-unregister": "971b658146e4",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "register-token:pn-fn-seed-multi:fee.manual": {
+  "status": "passed",
+  "at": "2026-11-27T19:07:03.027Z",
+  "seconds": 87,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-registered-again",
+  "checks": "09ae2a261d4d",
+  "features": {
+   "camera-permission": "d532f11b53db",
+   "fee-tokens": "4cfd23be40bd",
+   "network-settings": "ee92e5fa1fcb",
+   "token-register": "6eca3fa066b5",
+   "token-unregister": "971b658146e4",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "register-token:pn-ws-seed-multi:deposit.manual": {
+  "status": "passed",
+  "at": "2026-11-27T19:11:51.440Z",
+  "seconds": 85,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-registered-again",
+  "checks": "09ae2a261d4d",
+  "features": {
+   "camera-permission": "d532f11b53db",
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "token-register": "6eca3fa066b5",
+   "token-unregister": "971b658146e4",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "register-token:pn-ws-seed-multi:fee.manual": {
+  "status": "passed",
+  "at": "2026-11-27T19:13:18.594Z",
+  "seconds": 87,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-registered-again",
+  "checks": "09ae2a261d4d",
+  "features": {
+   "camera-permission": "d532f11b53db",
+   "feature-flags": "0db8546ccd77",
+   "fee-tokens": "4cfd23be40bd",
+   "network-settings": "ee92e5fa1fcb",
+   "token-register": "6eca3fa066b5",
+   "token-unregister": "971b658146e4",
+   "tx-history": "4c1f48a65836",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "reset-import:pn-fn-seed-multi": {
+  "status": "passed",
+  "at": "2026-11-27T16:27:50.032Z",
+  "seconds": 339,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-imported",
+  "checks": "5db3ca78dddd",
+  "features": {
+   "address-mode": "e7c277283d51",
+   "network-settings": "ee92e5fa1fcb",
+   "pin-setup": "1533e0172239",
+   "reset-wallet": "44a7fb5cdf33",
+   "token-import": "17c94d703742",
+   "token-register": "6eca3fa066b5",
+   "wallet-create": "1db18acef6a1",
+   "wallet-import": "823a5da9db45",
+   "wallet-load": "6dee5ac45e35"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "reset-import:pn-ws-seed-multi": {
+  "status": "passed",
+  "at": "2026-11-27T19:22:16.648Z",
+  "seconds": 336,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-imported",
+  "checks": "5db3ca78dddd",
+  "features": {
+   "address-mode": "e7c277283d51",
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "pin-setup": "1533e0172239",
+   "reset-wallet": "44a7fb5cdf33",
+   "token-import": "17c94d703742",
+   "token-register": "6eca3fa066b5",
+   "wallet-create": "1db18acef6a1",
+   "wallet-import": "823a5da9db45",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:multisig.deposit.public.private-over-limit.zero-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T19:14:12.714Z",
-  "seconds": 77,
+  "at": "2026-11-27T14:31:28.015Z",
+  "seconds": 83,
   "flow": "b236f57e0850",
   "outcome": "ok-sent",
   "checks": null,
@@ -2672,39 +2827,39 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:multisig.fee.public.decimals.zero-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T19:24:36.742Z",
-  "seconds": 57,
+  "at": "2026-11-27T14:41:46.619Z",
+  "seconds": 59,
   "flow": "84b091eba526",
   "outcome": "err-htr-and-fees",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:multisig.htr.public.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:05:18.774Z",
-  "seconds": 80,
+  "at": "2026-11-27T14:22:49.667Z",
+  "seconds": 81,
   "flow": "08a13628d328",
   "outcome": "ok-sent",
   "checks": null,
@@ -2713,16 +2868,16 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:multisig.htr.public.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:03:58.505Z",
-  "seconds": 84,
+  "at": "2026-11-27T14:21:28.253Z",
+  "seconds": 85,
   "flow": "6bb7b8e10d6f",
   "outcome": "ok-sent",
   "checks": null,
@@ -2731,16 +2886,16 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.deposit.hide-amount.max.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:53:23.825Z",
-  "seconds": 109,
+  "at": "2026-11-27T14:11:53.995Z",
+  "seconds": 78,
   "flow": "9354610b38ac",
   "outcome": "err-htr-and-fees",
   "checks": null,
@@ -2752,16 +2907,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.deposit.hide-amount.private-over-limit.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:00:55.202Z",
-  "seconds": 73,
+  "at": "2026-11-27T14:18:31.405Z",
+  "seconds": 72,
   "flow": "227b7282a569",
   "outcome": "err-private-over-limit",
   "checks": null,
@@ -2773,16 +2928,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.deposit.private.decimals.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:08:47.662Z",
-  "seconds": 102,
+  "at": "2026-11-27T14:25:58.234Z",
+  "seconds": 94,
   "flow": "9ffa23112151",
   "outcome": "ok-sent",
   "checks": null,
@@ -2794,16 +2949,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.deposit.private.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:55:19.309Z",
-  "seconds": 115,
+  "at": "2026-11-27T14:13:22.466Z",
+  "seconds": 88,
   "flow": "1d703d9ad259",
   "outcome": "err-privacy-fee",
   "checks": null,
@@ -2815,16 +2970,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.deposit.public.max.zero-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T19:25:55.405Z",
-  "seconds": 79,
+  "at": "2026-11-27T14:43:10.822Z",
+  "seconds": 84,
   "flow": "a44409b58e95",
   "outcome": "ok-sent",
   "checks": null,
@@ -2837,89 +2992,89 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.fee.hide-amount.decimals.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T19:16:58.635Z",
-  "seconds": 83,
+  "at": "2026-11-27T14:34:08.763Z",
+  "seconds": 81,
   "flow": "76829bd54ebe",
   "outcome": "edge-locked-unlock",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.fee.private.max.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T19:18:20.370Z",
-  "seconds": 82,
+  "at": "2026-11-27T14:35:31.558Z",
+  "seconds": 83,
   "flow": "df45781eff9d",
   "outcome": "edge-locked-unlock",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.fee.public.private-over-limit.enough-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T19:29:47.535Z",
-  "seconds": 86,
+  "at": "2026-11-27T14:46:57.940Z",
+  "seconds": 84,
   "flow": "0f38478b75f8",
   "outcome": "ok-sent",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.htr.hide-amount.normal.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T19:15:35.722Z",
-  "seconds": 83,
+  "at": "2026-11-27T14:32:47.993Z",
+  "seconds": 80,
   "flow": "7dff6cb6a694",
   "outcome": "edge-locked-unlock",
   "checks": null,
@@ -2932,17 +3087,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:shielded.htr.private.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:07:05.775Z",
-  "seconds": 107,
+  "at": "2026-11-27T14:24:23.934Z",
+  "seconds": 94,
   "flow": "58f111f9271b",
   "outcome": "ok-sent",
   "checks": null,
@@ -2954,16 +3109,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:50:27.953Z",
-  "seconds": 58,
+  "at": "2026-11-27T14:09:29.957Z",
+  "seconds": 59,
   "flow": "80819ffbe9e5",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -2975,16 +3130,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:49:30.329Z",
-  "seconds": 58,
+  "at": "2026-11-27T14:08:30.472Z",
+  "seconds": 57,
   "flow": "a7b0e5795280",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -2996,16 +3151,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.deposit.public.private-over-limit.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T19:02:35.001Z",
-  "seconds": 100,
+  "at": "2026-11-27T14:20:03.081Z",
+  "seconds": 92,
   "flow": "eb31e575d14e",
   "outcome": "ok-sent",
   "checks": null,
@@ -3017,35 +3172,35 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.fee.public.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:51:34.767Z",
-  "seconds": 67,
+  "at": "2026-11-27T14:10:36.410Z",
+  "seconds": 66,
   "flow": "f5bd01f42a57",
   "outcome": "err-htr-and-fees",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.htr.hide-amount.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:59:41.718Z",
-  "seconds": 61,
+  "at": "2026-11-27T14:17:19.268Z",
+  "seconds": 60,
   "flow": "1c330afab040",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -3057,16 +3212,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.htr.hide-amount.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:58:41.167Z",
-  "seconds": 61,
+  "at": "2026-11-27T14:16:18.792Z",
+  "seconds": 59,
   "flow": "dbea65c288e7",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -3078,16 +3233,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.htr.public.decimals.enough-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T19:28:21.427Z",
-  "seconds": 72,
+  "at": "2026-11-27T14:45:34.268Z",
+  "seconds": 71,
   "flow": "046ef729723c",
   "outcome": "ok-sent",
   "checks": null,
@@ -3098,17 +3253,17 @@
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.htr.public.empty.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:57:40.263Z",
-  "seconds": 58,
+  "at": "2026-11-27T14:15:19.369Z",
+  "seconds": 57,
   "flow": "2bfe9693638d",
   "outcome": "err-invalid-amount",
   "checks": null,
@@ -3117,16 +3272,16 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.htr.public.max.enough-htr.locked": {
   "status": "passed",
-  "at": "2026-11-25T19:19:39.310Z",
-  "seconds": 79,
+  "at": "2026-11-27T14:36:52.637Z",
+  "seconds": 81,
   "flow": "31fe7f745dff",
   "outcome": "ok-sent",
   "checks": null,
@@ -3137,17 +3292,17 @@
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.htr.public.normal.enough-htr.broken-key": {
   "status": "passed",
-  "at": "2026-11-25T19:27:08.976Z",
-  "seconds": 74,
+  "at": "2026-11-27T14:44:23.057Z",
+  "seconds": 72,
   "flow": "bcb57a53b7e3",
   "outcome": "ok-sent",
   "checks": null,
@@ -3158,17 +3313,17 @@
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-fn-seed-multi:simple.htr.public.over-balance.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T18:56:42.362Z",
-  "seconds": 83,
+  "at": "2026-11-27T14:14:22.655Z",
+  "seconds": 60,
   "flow": "2cf07eec5e75",
   "outcome": "err-insufficient-funds",
   "checks": null,
@@ -3177,15 +3332,15 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:multisig.deposit.public.private-over-limit.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:29:35.019Z",
+  "at": "2026-11-27T17:30:21.441Z",
   "seconds": 97,
   "flow": "06bbe2ebd414",
   "outcome": "ok-sent",
@@ -3199,38 +3354,38 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:multisig.fee.public.max.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:30:56.209Z",
-  "seconds": 81,
+  "at": "2026-11-27T17:31:29.926Z",
+  "seconds": 68,
   "flow": "c0c6c113ac92",
   "outcome": "err-htr-and-fees",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:multisig.htr.public.decimals.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:46:11.851Z",
-  "seconds": 82,
+  "at": "2026-11-27T17:46:51.819Z",
+  "seconds": 81,
   "flow": "5fdd060ca7de",
   "outcome": "ok-sent",
   "checks": null,
@@ -3240,17 +3395,17 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:multisig.htr.public.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:44:50.183Z",
-  "seconds": 83,
+  "at": "2026-11-27T17:45:30.390Z",
+  "seconds": 89,
   "flow": "01c8a02cfcb7",
   "outcome": "ok-sent",
   "checks": null,
@@ -3260,17 +3415,17 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.deposit.hide-amount.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:51:15.176Z",
-  "seconds": 99,
+  "at": "2026-11-27T17:51:53.594Z",
+  "seconds": 106,
   "flow": "50f21bfabd1a",
   "outcome": "ok-sent",
   "checks": null,
@@ -3283,17 +3438,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.deposit.hide-amount.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:32:12.314Z",
-  "seconds": 76,
+  "at": "2026-11-27T17:32:47.563Z",
+  "seconds": 78,
   "flow": "faec87224505",
   "outcome": "err-privacy-fee",
   "checks": null,
@@ -3306,16 +3461,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.deposit.hide-amount.private-over-limit.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:38:44.650Z",
+  "at": "2026-11-27T17:39:17.983Z",
   "seconds": 71,
   "flow": "ecf137b5284b",
   "outcome": "err-private-over-limit",
@@ -3329,17 +3484,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.deposit.private.decimals.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:33:35.708Z",
-  "seconds": 83,
+  "at": "2026-11-27T17:34:05.803Z",
+  "seconds": 78,
   "flow": "db00ea629452",
   "outcome": "err-privacy-fee",
   "checks": null,
@@ -3352,64 +3507,64 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.fee.hide-amount.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:56:26.235Z",
-  "seconds": 107,
+  "at": "2026-11-27T17:56:58.453Z",
+  "seconds": 104,
   "flow": "5024481f09a1",
   "outcome": "ok-sent",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.fee.private.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:58:08.762Z",
-  "seconds": 103,
+  "at": "2026-11-27T17:58:44.987Z",
+  "seconds": 107,
   "flow": "03867d230717",
   "outcome": "ok-sent",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.fee.public.decimals.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:52:57.725Z",
+  "at": "2026-11-27T17:53:36.652Z",
   "seconds": 103,
   "flow": "7793349766e5",
   "outcome": "ok-sent",
@@ -3417,48 +3572,48 @@
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.fee.public.private-over-limit.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:54:39.143Z",
-  "seconds": 101,
+  "at": "2026-11-27T17:55:14.874Z",
+  "seconds": 98,
   "flow": "ec8ae98888dd",
   "outcome": "ok-sent",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "privacy-settings": "1ba41ef428cd",
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.htr.hide-amount.decimals.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:47:56.033Z",
-  "seconds": 104,
+  "at": "2026-11-27T17:48:34.728Z",
+  "seconds": 103,
   "flow": "14dc2dc9fe1e",
   "outcome": "ok-sent",
   "checks": null,
@@ -3471,17 +3626,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:shielded.htr.private.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:49:36.590Z",
-  "seconds": 101,
+  "at": "2026-11-27T17:50:07.816Z",
+  "seconds": 93,
   "flow": "7766d4259d4c",
   "outcome": "ok-sent",
   "checks": null,
@@ -3494,17 +3649,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.deposit.hide-amount.max.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:26:47.358Z",
-  "seconds": 57,
+  "at": "2026-11-27T17:27:34.220Z",
+  "seconds": 56,
   "flow": "0cbd03ae2ba5",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -3517,17 +3672,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.deposit.hide-amount.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:25:50.042Z",
-  "seconds": 57,
+  "at": "2026-11-27T17:26:37.856Z",
+  "seconds": 56,
   "flow": "1e764332108d",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -3540,17 +3695,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.deposit.public.private-over-limit.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:43:27.588Z",
-  "seconds": 91,
+  "at": "2026-11-27T17:44:01.773Z",
+  "seconds": 87,
   "flow": "ca61a327f076",
   "outcome": "ok-sent",
   "checks": null,
@@ -3563,38 +3718,38 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.fee.public.normal.zero-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:27:58.456Z",
-  "seconds": 71,
+  "at": "2026-11-27T17:28:44.598Z",
+  "seconds": 70,
   "flow": "246771cd6c03",
   "outcome": "err-htr-and-fees",
   "checks": null,
   "features": {
    "biometrics": "dd9afd138937",
    "feature-flags": "0db8546ccd77",
-   "fee-tokens": "03c7dd5c1d81",
+   "fee-tokens": "4cfd23be40bd",
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.htr.hide-amount.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:37:33.242Z",
-  "seconds": 59,
+  "at": "2026-11-27T17:38:06.852Z",
+  "seconds": 61,
   "flow": "2f0a08fc5f8d",
   "outcome": "err-privacy-needs-shielded",
   "checks": null,
@@ -3607,16 +3762,16 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.htr.hide-amount.normal.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:36:33.738Z",
+  "at": "2026-11-27T17:37:06.040Z",
   "seconds": 59,
   "flow": "6622429ad409",
   "outcome": "err-privacy-needs-shielded",
@@ -3630,17 +3785,17 @@
    "send": "90e344ac6a59",
    "shielded": "302b30cbec60",
    "shielded-send": "770f62f36d3d",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.htr.public.decimals.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:41:56.999Z",
-  "seconds": 90,
+  "at": "2026-11-27T17:42:35.025Z",
+  "seconds": 101,
   "flow": "816f64552272",
   "outcome": "ok-sent",
   "checks": null,
@@ -3650,16 +3805,16 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.htr.public.empty.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:35:34.932Z",
+  "at": "2026-11-27T17:36:06.683Z",
   "seconds": 56,
   "flow": "ee380e0982ce",
   "outcome": "err-invalid-amount",
@@ -3670,17 +3825,17 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.htr.public.max.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:40:27.425Z",
-  "seconds": 103,
+  "at": "2026-11-27T17:40:53.859Z",
+  "seconds": 96,
   "flow": "57cb7bbc344b",
   "outcome": "ok-sent",
   "checks": null,
@@ -3690,17 +3845,17 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "send:pn-ws-seed-multi:simple.htr.public.over-balance.enough-htr.unlocked": {
   "status": "passed",
-  "at": "2026-11-25T21:34:39.393Z",
-  "seconds": 64,
+  "at": "2026-11-27T17:35:10.385Z",
+  "seconds": 65,
   "flow": "ed4f52340fce",
   "outcome": "err-insufficient-funds",
   "checks": null,
@@ -3710,17 +3865,99 @@
    "network-settings": "ee92e5fa1fcb",
    "pin-unlock": "17bb9f023ae8",
    "send": "90e344ac6a59",
-   "token-register": "629a5b581a6d",
+   "token-register": "6eca3fa066b5",
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "settings:pn-fn-seed-multi:broken-key": {
+  "status": "passed",
+  "at": "2026-11-27T16:51:30.383Z",
+  "seconds": 272,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-pin-changed",
+  "checks": "eb05878dbba2",
+  "features": {
+   "about": "07b9b9bca32b",
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "pin-setup": "1533e0172239",
+   "pin-unlock": "17bb9f023ae8",
+   "settings": "252a7562917b",
+   "shielded": "302b30cbec60",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "settings:pn-fn-seed-multi:locked": {
+  "status": "passed",
+  "at": "2026-11-27T16:43:09.733Z",
+  "seconds": 216,
+  "flow": "da39a3ee5e6b",
+  "outcome": "err-change-failed",
+  "checks": "eb05878dbba2",
+  "features": {
+   "about": "07b9b9bca32b",
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "pin-setup": "1533e0172239",
+   "pin-unlock": "17bb9f023ae8",
+   "settings": "252a7562917b",
+   "shielded": "302b30cbec60",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "settings:pn-fn-seed-multi:unlocked": {
+  "status": "passed",
+  "at": "2026-11-27T16:35:34.442Z",
+  "seconds": 286,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-pin-changed",
+  "checks": "eb05878dbba2",
+  "features": {
+   "about": "07b9b9bca32b",
+   "network-settings": "ee92e5fa1fcb",
+   "pin-setup": "1533e0172239",
+   "pin-unlock": "17bb9f023ae8",
+   "settings": "252a7562917b",
+   "shielded": "302b30cbec60",
+   "wallet-load": "6dee5ac45e35"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
+ },
+ "settings:pn-ws-seed-multi:unlocked": {
+  "status": "passed",
+  "at": "2026-11-27T19:30:21.815Z",
+  "seconds": 287,
+  "flow": "da39a3ee5e6b",
+  "outcome": "ok-pin-changed",
+  "checks": "eb05878dbba2",
+  "features": {
+   "about": "07b9b9bca32b",
+   "feature-flags": "0db8546ccd77",
+   "network-settings": "ee92e5fa1fcb",
+   "pin-setup": "1533e0172239",
+   "pin-unlock": "17bb9f023ae8",
+   "settings": "252a7562917b",
+   "shielded": "302b30cbec60",
+   "wallet-load": "6dee5ac45e35",
+   "wallet-service": "912a0ea4d833"
+  },
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "start-wallet:pn-fn-seed-multi:broken-key": {
   "status": "passed",
-  "at": "2026-11-25T20:56:31.327Z",
-  "seconds": 18,
+  "at": "2026-11-27T16:13:40.319Z",
+  "seconds": 19,
   "flow": "a28888996044",
   "outcome": "ok-started",
   "checks": null,
@@ -3731,13 +3968,13 @@
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "start-wallet:pn-fn-seed-multi:locked": {
   "status": "passed",
-  "at": "2026-11-25T20:53:27.109Z",
-  "seconds": 20,
+  "at": "2026-11-27T16:10:37.925Z",
+  "seconds": 19,
   "flow": "a28888996044",
   "outcome": "ok-started",
   "checks": null,
@@ -3748,12 +3985,12 @@
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "start-wallet:pn-fn-seed-multi:unlocked": {
   "status": "passed",
-  "at": "2026-11-25T20:50:09.075Z",
+  "at": "2026-11-27T16:07:20.751Z",
   "seconds": 26,
   "flow": "a28888996044",
   "outcome": "ok-started",
@@ -3764,13 +4001,13 @@
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "start-wallet:pn-ws-seed-multi:broken-key": {
   "status": "passed",
-  "at": "2026-11-25T23:00:55.063Z",
-  "seconds": 18,
+  "at": "2026-11-27T19:01:16.299Z",
+  "seconds": 20,
   "flow": "a28888996044",
   "outcome": "edge-fallback",
   "checks": null,
@@ -3781,13 +4018,13 @@
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "start-wallet:pn-ws-seed-multi:locked": {
   "status": "passed",
-  "at": "2026-11-25T22:57:17.178Z",
-  "seconds": 18,
+  "at": "2026-11-27T18:57:36.630Z",
+  "seconds": 19,
   "flow": "a28888996044",
   "outcome": "edge-fallback",
   "checks": null,
@@ -3798,13 +4035,13 @@
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  },
  "start-wallet:pn-ws-seed-multi:unlocked": {
   "status": "passed",
-  "at": "2026-11-25T22:53:29.041Z",
-  "seconds": 18,
+  "at": "2026-11-27T18:53:50.221Z",
+  "seconds": 19,
   "flow": "007f8a94fc95",
   "outcome": "ok-started",
   "checks": null,
@@ -3814,7 +4051,7 @@
    "wallet-load": "6dee5ac45e35",
    "wallet-service": "912a0ea4d833"
   },
-  "app": "4c20203dd688",
-  "kit": "b31f2e08be9f"
+  "app": "9fa548151222",
+  "kit": "ae24d3bb7e30"
  }
 }

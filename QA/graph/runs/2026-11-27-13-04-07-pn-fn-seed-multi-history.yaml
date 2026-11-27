@@ -1,0 +1,82 @@
+# This test was run based on the YAML of 2026-11-27, version from commit 1bf8946a, with the tools at commit 1bf8946a (with uncommitted changes).
+yamlCommit: 1bf8946a
+yamlDate: 2026-11-27
+toolsCommit: 1bf8946a (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-27 00:15:12
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: history scenarios of pn-fn-seed-multi"
+  picks: []
+results:
+  - scenario: history:pn-fn-seed-multi:htr.received.hide-amount.unlocked
+    status: passed
+    notes: "reached: ok-balance; Received HTR 1.01 in
+      00f2a5f5933a140180fc46ccea443022b6a38e7200e005ef817a5b5694937d55; fees
+      0.02 HTR"
+  - scenario: history:pn-fn-seed-multi:htr.self.private.unlocked
+    status: passed
+    notes: "reached: ok-balance; Sent HTR -0.04 in
+      0060b0246e53187ee1d9a8026f7190b3b79f8c1dabb83a39c6c41423469c878c; fees
+      0.04 HTR"
+  - scenario: history:pn-fn-seed-multi:deposit.received.private.unlocked
+    status: passed
+    notes: "reached: ok-balance; Received E2ED 1.03 in
+      00d919a4956874716683b77e0e7b8b985e0a1eca161112940c6d27b9f59be663; fees
+      0.05 HTR"
+  - scenario: history:pn-fn-seed-multi:deposit.sent.hide-amount.unlocked
+    status: passed
+    notes: "reached: ok-balance; Sent E2ED -1.04 in
+      000ec140dd8e4e53012af74c577189ef92fcc0c818303095749566f021282b19; fees
+      0.04 HTR"
+  - scenario: history:pn-fn-seed-multi:fee.received.public.unlocked
+    status: passed
+    notes: "reached: ok-balance; Received E2EF 1.05 in
+      00f89dc8b87385112600eaa2e51b9bdc65ce803bfa88ef415045debd84b02b23; fees
+      0.02 HTR"
+  - scenario: history:pn-fn-seed-multi:fee.sent.private.unlocked
+    status: passed
+    notes: "reached: ok-balance; Sent E2EF -1.06 in
+      003f581c72a1219be9ceb5be390b80f2e9f1f5d9b93cd107684c914abad81a29; fees
+      0.07 HTR"
+  - scenario: history:pn-fn-seed-multi:fee.self.hide-amount.unlocked
+    status: passed
+    notes: "reached: ok-balance; You sent E2EF to yourself 0.00 in
+      002018863c3b2847ca34093f81868178dbaa03634d77394b44710f3120e8aaeb; fees
+      0.04 HTR"
+  - scenario: history:pn-fn-seed-multi:htr.received.public.locked
+    status: passed
+    notes: "reached: edge-locked-count; Received HTR 1.01 in
+      00bc1a8c234d5a3423bae18e58de8a4eae483316b37ae3c1ea87d00a4b4eda6f; no fees
+      shown"
+  - scenario: history:pn-fn-seed-multi:deposit.self.public.locked
+    status: passed
+    notes: "reached: edge-locked-count; You sent E2ED to yourself 0.00 in
+      00ba85869f5979daf317c048a11af9ed11f72a7f1cc12ec2d6d629b9c5c75f98; no fees
+      shown"
+  - scenario: history:pn-fn-seed-multi:fee.sent.public.locked
+    status: passed
+    notes: "reached: edge-locked-count; Sent E2EF -1.03 in
+      00c2174dfffefe68e372147902fcf298d68b11eb8ae32066f1b733f1dad9680a; fees
+      0.02 HTR"
+  - scenario: history:pn-fn-seed-multi:htr.received.public.broken-key
+    status: passed
+    notes: "reached: edge-private-unavailable; Received HTR 1.01 in
+      004c4bc45ce9107fe83927b3dc354656c231496f5822e1ac5bf66cad8e1d6a66; no fees
+      shown"
+  - scenario: history:pn-fn-seed-multi:htr.sent.public.broken-key
+    status: passed
+    notes: "reached: edge-private-unavailable; Sent HTR -1.02 in
+      00a862b4af9bc62f61dc9c2d9af6fe517fae4e673b2a5e837a310b01a27a7bc6; no fees
+      shown"
+  - scenario: history:pn-fn-seed-multi:deposit.received.public.broken-key
+    status: passed
+    notes: "reached: edge-private-unavailable; Received E2ED 1.03 in
+      00b4220559dc79b2811a5849a829b7264d238519368a82f3f959b3d73267ac9e; no fees
+      shown"
+  - scenario: history:pn-fn-seed-multi:fee.self.public.broken-key
+    status: passed
+    notes: "reached: edge-private-unavailable; You sent E2EF to yourself 0.00 in
+      00b9d2d1925a4bddd78ce52fdff3c5b2682eea4b31c0fc2d738ddb61fbb7f456; fees
+      0.02 HTR"

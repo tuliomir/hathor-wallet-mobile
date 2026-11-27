@@ -1,0 +1,17 @@
+# This test was run based on the YAML of 2026-11-27, version from commit 1bf8946a, with the tools at commit 1bf8946a (with uncommitted changes).
+yamlCommit: 1bf8946a
+yamlDate: 2026-11-27
+toolsCommit: 1bf8946a (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-27 00:15:12
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: reset-import scenarios of pn-ws-seed-multi"
+  picks: []
+results:
+  - scenario: reset-import:pn-ws-seed-multi
+    status: passed
+    notes: "reached: ok-imported; reset, reopened on the welcome screen, imported
+      again: HTR 50.00, E2ED then E2EF from the banner, each with its history as
+      before (HTR 1, E2ED 1, E2EF 1 rows), nothing left to import"

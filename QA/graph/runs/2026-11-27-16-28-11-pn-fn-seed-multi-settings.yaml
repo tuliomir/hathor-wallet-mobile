@@ -1,0 +1,30 @@
+# This test was run based on the YAML of 2026-11-27, version from commit 1bf8946a, with the tools at commit 1bf8946a (with uncommitted changes).
+yamlCommit: 1bf8946a
+yamlDate: 2026-11-27
+toolsCommit: 1bf8946a (with uncommitted changes)
+appBuild: release build 0.41.0-rc.1-e2e, installed 2026-11-27 00:15:12
+device: Android emulator (AVD hnni, android-36 x86_64)
+platform: android
+environment: local-privnet
+scope:
+  reason: "e2e runner: settings scenarios of pn-fn-seed-multi"
+  picks: []
+results:
+  - scenario: settings:pn-fn-seed-multi:unlocked
+    status: passed
+    notes: "reached: ok-pin-changed; v0.41.0-rc.1-e2e (build 135); identifier
+      cd9ffadeda68019d; a differing confirmation refused; the PIN changed, the
+      old one refused on the lock screen, the new one opened it there and after
+      a restart; the private balance unlocked; back to the kit's PIN"
+  - scenario: settings:pn-fn-seed-multi:locked
+    status: passed
+    notes: 'reached: err-change-failed; v0.41.0-rc.1-e2e (build 135); identifier
+      cd9ffadeda68019d; a differing confirmation refused; the change refused
+      ("Error while changing PIN"), and the old PIN still the one that opens it;
+      the private balance locked'
+  - scenario: settings:pn-fn-seed-multi:broken-key
+    status: passed
+    notes: "reached: ok-pin-changed; v0.41.0-rc.1-e2e (build 135); identifier
+      cd9ffadeda68019d; a differing confirmation refused; the PIN changed, the
+      old one refused on the lock screen, the new one opened it there and after
+      a restart; the private balance broken-key; back to the kit's PIN"

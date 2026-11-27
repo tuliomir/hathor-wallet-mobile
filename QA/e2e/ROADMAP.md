@@ -1,13 +1,13 @@
 # e2e roadmap: from the send scenarios to the whole app
 
-Status on 2026-11-27. The kit runs the QA graph's receive, receive-payment, history, send, create-token, start-wallet, register-token, reset-import, settings and address-mode scenarios, in every private balance state, on the local privnet, with a seed wallet, on the fullnode and the wallet-service facades: 195 scenarios: the 179 of the last full run all passing on `a1ce8fd1`, the 16 added since passing in `dev`, but for the 4 that register a token by QR code, which are skipped. It runs them on an Android emulator, records them, and shows them in a viewer for a person to check. Suites fit the moment: `dev` runs what a change reaches, `full` everything (README "Which command to run"). This file is where it stands, what holds it back, and the way to the whole app.
+Status on 2026-11-27. The kit runs the QA graph's receive, receive-payment, history, send, create-token, start-wallet, register-token, reset-import, settings and address-mode scenarios, in every private balance state, on the local privnet, with a seed wallet, on the fullnode and the wallet-service facades: 195 scenarios, all passing in the last full run, on `1bf8946a`, but for the 4 that register a token by QR code, which are skipped. It runs them on an Android emulator, records them, and shows them in a viewer for a person to check. Suites fit the moment: `dev` runs what a change reaches, `full` everything (README "Which command to run"). This file is where it stands, what holds it back, and the way to the whole app.
 
 ## Where it stands
 
 | | |
 |---|---|
 | Graph | 44 features, 15 setups, 10 actions modelled (send, create-token, start-wallet, receive, receive-payment, history, register-token, reset-import, settings, address-mode): 477 scenarios. Multichain isn't modelled. |
-| Automated | Ten actions on four setups: 195 scenarios in 22 jobs, 4 of them skipped. Eight actions run on the shielded privnet (`pn-fn-seed-multi`, `pn-ws-seed-multi`), address-mode on the plain one (`pnp-fn-seed-single`, `pnp-ws-seed-single`, README "The plain privnet"). The last full run is "Full run of 2026-11-25" below, of 179; `ledger.json` has what each scenario passed with. Added on 2026-11-26 and 27, passing in `dev` on both facades and not in `ledger.json` until a full run: `register-token` (2 of 2 on each, and 2 skipped), `reset-import` (1 of 1 on each), `settings` (3 of 3 on the fullnode, 1 of 1 on the wallet service) and `address-mode` (1 of 1 on each). |
+| Automated | Ten actions on four setups: 195 scenarios in 22 jobs, 4 of them skipped. Eight actions run on the shielded privnet (`pn-fn-seed-multi`, `pn-ws-seed-multi`), address-mode on the plain one (`pnp-fn-seed-single`, `pnp-ws-seed-single`, README "The plain privnet"). The last full run is "Full run of 2026-11-27" below; `ledger.json` has what each scenario passed with. |
 | Held back | Registering a token by QR code, 4 scenarios: it needs a camera helper ("Phase 2"). |
 | Official QA (`QA/QA*.md`) | About 122 of its 756 numbered steps run automatically (16%), counted on 2026-11-27 by section: the 33 of 2026-11-04 (the sends), then Receive Tests 5, Transaction History Tests 4, Create a new token Tests 13, Generate token error Tests 8, sending the new tokens 12, Register a token Tests 13 of 15 (not by QR code, not the network switch), Reset Wallet 2, Import a wallet 4, Import tokens (imported wallet with tokens) 5 of 12 (not the timing of Settings > Import tokens before the banner, nor the network steps), Settings Tests 8 (not biometry), Double-check the Version 1, QA_ADDRESS_MODE.md 14 of 20 (not the network switch, nor the Reown and nano contract steps). The earlier sections are counted by what their scenarios check, not step by step against a run. |
 | Funds | A send run gives its HTR and minted deposits back to genesis. Tokens created in the app keep their deposits (about 10 HTR each for the sends; up to the whole balance in the create run), and the create run isn't cleaned up. |
@@ -70,6 +70,13 @@ Open questions:
 - **`tools/` has wallet-lib 4.3.0; the app has 4.4.0.** Untested whether it matters to funding and minting.
 - **The graph lacks multichain**: 4 flags and 8 routes are in the code only. Out of scope of the regression run; tested by hand.
 
+## Full run of 2026-11-27
+
+`1bf8946a`, `qa/e2e-pin-address-mode` (0.41.0-rc.1 with the kit), on a clean tree: 191 of 191 passed, and the 4 QR code registrations skipped. In five parts of up to 110 min, 12:33 to 19:44 UTC, 7 h 06 min of running with the retries. Twenty-five results files in `QA/graph/runs/`, the failed first try of fn/send among them, and `ledger.json`.
+
+- **fn/send ran twice.** In the first try its 5 scenarios with the private balance locked failed in setup: after the wallet started locked, the tap on the Receive tab was lost, and "Private receiving is locked" never showed (the screen was still Home). The second try passed 25 of 25. Taken for a lost tap; not seen before, in this setup or others.
+- **fn/register-token ran three times**, each passing 2 and skipping 2: `full` took a job with skipped scenarios for one that failed, and `--retry` ran it again in every part. Fixed after the run (`failedIn` in `suite.js`); without `--retry`, the run would have ended without writing the ledger.
+
 ## Full run of 2026-11-25
 
 `a1ce8fd1`, `qa/e2e` (0.41.0-rc.1 with the kit), on a clean tree: 179 of 179 passed, nothing skipped, no retries. Fourteen results files in `QA/graph/runs/`, of 17:59 to 22:50 UTC, and `ledger.json`. A first start, at 16:31, was set aside after 57 scenarios (50 passed, 7 failed): the funding helper refused a transaction made in the same second as its parent, which broke one group's setup. `lib/payAgain.js` pays again in that case.
@@ -82,7 +89,7 @@ What the new checks were seen failing on, each by breaking what it guards: a pay
 2. **The run dashboard**: built (README "Watching a run live"), from state 1 of the design; the design's other states are drawn by the same page from `progress.json`, not designed yet (`design/dashboard/screens/STATES.md`). Not yet: a live screenshot of the phone, which would need addresses masked.
 3. **Registering and unregistering tokens**: done by configuration string (README "Registering tokens again"). By QR code needs the camera helper below.
 4. **Resetting and importing a wallet**: done (README "Resetting and importing the wallet").
-5. **Settings and the PIN, and the address mode**: done (README "Settings and the PIN", "The plain privnet", "Address mode"). A full run, to put the four new actions in `ledger.json`; it switches privnets once, for the last two jobs.
+5. **Settings and the PIN, and the address mode**: done (README "Settings and the PIN", "The plain privnet", "Address mode"), and in `ledger.json` since the full run of 2026-11-27.
 6. Model a private-only `funding` for create-token, to keep the fee-token finding in the regression.
 
 ## Future possibilities
