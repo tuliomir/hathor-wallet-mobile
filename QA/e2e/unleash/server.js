@@ -11,7 +11,8 @@
 // run sets them through /flags.
 //
 //   GET  /proxy        what the app fetches: the enabled flags, as the Unleash proxy returns them
-//   GET  /flags        { flags, served }: served = the app has fetched the current flags
+//   GET  /flags        { flags, served, userId }: served = the app has fetched the current flags;
+//                      userId = the user id of the app's last fetch, its unique identifier
 //   PUT  /flags        merge { "<flag>": true|false, ... } into the flags
 //   POST /flags/reset  back to the flags the server started with
 
@@ -23,6 +24,7 @@ const path = require('path');
 function createServer(initialFlags, { log = () => {} } = {}) {
   let flags = { ...initialFlags };
   let servedEtag = null;
+  let userId = null;
 
   const etagOf = () => `"${crypto.createHash('sha1')
     .update(JSON.stringify(Object.entries(flags).sort()))
@@ -49,6 +51,7 @@ function createServer(initialFlags, { log = () => {} } = {}) {
     const route = `${req.method} ${req.url.split('?')[0]}`;
     log(`${new Date().toISOString()} ${route}`);
     if (route === 'GET /proxy') {
+      userId = new URL(req.url, 'http://unleash').searchParams.get('userId') || userId;
       const etag = etagOf();
       servedEtag = etag;
       if (req.headers['if-none-match'] === etag) {
@@ -64,7 +67,7 @@ function createServer(initialFlags, { log = () => {} } = {}) {
       return;
     }
     if (route === 'GET /flags') {
-      send(res, 200, { flags, served: servedEtag === etagOf() });
+      send(res, 200, { flags, served: servedEtag === etagOf(), userId });
       return;
     }
     if (route === 'PUT /flags') {

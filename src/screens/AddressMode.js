@@ -174,6 +174,7 @@ export default function AddressMode({ navigation }) {
 
         <View style={styles.groupWrapper}>
           <RadioGroup
+            testID='address-mode'
             value={selectedMode}
             onChange={setSelectedMode}
             options={[
@@ -210,6 +211,7 @@ export default function AddressMode({ navigation }) {
 
       <View style={styles.buttonContainer}>
         <NewHathorButton
+          testID='address-mode-save'
           title={t`Save preferences`}
           onPress={onSave}
           disabled={isSaveDisabled || saving}

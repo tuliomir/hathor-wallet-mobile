@@ -35,4 +35,9 @@ describe('numpadKeys', () => {
     });
     expect(numpadKeys('{}')).toEqual({});
   });
+
+  it('reads just under each key\'s top edge, for a keypad the navigation bar covers', () => {
+    const node = (digit, bounds) => `{ "attributes" : { "text" : "", "resource-id" : "numpad-key-${digit}", "clickable" : "true", "bounds" : "${bounds}" } }`;
+    expect(numpadKeys(node(0, '[374,2300][706,2447]'), { top: true })).toEqual({ 0: ['540', '2312'] });
+  });
 });

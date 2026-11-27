@@ -18,7 +18,8 @@ services:
       # What the wallet service's daemon reads (profile "ws").
       "--enable-event-queue"]
     environment:
-      HATHOR_CONFIG_YAML: privnet/conf/privnet.yml
+      # PRIVNET_CONFIG=privnet-plain.yml for the plain one (lib/app.js ensurePrivnet).
+      HATHOR_CONFIG_YAML: privnet/conf/${PRIVNET_CONFIG:-privnet.yml}
     ports: ["18083:8080"]
     volumes:
       - {type: bind, source: ./, target: /privnet/conf}
@@ -101,7 +102,7 @@ services:
       <<: *ws-db
       FETCH_FULLNODE_IDS: "true"
       FULLNODE_HOST: fullnode:8080
-      FULLNODE_NETWORK: testnet-shielded-outputs
+      FULLNODE_NETWORK: ${PRIVNET_NETWORK:-testnet-shielded-outputs}
       REDIS_URL: redis://redis:6379
       USE_SSL: "false"
       # The queue stand-in (sqs below); the daemon signs the request, with any credentials.

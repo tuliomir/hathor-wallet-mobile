@@ -62,6 +62,8 @@ const { runReceive } = require('./lib/receiveScenarios');
 const { runPayment, runHistory } = require('./lib/historyScenarios');
 const { runRegister } = require('./lib/registerScenarios');
 const { runResetImport } = require('./lib/resetScenarios');
+const { runSettings } = require('./lib/settingsScenarios');
+const { runAddressMode } = require('./lib/addressModeScenarios');
 const { tokenPlan } = require('./lib/tokenPlan');
 const walletStart = require('./lib/walletStart');
 const { htrOnDashboard, numpadKeys } = require('./lib/dashboard');
@@ -552,19 +554,36 @@ async function unlock() {
 
 const launchApp = () => execFileSync(ADB, ['shell', 'monkey -p network.hathor.wallet -c android.intent.category.LAUNCHER 1'], { stdio: 'ignore' });
 
-/** Types the PIN on the keypad on screen, which may never go idle (see unlock). */
-async function typePin(where = 'the PIN screen') {
+/** Types a PIN on the keypad on screen, which may never go idle (see unlock). */
+async function typePin(where = 'the PIN screen', pin = PIN) {
   let keys = {};
   for (let i = 0; i < 10 && Object.keys(keys).length < 10; i += 1) {
     const { stdout } = spawnSync(MAESTRO, ['hierarchy'], { encoding: 'utf8', env: MAESTRO_ENV, maxBuffer: 64 * 1024 * 1024 });
-    keys = numpadKeys(stdout);
+    keys = numpadKeys(stdout, { top: true });
   }
   if (Object.keys(keys).length < 10) throw new Error(`${where} did not show`);
-  for (const digit of PIN) {
+  for (const digit of pin) {
     execFileSync(ADB, ['shell', 'input', 'tap', ...keys[digit]]);
     // eslint-disable-next-line no-await-in-loop
     await sleep(500);
   }
+}
+
+/**
+ * Waits until Maestro's hierarchy, which doesn't wait for the screen to go idle, has a text that
+ * `pattern` matches: for screens uiautomator can't read, such as the lock screen.
+ */
+async function hierarchyShows(pattern, seconds = 30) {
+  const end = Date.now() + seconds * 1000;
+  let texts = [];
+  while (Date.now() < end) {
+    const { stdout } = spawnSync(MAESTRO, ['hierarchy'], { encoding: 'utf8', env: MAESTRO_ENV, maxBuffer: 64 * 1024 * 1024 });
+    texts = [...(stdout || '').matchAll(/"text" : "((?:[^"\\]|\\.)*)"/g)].map((m) => JSON.parse(`"${m[1]}"`));
+    if (texts.some((text) => pattern.test(text))) return texts;
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(500);
+  }
+  throw new Error(`waited ${seconds} s for ${pattern} (the screen had: ${texts.filter(Boolean).slice(0, 12).join(' | ')})`);
 }
 
 /** Writes the privnet into the stopped app's storage, as before onboarding (app-on-privnet.sh). */
@@ -643,6 +662,9 @@ const KIND = {
   history: 'paid',
   'register-token': 'paid',
   'reset-import': 'paid',
+  settings: 'paid',
+  // A wallet with no transactions, which the scenario leaves in multi-address mode for good.
+  'address-mode': 'bare',
 };
 
 function keepWallet(setup, state, dir, ctx, failed) {
@@ -684,7 +706,8 @@ function keptWallet(setup, state, ctx, plan) {
 async function prepareGroup(setup, state, dir, ctx, plan) {
   const cleared = Object.fromEntries(KEPT.map((field) => [field, undefined]));
   Object.assign(ctx, cleared, { locked: 0, reusedWallet: false });
-  const kept = ctx.reuse && ctx.action !== 'start-wallet' ? keptWallet(setup, state, ctx, plan) : null;
+  const fresh = ['start-wallet', 'address-mode'].includes(ctx.action);
+  const kept = ctx.reuse && !fresh ? keptWallet(setup, state, ctx, plan) : null;
   if (kept) {
     KEPT.forEach((field) => { ctx[field] = kept[field]; });
     ctx.walletDir = kept.dir;
@@ -808,6 +831,8 @@ const BY_ADB = {
   history: runHistory,
   'register-token': runRegister,
   'reset-import': runResetImport,
+  settings: runSettings,
+  'address-mode': runAddressMode,
 };
 
 async function runByAdb(scenario, outcome, ctx, dir, api) {
@@ -1064,6 +1089,12 @@ async function runPlan(setup, plan, runDir, startedAt, args) {
     unlock,
     launchApp,
     typePin,
+    hierarchyShows,
+    unleashUserId: async () => (await getJson(`${UNLEASH_URL}/flags`)).userId,
+    versionOfApp: () => {
+      const info = execFileSync(ADB, ['shell', 'dumpsys', 'package', 'network.hathor.wallet'], { encoding: 'utf8' });
+      return { name: /versionName=(\S+)/.exec(info)[1], code: /versionCode=(\d+)/.exec(info)[1] };
+    },
     pointAtPrivnet,
     storageKeys,
     // What --reuse goes by: a reset drops it until the wallet is back.

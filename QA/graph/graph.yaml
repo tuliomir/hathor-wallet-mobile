@@ -11,6 +11,9 @@ environments:
   - id: local-privnet
     name: Local privnet (mobile-e2e-flows)
     notes: A local fullnode and `sender` wallet from `../mobile-e2e-flows`, driven by Maestro on an Android emulator; for large amounts, edge cases and potentially breaking behaviour. Flags are forced on by editing `FEATURE_TOGGLE_DEFAULTS` locally (marked `E2E-LOCAL`), not through Unleash.
+  - id: local-privnet-plain
+    name: Local privnet without shielded outputs (QA/e2e)
+    notes: The kit's privnet under a name the app doesn't take for the shielded testnet's (`QA/e2e/privnet/privnet-plain.yml`), so it behaves as the public testnet does, single-address mode included. Same genesis and funding as the local privnet; one of the two runs at a time.
   - id: store-device
     name: Store build on a physical device
     notes: The App Store or Play Store build on a real phone; for what only manual QA can verify (passkeys, biometrics, push, camera).
@@ -159,7 +162,7 @@ features:
       - { to: shielded, reason: An active shielded chain keeps the wallet in multi-address mode }
       - { to: wallet-load, reason: Changing the mode reloads the wallet }
     introduces: ['addr:single']
-    actions: [receive]
+    actions: [receive, address-mode]
 
   - id: tx-history
     name: Token history and transaction details
@@ -375,12 +378,17 @@ features:
 
   - id: pin-setup
     name: Choose or change PIN
-    description: The user picks a PIN during onboarding or changes it later in settings.
-    status: out-of-scope
+    description: The user picks a PIN during onboarding or changes it later in settings, which encrypts the wallet's keys again, the private balance's scan key among them.
+    status: in-scope
     screens: [ChoosePinScreen, ChangePin]
     files:
       - src/screens/ChangePin.js
+      - src/screens/Security.js
     flags: []
+    links:
+      - { to: shielded, reason: A new PIN encrypts the scan key again (changeEncryptionPin in wallet-lib) }
+    introduces: []
+    actions: [settings]
 
   - id: biometrics
     name: Biometric unlock
@@ -393,13 +401,15 @@ features:
 
   - id: lock-screen
     name: App lock
-    description: The app asks for the PIN again after it was in the background for a while.
-    status: out-of-scope
+    description: The app asks for the PIN again after it was in the background for a while, or when the user locks it from Security.
+    status: in-scope
     screens: [PinScreen]
     files: []
     flags: []
     links:
       - { to: pin-unlock, reason: The app lock uses the same PIN screen }
+    introduces: []
+    actions: [settings]
 
   - id: passkey-lock
     name: Passkey lock screen
@@ -595,12 +605,15 @@ features:
 
   - id: settings
     name: Settings menu
-    description: The settings tab lists the wallet's settings and shows only the entries whose flags are on.
-    status: out-of-scope
+    description: The settings tab lists the wallet's settings and shows only the entries whose flags are on, with the app's unique identifier and the server it is connected to.
+    status: in-scope
     screens: [Settings]
     files:
       - src/screens/Settings.js
     flags: [network-settings, reown, single-address, amount-format]
+    links: []
+    introduces: []
+    actions: [settings]
 
   - id: monitoring
     name: Error reporting
@@ -634,11 +647,14 @@ features:
   - id: about
     name: About
     description: Shows the app version and legal links.
-    status: out-of-scope
+    status: in-scope
     screens: [About]
     files:
       - src/screens/About.js
     flags: []
+    links: []
+    introduces: []
+    actions: [settings]
 
 flags:
   - id: wallet-service
@@ -796,6 +812,7 @@ axes:
       - { id: testnet, name: Public testnet }
       - { id: testnet-shielded, name: Shielded testnet (testnet-shielded-outputs) }
       - { id: local-privnet, name: Local privnet (mobile-e2e-flows) }
+      - { id: local-privnet-plain, name: Local privnet without shielded outputs (QA/e2e) }
     how: QA.md "Common Activities" > "Changing Networks" (Settings > Network Settings > "I Understand" > pick a pre-setting or "Customize"); "Identifying the current network" to check it. The wallet restarts and flags are read again for the new network. The Shielded Testnet preset shows only with shielded-outputs-network.rollout on for the device on the current network (QA_SHIELDED.md). The local privnet is a Customize to the emulator's forwarded fullnode, in the e2e kit's emulator build (`QA/e2e`, README "The e2e build").
     switch:
       cost: expensive # QA: confirm
@@ -1079,6 +1096,18 @@ setups:
     environment: local-privnet
     runnable: true # QA: confirm
     notes: The kit's privnet runs the wallet service with `docker compose --profile ws up -d` (QA/e2e/README.md).
+  - id: pnp-fn-seed-single
+    name: Plain local privnet, fullnode, seed, single address
+    values: { network: local-privnet-plain, facade: fullnode, wallet: seed, addr: single, flag-fbt: on }
+    environment: local-privnet-plain
+    runnable: true
+    notes: A new wallet, as on the public testnet, starts in single-address mode (QA_ADDRESS_MODE.md).
+  - id: pnp-ws-seed-single
+    name: Plain local privnet, wallet service, seed, single address
+    values: { network: local-privnet-plain, facade: wallet-service, wallet: seed, addr: single, flag-fbt: on }
+    environment: local-privnet-plain
+    runnable: true
+    notes: As pnp-fn-seed-single, on the kit's wallet service.
 
   # Passkey wallets: the passkey's RP ID needs a store-signed build on a physical device.
   - id: tn-ws-passkey-multi
@@ -1448,6 +1477,70 @@ actions:
           verified: false
           note: 'The wallet is as it was before the reset: same balances, same history, every token registered again, the first ones through the banner (src/components/TokenImportBanner.js:70) while one stays offered.'
 
+  - id: settings
+    name: About, the app identifier, and changing the PIN
+    feature: settings
+    axes: [private-balance]
+    setups: [tn-ws-seed-multi, tn-fn-seed-multi, tns-ws-seed-multi, tns-fn-seed-multi, pn-fn-seed-multi, pn-ws-seed-multi]
+    path:
+      steps:
+        - { id: about, screen: About, name: 'Settings > About: the version under test' }
+        - { id: identifier, screen: Settings, name: 'The unique app identifier is the one the app gives Unleash; a tap copies it' }
+        - { id: mismatch, screen: ChangePin, name: 'Security > Change PIN: the current PIN, a new one, and a confirmation that differs' }
+        - { id: change, screen: ChangePin, name: The new PIN confirmed }
+        - { id: lock, screen: PinScreen, name: 'Security > Lock wallet: the old PIN is refused, the new one opens the wallet' }
+        - { id: restart, screen: PinScreen, name: 'Closed and opened again, the new PIN opens the wallet, with its private balance as it was' }
+      outcomes:
+        - id: err-pins-differ
+          kind: error
+          at: mismatch
+          message: "PIN codes don't match."
+          source: 'src/screens/ChangePin.js:154'
+          verified: false
+          note: Every scenario sees it on the way, then confirms the PIN right.
+        - id: err-old-pin
+          kind: error
+          at: lock
+          message: Incorrect PIN Code. Try again.
+          source: 'src/screens/PinScreen.js:304'
+          verified: false
+          note: Every scenario sees it on the way, then types the new PIN.
+        - id: err-change-failed
+          kind: error
+          at: change
+          message: Error while changing PIN
+          source: 'src/screens/ChangePin.js:186'
+          verified: false
+          note: 'Nothing is saved: the old PIN still opens the wallet, the new one is refused, and the private balance stays as it was.'
+        - id: ok-pin-changed
+          kind: success
+          at: restart
+          message: New PIN recorded
+          source: 'src/screens/ChangePin.js:234'
+          verified: false
+          note: 'After it, the new PIN opens the wallet from the lock screen and after a restart, and the private balance is in the state it was: unlocked, locked or with its broken key (Receive says which).'
+
+  - id: address-mode
+    name: Switch the address mode, until a payment past the first address keeps the wallet multi
+    feature: address-mode
+    axes: []
+    setups: [tn-ws-seed-single, tn-fn-seed-single, pnp-fn-seed-single, pnp-ws-seed-single]
+    path:
+      steps:
+        - { id: single, screen: AddressMode, name: 'A new wallet: Settings > Address Mode has Single selected; Receive shows the first address (index 0) and no New address' }
+        - { id: multi, screen: AddressMode, name: 'Multi, saved: the wallet starts again; Receive has New address, which gives the next address' }
+        - { id: back, screen: AddressMode, name: 'Single again, saved: the wallet starts again on the first address, with no New address' }
+        - { id: pay, screen: Dashboard, name: 'Pay the address New address gave (index 1) from another wallet: on the fullnode a single-address wallet watches index 0 only, so the payment shows after the next start; the wallet service shows it at once' }
+        - { id: restart, screen: AddressMode, name: 'Start the wallet again: it is in multi-address mode, and Single is disabled with a warning' }
+      outcomes:
+        - id: ok-kept-multi
+          kind: success
+          at: restart
+          message: "You can't switch to single address mode because other addresses in your wallet are already in use."
+          source: 'src/screens/AddressMode.js:204'
+          verified: false
+          note: 'At the start wallet-lib finds the transaction past index 0, counts it, and leaves single-address mode; Receive has New address again. On the shielded testnet Single is never offered ("Single address mode is not available on this network.", :203), which c-rcv-single-shielded-chain models for receive.'
+
 constraints:
   # send
   - id: c-send-shielded-dest-outside
@@ -1697,7 +1790,7 @@ constraints:
     action: receive
     when: { network: [testnet-shielded, local-privnet], wallet: seed, addr: single }
     class: invalid
-    note: 'A seed wallet in the shielded environment has a shielded chain, which keeps it in multi-address mode ("Single address mode is not available on this network.", src/screens/AddressMode.js:202).'
+    note: 'A seed wallet in the shielded environment has a shielded chain, which keeps it in multi-address mode ("Single address mode is not available on this network.", src/screens/AddressMode.js:203).'
   - id: c-rcv-ws-single-no-shielded
     action: receive
     when: { network: testnet-shielded, facade: wallet-service, addr: single }
@@ -1845,3 +1938,28 @@ constraints:
     when: { token: htr }
     class: invalid
     note: HTR is always registered; its screen has no details to unregister it from (tokenInfo in src/screens/MainScreen.js).
+
+  # settings
+  - id: c-set-private-balance-outside
+    action: settings
+    when: { network: testnet, private-balance: [locked, broken-key] }
+    class: invalid
+    note: There is no private balance outside the shielded environment.
+  - id: c-set-ws-private-balance
+    action: settings
+    when: { facade: wallet-service, private-balance: [locked, broken-key] }
+    class: invalid
+    note: 'The wallet service has neither state: the app falls back to the fullnode facade (start-wallet, c-start-ws-fallback).'
+  - id: c-set-locked
+    action: settings
+    when: { private-balance: locked }
+    class: rejected
+    outcome: err-change-failed
+    note: "The scan key of a locked private balance is encrypted under another PIN, so changeEncryptionPin (wallet-lib) can't encrypt it again, and changePinOnAccessData (src/utils.js) returns false. The message doesn't say why (QA/e2e/ROADMAP.md \"Findings\")."
+
+  # address-mode
+  - id: c-am-ws-sees-all
+    action: address-mode
+    when: { facade: wallet-service }
+    class: lib-risk
+    note: "On the wallet service a single-address wallet shows a payment to an address past index 0 at once, as the service knows every address of the wallet; on the fullnode it shows only after the next start (QA/e2e/ROADMAP.md \"Findings\")."

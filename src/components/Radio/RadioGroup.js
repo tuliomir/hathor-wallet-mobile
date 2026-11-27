@@ -21,14 +21,16 @@ import RadioOption from './RadioOption';
  *   value: string|number, title: string, description?: string, hint?: string,
  *   badge?: string, disabled?: boolean
  * }>} props.options
+ * @param {string} [props.testID] - Each option's id is `<testID>-<value>`, for e2e tests.
  */
-export default function RadioGroup({ value, onChange, options }) {
+export default function RadioGroup({ value, onChange, options, testID, }) {
   return (
     <View accessibilityRole='radiogroup' style={styles.card}>
       {options.map((option, index) => (
         <React.Fragment key={String(option.value)}>
           {index > 0 && <View style={styles.divider} />}
           <RadioOption
+            testID={testID && `${testID}-${option.value}`}
             selected={value === option.value}
             onPress={() => {
               // Deliberately redundant with the touchable's `disabled`: keeps

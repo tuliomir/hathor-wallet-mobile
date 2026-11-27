@@ -67,8 +67,9 @@ appId: network.hathor.wallet
 - runFlow: pin.yaml
 - tapOn:
     id: choose-pin-start-wallet
+# Either privnet (lib/app.js PRIVNETS): the shielded testnet's stand-in or the plain one.
 - extendedWaitUntil:
-    visible: "Custom network: testnet-shielded-outputs"
+    visible: "Custom network: (testnet-shielded-outputs|testnet-e2e-plain)"
     timeout: 120000
 - extendedWaitUntil:
     visible: "HTR"

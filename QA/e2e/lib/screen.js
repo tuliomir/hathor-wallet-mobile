@@ -18,7 +18,10 @@ const ENTITIES = {
 const unescape = (text) => text.replace(/&(?:#(\d+)|(\w+));/g, (all, code, name) => (
   code ? String.fromCodePoint(Number(code)) : ENTITIES[name] || all));
 
-/** The nodes of a uiautomator dump: { id, text, x, y, height }, x and y being the centre. */
+/**
+ * The nodes of a uiautomator dump: { id, text, x, y, height, checked, enabled }, x and y being the
+ * centre.
+ */
 function nodesOf(xml) {
   return [...xml.matchAll(/<node [^>]*>/g)].map(([node]) => {
     const attribute = (name) => unescape((new RegExp(` ${name}="([^"]*)"`).exec(node) || [])[1] || '');
@@ -29,6 +32,8 @@ function nodesOf(xml) {
       x: Math.round((x1 + x2) / 2),
       y: Math.round((y1 + y2) / 2),
       height: y2 - y1,
+      checked: attribute('checked') === 'true',
+      enabled: attribute('enabled') !== 'false',
     };
   });
 }

@@ -27,6 +27,7 @@ import RadioButton from './RadioButton';
  * @param {string} [props.badge] - Pill text shown at the right of the title row.
  * @param {string} [props.description]
  * @param {string} [props.hint] - Muted italic line below the description.
+ * @param {string} [props.testID] - The id e2e tests find the option by.
  */
 export default function RadioOption({
   selected,
@@ -36,9 +37,11 @@ export default function RadioOption({
   badge,
   description,
   hint,
+  testID,
 }) {
   return (
     <TouchableOpacity
+      testID={testID}
       accessibilityRole='radio'
       accessibilityState={{ checked: selected, disabled }}
       activeOpacity={disabled ? 1 : 0.7}

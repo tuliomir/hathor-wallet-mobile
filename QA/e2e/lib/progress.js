@@ -94,7 +94,7 @@ function newProgress(run, jobs, { setupSeconds, extraSeconds = () => 0 }) {
       const guessed = scenarios.filter((s) => s.estimateFrom === 'guess').length;
       return {
         id: job.id,
-        facade: job.setup.startsWith('pn-ws') ? 'wallet-service' : 'fullnode',
+        facade: job.setup.includes('-ws-') ? 'wallet-service' : 'fullnode',
         action: job.action,
         status: 'queued',
         tries: 0,

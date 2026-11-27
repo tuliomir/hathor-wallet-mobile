@@ -82,4 +82,14 @@ describe('fake Unleash', () => {
     await fetch(`${base}/flags/reset`, { method: 'POST' });
     expect((await (await fetch(`${base}/flags`)).json()).flags).toEqual({ 'a.rollout': true });
   });
+
+  it('says the user id of the app\'s last fetch: its unique identifier', async () => {
+    await start({ 'a.rollout': true });
+    const seen = async () => (await (await fetch(`${base}/flags`)).json()).userId;
+    expect(await seen()).toBeNull();
+    await fetch(`${base}/proxy?appName=wallet-mobile-android&userId=abc-123&properties%5Bnetwork%5D=testnet`);
+    expect(await seen()).toBe('abc-123');
+    await proxy();
+    expect(await seen()).toBe('abc-123');
+  });
 });

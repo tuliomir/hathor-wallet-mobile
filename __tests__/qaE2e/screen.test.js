@@ -12,16 +12,16 @@ import { nodesOf, mismatches } from '../../QA/e2e/lib/screen';
 
 const XML = '<?xml version="1.0"?><hierarchy rotation="0">'
   + '<node index="0" text="3.00 HTR" resource-id="token-available-balance" class="x" bounds="[100,200][300,260]" />'
-  + '<node index="1" text="Date &amp; Time &#10;x" resource-id="" class="x" bounds="[0,0][10,10]"></node></hierarchy>';
+  + '<node index="1" text="Date &amp; Time &#10;x" resource-id="" class="x" checked="true" enabled="false" bounds="[0,0][10,10]"></node></hierarchy>';
 
 describe('the screen', () => {
-  it('reads a dump: ids, unescaped texts and centres', () => {
+  it('reads a dump: ids, unescaped texts, centres, and whether checked and enabled', () => {
     expect(nodesOf(XML)).toEqual([
       {
-        id: 'token-available-balance', text: '3.00 HTR', x: 200, y: 230, height: 60,
+        id: 'token-available-balance', text: '3.00 HTR', x: 200, y: 230, height: 60, checked: false, enabled: true,
       },
       {
-        id: '', text: 'Date & Time \nx', x: 5, y: 5, height: 10,
+        id: '', text: 'Date & Time \nx', x: 5, y: 5, height: 10, checked: true, enabled: false,
       },
     ]);
     expect(nodesOf('ERROR: could not get idle state.')).toEqual([]);

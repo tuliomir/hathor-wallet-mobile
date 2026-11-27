@@ -12,7 +12,7 @@ const sendFlow = require('./sendFlow');
 const createTokenFlow = require('./createTokenFlow');
 const walletStart = require('./walletStart');
 
-const ACTIONS = ['send', 'create-token', 'start-wallet', 'receive', 'receive-payment', 'history', 'register-token', 'reset-import'];
+const ACTIONS = ['send', 'create-token', 'start-wallet', 'receive', 'receive-payment', 'history', 'register-token', 'reset-import', 'settings', 'address-mode'];
 
 // The kit's files only these actions' scenarios go through, whose change reaches nothing else. The
 // builders of Maestro flows aren't here: the flow they write for a scenario says more.
@@ -22,6 +22,8 @@ const ACTION_FILES = {
   history: ['QA/e2e/lib/historyScenarios.js', 'QA/e2e/lib/book.js'],
   'register-token': ['QA/e2e/lib/registerScenarios.js'],
   'reset-import': ['QA/e2e/lib/resetScenarios.js'],
+  settings: ['QA/e2e/lib/settingsScenarios.js', 'QA/e2e/unleash/server.js'],
+  'address-mode': ['QA/e2e/lib/addressModeScenarios.js', 'QA/e2e/privnet/privnet-plain.yml'],
 };
 
 /** The facade a start-wallet scenario ends on. */

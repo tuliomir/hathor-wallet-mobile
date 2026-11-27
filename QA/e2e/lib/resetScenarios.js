@@ -211,4 +211,4 @@ async function runResetImport(scenario, outcome, ctx, dir, api) {
     + `${[HTR, first, rest].map(({ uid, symbol }) => `${symbol} ${history[uid].length}`).join(', ')} rows), nothing left to import`;
 }
 
-module.exports = { runResetImport, RANDOM_WORDS };
+module.exports = { runResetImport, openSetting, RANDOM_WORDS };

@@ -29,7 +29,7 @@ Run tests through these commands: each run shows live on the run dashboard and p
 
 | Path | What it is |
 |---|---|
-| `privnet/` | docker compose: the shielded fullnode (host port 18083), the dev miner (18035), the fake Unleash (18042) and wallet-lib's integration-test helper for funding (13020). Blocks are weight 1, so the miner sits near idle. |
+| `privnet/` | docker compose: the shielded fullnode (host port 18083), or the plain one (`privnet-plain.yml`, "The plain privnet"), the dev miner (18035), the fake Unleash (18042) and wallet-lib's integration-test helper for funding (13020). Blocks are weight 1, so the miner sits near idle. |
 | `unleash/` | The fake Unleash: `server.js`, and `flags.json`, the flags it starts with (real testnet values, plus the shielded flags on, push and wallet service off). |
 | `bin/flags.js` | Lists and sets the flags: `flags.js set fee-based-tokens.rollout=off --wait`. |
 | `bin/fund.js` | Sends HTR from the genesis wallet to a public address: `fund.js W... 10.50`. Uses the helper's `POST /fund`; shielded addresses are refused. |
@@ -37,7 +37,7 @@ Run tests through these commands: each run shows live on the run dashboard and p
 | `suite.js`, `ledger.json` | The suites ("Which command to run"), and what each scenario passed with in the last full run. |
 | `run.js` | The runner under them: the scenarios of one action on one setup, with a results file (`QA/graph/runs/`, or `--results <dir>`) and evidence in `evidence/` (git-ignored). Its options are at its top. |
 | `bin/app-on-privnet.sh` | Points the app at the privnet before it starts, writing its storage as root. `--fresh` wipes it first. Refuses anything but an emulator: store builds share the app id, so a wipe on a phone would erase its wallet. |
-| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow, and `flowSteps.js` has the steps they share; `walletStart.js` writes the flows around starting the wallet; `pinServer.js` taps the PIN for a running flow; `affected.js` finds the scenarios a change reaches; `tokenPlan.js` says which token each send gets; `createdTokens.js` has what differs for tokens created in the app; `payAgain.js` pays again what came in the same second as another transaction; `unrunnable.js` says why a scenario can't run (the QR code registrations); `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `jobs.js`, `plan.js`, `fingerprint.js`, `ledger.js`, `select.js` and `smoke.js` pick what a suite runs, and `app.js` brings up what it runs on; `screen.js` drives the app over adb, and `receiveScenarios.js`, `historyScenarios.js`, `registerScenarios.js` and `resetScenarios.js` use it, with what the app should show in `book.js`; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
+| `lib/` | `sendFlow.js` and `createTokenFlow.js` turn a scenario into a Maestro flow, and `flowSteps.js` has the steps they share; `walletStart.js` writes the flows around starting the wallet; `pinServer.js` taps the PIN for a running flow; `affected.js` finds the scenarios a change reaches; `tokenPlan.js` says which token each send gets; `createdTokens.js` has what differs for tokens created in the app; `payAgain.js` pays again what came in the same second as another transaction; `unrunnable.js` says why a scenario can't run (the QR code registrations); `dashboard.js` reads the dashboard's HTR; `runOrder.js` orders a setup's scenarios; `jobs.js`, `plan.js`, `fingerprint.js`, `ledger.js`, `select.js` and `smoke.js` pick what a suite runs, and `app.js` brings up what it runs on; `screen.js` drives the app over adb, and `receiveScenarios.js`, `historyScenarios.js`, `registerScenarios.js`, `resetScenarios.js`, `settingsScenarios.js` and `addressModeScenarios.js` use it, with what the app should show in `book.js`; `recorder.js` records the screen; `timeline.js` turns Maestro's logs into the viewer's timeline. |
 | `viewer/` | `viewer.html`, the run viewer; `bin/serve-viewer.js` serves the runs' viewers and the live dashboard. |
 | `dashboard/` | `dashboard.html`, the live dashboard of suite runs ("Watching a run live"); `lib/progress.js` keeps the `progress.json` it reads, and `lib/live.js` its server and link. Its design: `design/dashboard/`. |
 | `flows/` | Maestro flows. `onboard.yaml`: new wallet on the privnet, ending on the dashboard. `to_dashboard.yaml`: back to the dashboard from wherever a scenario ended. `enter_pin.yaml`: the PIN, by taps. |
@@ -193,6 +193,29 @@ These run over adb, with no Maestro but to import a token: a screen is read in o
 - **The banner's link** has no node of its own (Selectors): a Maestro flow of one tap.
 - **On the wallet service** the imported wallet is the one the service already knows (same words), and the banner offered both tokens as soon as the wallet started, as `c-pay-ws-offer-at-start` expects: the setup paid them publicly to a legacy address. The late offer of ROADMAP "Findings" (a public payment to the private address) isn't met here.
 - **Time:** about 5.5 min a scenario on either facade, on top of the wallet's setup.
+
+## Settings and the PIN
+
+`settings` runs on the payments' wallet, in every private balance state the facade has, over adb. About must say the version `dumpsys` gives (`v<versionName> (build <versionCode>)`). The unique app identifier Settings shows must be the user id the app last gave the fake Unleash (`userId` in its `GET /flags`); a tap copies it, pasted into Send, after the app first copied something else (a token's configuration string). Security > Change PIN must refuse a confirmation that differs ("PIN codes don't match."), then take the new PIN; Lock wallet must refuse the old PIN and open with the new one; and closed and opened again, the app must open with the new PIN, with Receive saying the private balance is as it was. The PIN then goes back to the kit's, so the wallet ends as it started.
+
+- **A locked private balance refuses the change** ("Error while changing PIN", ROADMAP "Findings"): there the scenario checks that nothing changed, the new PIN refused and the old one opening the wallet, and the balance still locked.
+- **The PIN screens never go idle**, so their prompts and errors are read from `maestro hierarchy` (`hierarchyShows` in `run.js`), and the keys tapped with adb.
+- **Change PIN's bottom row is under the navigation bar** (ROADMAP "Findings"): every key is tapped just under its top edge, and the new PIN has a 0 to keep that in the run.
+- Biometry (QA.md "Settings Tests" and "Biometry tests") isn't here: it needs `adb emu finger touch` and a device with a fingerprint enrolled.
+
+## The plain privnet
+
+The shielded privnet reports the shielded testnet's name, so the app treats it as that network: a seed wallet there always has a shielded chain and is always multi-address. What only a plain network has, single-address mode first, runs on a second privnet, `privnet/privnet-plain.yml`: the same genesis and funding under the name `testnet-e2e-plain`, with shielded transactions off. The app maps it to testnet and registers no shielded chain.
+
+One privnet runs at a time, on the same ports. A job says which it needs (`privnet` in `lib/jobs.js`), and `ensurePrivnet` in `lib/app.js` takes the other down and starts that one (`PRIVNET_CONFIG` and `PRIVNET_NETWORK` in `docker-compose.yml`, which the wallet service's daemon reads too), about 3 min. A switch starts a new chain, so the wallets kept on the old one give back their funds first and are forgotten, as `e2e:down` does. The plain privnet's jobs come after all the others, so a run switches once at most; the next run on the shielded privnet switches back.
+
+## Address mode
+
+`address-mode` runs on the plain privnet (`pnp-fn-seed-single`, `pnp-ws-seed-single`), one scenario a setup, on a new wallet with no transactions, never reused: it ends multi-address for good. Over adb, from the QA_ADDRESS_MODE.md "Auto switch to multi" steps: a new wallet is in single-address mode, and Receive shows its first address and no New address; Multi saved, Receive has New address, which gives the second address; Single saved again, Receive is back on the first address; 1.00 HTR paid to the second address and 1.00 to the first; started again, the wallet counts both, is multi, and offers Single no more, with the warning. The addresses are derived from the seed outside the app; the modes are read from the options' `checked` and `enabled` (testIDs `address-mode-single` and `address-mode-multi`).
+
+- **While single, the fullnode doesn't count the payment to the second address, and the wallet service does** (ROADMAP "Findings"): Home shows 1.00 HTR on the fullnode, 2.00 on the wallet service, before the restart.
+- **Saving a mode leaves the screen where it is**, with the mode selected and Save off, while the wallet starts again under it.
+- Not here: "Address mode per network" (a network switch, the custom-network work), and the Reown and nano contract steps (their helpers).
 
 ## Running less, and faster
 

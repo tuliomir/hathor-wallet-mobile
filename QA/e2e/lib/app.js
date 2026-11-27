@@ -94,22 +94,46 @@ async function until(what, seconds, check) {
 
 const answers = (url) => fetch(url).then((r) => r.ok, () => false);
 
-async function ensurePrivnet(walletService, log) {
+// The privnets a job can run on: the shielded testnet's stand-in, and a plain testnet for what the
+// shielded one hides (the address mode). One runs at a time, on the same ports.
+const PRIVNETS = {
+  shielded: { config: 'privnet.yml', name: 'testnet-shielded-outputs' },
+  plain: { config: 'privnet-plain.yml', name: 'testnet-e2e-plain' },
+};
+
+const runningPrivnet = () => fetch('http://localhost:18083/v1a/status')
+  .then((r) => (r.ok ? r.json() : null), () => null)
+  .then((body) => (body && body.server ? body.server.network : null), () => null);
+
+/**
+ * Brings up the privnet a job needs. When the other one runs, it is taken down first, and
+ * `onSwitch` runs before, while its chain still answers: a switch starts a new chain, so a wallet
+ * kept on the old one is no use after.
+ */
+async function ensurePrivnet(walletService, log, privnet = 'shielded', onSwitch = () => {}) {
+  const { config, name } = PRIVNETS[privnet];
   const up = async () => (await Promise.all([
-    answers('http://localhost:18083/v1a/status'),
+    runningPrivnet().then((running) => running === name),
     answers('http://localhost:18042/flags'),
     answers('http://localhost:13020/ready'),
     ...(walletService ? [answers('http://localhost:18300/dev/version')] : []),
   ])).every(Boolean);
   if (await up()) return;
-  log(`starting the privnet${walletService ? ', with the wallet service' : ''}`);
+  const cwd = path.join(E2E, 'privnet');
+  const env = { ...process.env, PRIVNET_CONFIG: config, PRIVNET_NETWORK: name };
+  const running = await runningPrivnet();
+  if (running && running !== name) {
+    onSwitch();
+    log(`taking down the privnet ${running}, for ${name}`);
+    execFileSync('docker', ['compose', '--profile', 'ws', 'down'], { cwd, stdio: 'ignore', env });
+  }
+  log(`starting the privnet ${name}${walletService ? ', with the wallet service' : ''}`);
   execFileSync('docker', ['compose', ...(walletService ? ['--profile', 'ws'] : []), 'up', '-d'], {
-    cwd: path.join(E2E, 'privnet'), stdio: 'ignore',
+    cwd, stdio: 'ignore', env,
   });
   await until('the privnet', 180, up);
 }
 
-/** Answers the "System UI isn't responding" dialog of a freshly booted emulator with Wait. */
 function answerDialog() {
   const xml = tried(() => adb('exec-out', 'uiautomator', 'dump', '/dev/tty'));
   if (!/isn(&apos;|'|’)t responding/.test(xml)) return;
@@ -145,5 +169,5 @@ function down(log) {
 }
 
 module.exports = {
-  ensureApp, staleApp, ensurePrivnet, ensureEmulator, down, builtId, installedId,
+  ensureApp, staleApp, ensurePrivnet, ensureEmulator, down, builtId, installedId, PRIVNETS,
 };

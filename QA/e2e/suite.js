@@ -199,8 +199,17 @@ function phaseLog(msg) {
   }
 }
 
+const onWalletService = (rows) => rows.some(({ job }) => job.setup.includes('-ws-'));
+
+/**
+ * The privnet a job runs on (lib/jobs.js). A switch to the other starts a new chain: the wallets
+ * kept on the old one give back their funds first, and are forgotten.
+ */
+const privnetFor = (job, rows) => (
+  app.ensurePrivnet(onWalletService(rows), phaseLog, job.privnet, giveBackKept));
+
 async function bringUp(rows, args, appSources) {
-  await app.ensurePrivnet(rows.some(({ job }) => job.setup.startsWith('pn-ws')), phaseLog);
+  await privnetFor(rows[0].job, rows);
   await app.ensureEmulator(phaseLog);
   if (args.noBuild) {
     const stale = app.staleApp(appSources);
@@ -298,6 +307,8 @@ async function runRows(rows, args, appSources) {
   const summary = [];
   // A job whose wallet the next can go on with comes right before it.
   for (const { job, rows: own } of byJob(rows)) {
+    // eslint-disable-next-line no-await-in-loop
+    await privnetFor(job, rows);
     log(`== ${job.id}: ${own.length} scenarios`);
     const options = ['--results', path.join(EVIDENCE, 'results')];
     options.push(args.fresh ? '--keep' : '--reuse');
@@ -426,6 +437,8 @@ async function full(args) {
       liveRun.close();
       return;
     }
+    // eslint-disable-next-line no-await-in-loop
+    await privnetFor(job, rows);
     log(`== ${job.id}: ${own.length} scenarios, about ${minutes(estimate(own))}`);
     const before = state.done[job.id];
     liveRun.event({ type: 'job-started', job: job.id, tries: before ? before.tries + 1 : 1 });
@@ -455,8 +468,8 @@ async function full(args) {
   printSummary(byJob(rows).map(({ job }) => ({ job, ...state.done[job.id] })));
 }
 
-/** Gives back the funds of every wallet a run kept, and takes the privnet and the emulator down. */
-function down() {
+/** Gives back the funds of every wallet a run kept, and forgets them: no run goes on with them. */
+function giveBackKept() {
   const entries = (dir) => (fs.existsSync(dir) ? fs.readdirSync(dir, { withFileTypes: true }) : []);
   const find = (dir, depth) => (depth < 0 ? [] : entries(dir)
     .flatMap((entry) => {
@@ -477,6 +490,11 @@ function down() {
     }
     fs.rmSync(file);
   });
+}
+
+/** Gives back the funds of every wallet a run kept, and takes the privnet and the emulator down. */
+function down() {
+  giveBackKept();
   app.down(log);
 }
 

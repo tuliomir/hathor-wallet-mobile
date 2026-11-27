@@ -330,6 +330,7 @@ export class Settings extends React.Component {
                   </Text>
 
                   <CopyClipboard
+                    testID='settings-unique-id'
                     text={this.props.uniqueDeviceId}
                     textStyle={{ fontSize: 12 }}
                   />
